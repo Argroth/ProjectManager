@@ -34,6 +34,7 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.join(__dirname, 'view/build', 'index.html'));
   });
 }
+
 //###########################################################       Database connection        #################################################################
 const databaseConfig = require("./database/config.js");
 const databaseCredentials = require("./database/credentials.js");
