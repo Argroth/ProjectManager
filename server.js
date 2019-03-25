@@ -3,27 +3,19 @@ const app = express();
 const port = process.env.PORT || 5000;
 const path = require('path');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
+const session = require('express-session');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.static('test'));
 
+require('./routes/passport-routes')(app);
+require('./routes/index-routes')(app);
 
-//controller declaration
-const index_controller = require('./controller/index-controller.js');
-
-//controller usage
-app.get('/nudes', index_controller.index);
-
-app.get('/api/hello', (req, res) => {
-  res.send({ express: 'Hello From Express' });
-});
-
-app.post('/api/world', (req, res) => {
-  console.log(req.body);
-  res.send(
-    `I received your POST request. This is what you sent me: ${req.body.post}`,
-  );
-});
 
 if (process.env.NODE_ENV === 'production') {
   // Serve any static files
@@ -48,5 +40,28 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log("we are connected to database!");
 });
+
+//###########################################################     SANDBOX    ##############################################################################
+
+
+
+// var User = require('./model/passport');
+//
+// var newUser = new User({
+//   name: 'Lukas',
+//   username: 'basic',
+//   password: 'admin'
+// });
+//
+// newUser.save(err=>{
+//   if(err) throw err;
+//
+//   console.log('saved' + newUser);
+// });
+
+
+
+//###########################################################     SANDBOX     ##############################################################################
+
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
