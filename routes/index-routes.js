@@ -1,10 +1,10 @@
 module.exports = (app) => {
 
 //controller declaration
-    const index_controller = require('../controller/index-controller.js');
+    const indexController = require('../controller/index-controller.js');
 
 //controller usage
-    app.get('/nudes', index_controller.index);
+    app.get('/nudes', indexController.index);
 
     app.get('/api/hello', (req, res) => {
         res.send({express: 'Hello From Express'});

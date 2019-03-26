@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const port = process.env.PORT || 5000;
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -12,9 +13,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static('test'));
+app.use(cors());
+
+var corsOptions = {
+  origin: 'http://localhost:5000/',
+  optionSuccessStatus: 200
+};
 
 require('./routes/passport-routes')(app);
 require('./routes/index-routes')(app);
+require('./routes/project-routes')(app);
 
 
 if (process.env.NODE_ENV === 'production') {
