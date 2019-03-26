@@ -3,6 +3,9 @@
 # dependencies
 node_modules
 
+#vulnerable data
+database
+
 # testing
 coverage
 
