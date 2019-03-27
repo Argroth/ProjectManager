@@ -1,5 +1,20 @@
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('../model/user-model');
+const crypto = require('crypto');
+
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    host: "smtp.office365.com",
+    port: 587,
+    tls:{rejectUnauthorized: false},
+    auth: {
+        user: 'dev@telemond-holding.com',
+        pass: 'Bot91531'
+    }
+});
+
+
 
 
 module.exports = passport => {
@@ -28,7 +43,8 @@ module.exports = passport => {
                         return done(null, false, req.flash('signupMessage', 'Adres e-mail jest już zajęty.'));
                     } else {
 //TODO Add user details to login form
-                        var newUser = new User();
+                        const token = crypto.randomBytes(12).toString('hex');
+                        const newUser = new User();
                         newUser.email = email;
                         newUser.password = newUser.generateHash(password);
                         newUser.role = req.body.role;
@@ -37,6 +53,24 @@ module.exports = passport => {
                         newUser.meta.departmentRole = req.body.departmentRole;
                         newUser.meta.company = req.body.company;
                         newUser.meta.createdAt = Date.now();
+                        newUser.token.tokenID = token;
+
+                        const mailOptions = {
+                            from: 'dev@telemond-holding.com',
+                            to: email,
+                            subject: 'Utwórz hasło i aktywuj konto w TelemondApp!',
+                            text: 'Kliknij w link, aby utworzyć hasło i aktywować konto: http://localhost:5000/verify/' + token
+                        };
+
+//TODO unlock emails
+                        // transporter.sendMail(mailOptions, function(error, info){
+                        //     if (error) {
+                        //         console.log(error);
+                        //     } else {
+                        //         console.log('Email sent');
+                        //     }
+                        // });
+
                         newUser.save((err) => {
                             if (err)
                                 throw err;

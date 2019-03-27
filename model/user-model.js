@@ -12,6 +12,11 @@ const userSchema = mongoose.Schema({
             departmentRole: String,
             company: String,
             createdAt: Date
+        },
+        token: {
+            tokenID: String,
+            expDate: Date,
+            isVerified: {type: Boolean, default: false}
         }
 });
 

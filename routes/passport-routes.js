@@ -1,5 +1,6 @@
 const passport = require('passport');
 const path = require('path');
+const passportController = require('../controller/passport-controller');
 require('../passport/passport-config')(passport);
 
 module.exports = (app) => {
@@ -29,4 +30,6 @@ module.exports = (app) => {
         res.redirect('/');
     });
 
-}
+    app.get('/verify/:token', passportController.verify);
+
+};
