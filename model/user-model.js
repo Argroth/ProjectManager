@@ -5,7 +5,14 @@ const saltRounds = 10;
 const userSchema = mongoose.Schema({
         email : String,
         password : String,
-        role : {type: String, default: "User"}
+        role : {type: String, default: "User"},
+        meta: {
+            name: String,
+            department: String,
+            departmentRole: String,
+            company: String,
+            createdAt: Date
+        }
 });
 
 userSchema.methods.generateHash = (password) => {
