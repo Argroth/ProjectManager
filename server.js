@@ -4,7 +4,6 @@ const cors = require('cors');
 const port = process.env.PORT || 5000;
 const path = require('path');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const session = require('express-session');
 
@@ -51,9 +50,6 @@ db.once('open', function() {
 
 //###########################################################     SANDBOX    ##############################################################################
 
-//
-// console.log(
-//     (new Date()).toISOString());
 
 //###########################################################     SANDBOX     ##############################################################################
 
