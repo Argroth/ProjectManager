@@ -1,20 +1,9 @@
 const LocalStrategy = require('passport-local').Strategy;
-const User = require('../model/user-model');
 const crypto = require('crypto');
 
-const nodemailer = require('nodemailer');
+const User = require('../model/user-model');
 
-const transporter = nodemailer.createTransport({
-    host: "smtp.office365.com",
-    port: 587,
-    tls:{rejectUnauthorized: false},
-    auth: {
-        user: 'dev@telemond-holding.com',
-        pass: 'Bot91531'
-    }
-});
-
-
+require('../emailer/emailer-config');
 
 
 module.exports = passport => {
@@ -54,6 +43,8 @@ module.exports = passport => {
                         newUser.meta.company = req.body.company;
                         newUser.meta.createdAt = Date.now();
                         newUser.token.tokenID = token;
+                        newUser.changePassword.tokenID = '';
+                        newUser.changePassword.expDate = Date.now();
 
                         const mailOptions = {
                             from: 'dev@telemond-holding.com',
@@ -63,13 +54,14 @@ module.exports = passport => {
                         };
 
 //TODO unlock emails
-                        // transporter.sendMail(mailOptions, function(error, info){
-                        //     if (error) {
-                        //         console.log(error);
-                        //     } else {
-                        //         console.log('Email sent');
-                        //     }
-                        // });
+
+                        transporter.sendMail(mailOptions, function(error, info){
+                            if (error) {
+                                console.log(error);
+                            } else {
+                                console.log('Email sent');
+                            }
+                        });
 
                         newUser.save((err) => {
                             if (err)

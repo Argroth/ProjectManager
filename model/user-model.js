@@ -3,7 +3,7 @@ const bcrypt   = require('bcrypt');
 const saltRounds = 10;
 
 const userSchema = mongoose.Schema({
-        email : String,
+        email : {type: String, unique: true},
         password : String,
         role : {type: String, default: "User"},
         meta: {
@@ -17,6 +17,10 @@ const userSchema = mongoose.Schema({
             tokenID: String,
             expDate: Date,
             isVerified: {type: Boolean, default: false}
+        },
+        changePassword: {
+            tokenID: String,
+            expDate: Date
         }
 });
 

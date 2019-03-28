@@ -31,5 +31,10 @@ module.exports = (app) => {
     });
 
     app.get('/verify/:token', passportController.verify);
+    app.post('/verified/:token', passportController.verified);
+    app.get('/changepassword', passportController.changePass);
+    app.post('/resetpass', passportController.resetPass);
+    app.get('/newpass/:token', passportController.newPassForm);
+ //   app.post('/newpass', passportController.newPass);
 
 };
