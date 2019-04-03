@@ -10,7 +10,7 @@ import ReactDOM from 'react-dom';
 import { Route, Link, BrowserRouter as Router } from 'react-router-dom';
 import DashBoard from './dashboard/app';
 import Login from './login/app';
-import NotFound from './not-found/app';
+import Home from "./login/components/home";
 
 
 const routing = (
@@ -18,6 +18,8 @@ const routing = (
         <div>
             <Route exact path="/" component={DashBoard} />
             <Route path="/login" component={Login} />
+            <Route path="/home" exact component={Home} />
+
         </div>
     </Router>
 );
