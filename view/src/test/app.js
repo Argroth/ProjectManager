@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import SearchBar from './search-bar';
+import SearchBar from '../common-components/search-bar';
 
 
 class App extends React.Component{

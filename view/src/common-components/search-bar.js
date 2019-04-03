@@ -16,7 +16,7 @@ class SearchBar extends React.Component {
 
         this.props.onSubmit(this.state.term);
     };
-
+//TODO change onchange to separate function
 
     render() {
         return (
