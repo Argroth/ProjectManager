@@ -15,7 +15,7 @@ const routing = (
             <Route exact path="/" component={DashBoard} />
             <Route path="/applogin" component={AppLogin} />
             <Route path="/home" component={Home} />
-            <Route path="/secret" component={Secret} />
+            <Route path="/secret" component={withAuth({Secret})} />
             <Route path="/login" component={Login} />
 
         </div>

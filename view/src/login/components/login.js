@@ -19,27 +19,21 @@ export default class Login extends Component {
 
     onSubmit = (event) => {
         event.preventDefault();
-        fetch('http://localhost/api/authenticate', {
-            method: 'POST',
-            body: JSON.stringify(this.state),
+        this.login();
+    };
+    async login(){
+        const response = await axios.post('http://localhost:5000/api/authenticate',{
+         email: this.state.email,
+         password: this.state.password
+        },{
+            withCredentials: true,
             headers: {
                 'Content-Type': 'application/json'
             }
-        })
-            .then(res => {
-                if (res.status === 200) {
-                    console.log(res);
-                    this.props.history.push('/');
-                } else {
-                    const error = new Error(res.error);
-                    throw error;
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Error logging in please try again');
-            });
-    }
+        });
+
+        console.log(response);
+    };
 
     render() {
         return (

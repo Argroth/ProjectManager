@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-axios.defaults.withCredentials = true;
 const data = {};
 
 export default class Secret extends Component {
@@ -14,7 +13,7 @@ export default class Secret extends Component {
     componentDidMount(){
         this.getMessage();
     };
-//TODO get cookie is working well
+
     async getMessage(){
         const response = await axios.post('http://localhost:5000/cookie', data,{
             withCredentials: true,

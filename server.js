@@ -1,13 +1,10 @@
 const express = require('express');
-const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 5000;
 const path = require('path');
 const bodyParser = require('body-parser');
 const passport = require('passport');
-const session = require('express-session');
 
- //app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,6 +17,9 @@ app.use(express.static('test'));
 require('./routes/passport-routes')(app);
 require('./routes/index-routes')(app);
 require('./routes/project-routes')(app);
+
+
+
 
 
 if (process.env.NODE_ENV === 'production') {
@@ -65,6 +65,8 @@ const withAuth = function(req, res, next) {
       req.query.token ||
       req.headers['x-access-token'] ||
       req.cookies.token;
+
+  console.log(req.body.cookies);
 
   if (!token) {
     res.status(401).send('Unauthorized: No token provided');
@@ -149,7 +151,7 @@ app.post('/api/authenticate', function(req, res) {
             expiresIn: '1h'
           });
           console.log(token);
-          res.cookie('token', token, { httpOnly: true }).sendStatus(200);
+              res.cookie('token', token, { httpOnly: true }).sendStatus(200);
         }
       });
     }
