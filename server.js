@@ -1,23 +1,21 @@
 const express = require('express');
-const app = express();
 const cors = require('cors');
+const app = express();
 const port = process.env.PORT || 5000;
 const path = require('path');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const session = require('express-session');
 
+ //app.use(cors());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static('test'));
-app.use(cors());
 
-var corsOptions = {
-  origin: 'http://localhost:5000/',
-  optionSuccessStatus: 200
-};
+
 
 require('./routes/passport-routes')(app);
 require('./routes/index-routes')(app);
@@ -35,27 +33,134 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 //###########################################################       Database connection        #################################################################
-const databaseConfig = require("./database/config.js");
-const databaseCredentials = require("./database/credentials.js");
+const databaseConfig = require("./database/config");
+const databaseCredentials = require("./database/credentials");
 const mongoose = require('mongoose');
 
 mongoose.connect(
     'mongodb://' + databaseCredentials.login + ":" + databaseCredentials.pwd + '@' + databaseConfig.url + '/' + databaseCredentials.authDatabase, {useNewUrlParser: true});
 
-var db = mongoose.connection;
+const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log("we are connected to database!");
 });
 
 //###########################################################     SANDBOX    ##############################################################################
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  next();
+});
+
+const withAuth = function(req, res, next) {
+  const token =
+      req.body.token ||
+      req.query.token ||
+      req.headers['x-access-token'] ||
+      req.cookies.token;
+
+  if (!token) {
+    res.status(401).send('Unauthorized: No token provided');
+  } else {
+    jwt.verify(token, secret, function(err, decoded) {
+      if (err) {
+        res.status(401).send('Unauthorized: Invalid token');
+      } else {
+        req.email = decoded.email;
+        next();
+      }
+    });
+  }
+};
+
+app.post('/cookie', (req, res) => {
+    res.cookie('sprawdz czy dziala', '234', {httpOnly: true}).sendStatus(200);
+});
+
 app.get('/api/home', function(req, res) {
   res.send('Welcome!');
 });
 
 app.get('/api/secret', function(req, res) {
-  res.send('The password is potato');
+  res.json('The password is potato');
 });
+
+const User = require('./model/user-model');
+
+app.post('/api/register', function(req, res) {
+console.log(req.body.email);
+
+const newUser = new User();
+newUser.email = req.body.email;
+newUser.password = req.body.password;
+
+newUser.save(function(err) {
+  if (err) {
+    res.status(500)
+        .send("Error registering new user please try again.");
+  } else {
+    res.status(200).send("Sucessfully registered");
+  }
+  });
+});
+
+const jwt = require('jsonwebtoken');
+const secret = 'mysecreetsshhh';
+
+
+app.post('/api/authenticate', function(req, res) {
+    console.log(req.body);
+  const { email, password } = req.body;
+  User.findOne({ email }, function(err, user) {
+    if (err) {
+      console.error(err);
+      res.status(500)
+          .json({
+            error: 'Internal error please try again'
+          });
+    } else if (!user) {
+      res.status(401)
+          .json({
+            error: 'Incorrect email or password'
+          });
+    } else {
+      user.isCorrectPassword(password, function(err, same) {
+        if (err) {
+          res.status(500)
+              .json({
+                error: 'Internal error please try again'
+              });
+        } else if (!same) {
+          res.status(401)
+              .json({
+                error: 'Incorrect email or password'
+              });
+        } else {
+          // Issue token
+          const payload = { email };
+          const token = jwt.sign(payload, secret, {
+            expiresIn: '1h'
+          });
+          console.log(token);
+          res.cookie('token', token, { httpOnly: true }).sendStatus(200);
+        }
+      });
+    }
+  });
+});
+
+
+app.get('/checktoken', withAuth, (req, res)=>{
+  res.sendStatus(200);
+});
+
 //###########################################################     SANDBOX     ##############################################################################
 
 

@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+
 
 export default class Home extends Component {
     constructor() {
@@ -8,16 +10,16 @@ export default class Home extends Component {
         }
     }
 
-    componentDidMount() {
-        fetch('/api/home')
-            .then(res => res.text())
-            .then(res => this.setState({message: res}));
+    componentDidMount(){
+           const response = axios.get('http://localhost:5000/api/secret');
+            console.log(response);
+           this.setState({message: response});
     }
 
     render() {
         return (
             <div>
-                <h1>Home</h1>
+                {this.state.message}
             </div>
         );
     }

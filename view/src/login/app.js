@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, Route, Switch } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 export default class App extends Component {
     render() {
@@ -7,6 +7,8 @@ export default class App extends Component {
             <div>
                 <ul>
                     <li><Link to="/home">Home</Link></li>
+                    <li><Link to="/secret">Secret</Link></li>
+                    <li><Link to="/login">Login</Link></li>
 
                 </ul>
             </div>
