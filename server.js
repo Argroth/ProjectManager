@@ -1,22 +1,31 @@
 const express = require('express');
 const app = express();
+const cookieParser = require('cookie-parser');
 const port = process.env.PORT || 5000;
 const path = require('path');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 
-
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static('test'));
 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
 
+  next();
+});
 
-require('./routes/passport-routes')(app);
+//require('./routes/passport-routes')(app);
 require('./routes/index-routes')(app);
 require('./routes/project-routes')(app);
+require('./routes/auth-routes')(app);
 
 
 
@@ -38,7 +47,10 @@ const databaseCredentials = require("./database/credentials");
 const mongoose = require('mongoose');
 
 mongoose.connect(
-    'mongodb://' + databaseCredentials.login + ":" + databaseCredentials.pwd + '@' + databaseConfig.url + '/' + databaseCredentials.authDatabase, {useNewUrlParser: true});
+    'mongodb://' + databaseCredentials.login + ":" + databaseCredentials.pwd + '@' + databaseConfig.url + '/' + databaseCredentials.authDatabase,
+    {useNewUrlParser: true, 
+     useCreateIndex: true}
+    );
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -47,52 +59,6 @@ db.once('open', function() {
 });
 
 //###########################################################     SANDBOX    ##############################################################################
-const cookieParser = require('cookie-parser');
-app.use(cookieParser());
-
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-
-  next();
-});
-
-const withAuth = function(req, res, next) {
-  const token =
-      req.body.token ||
-      req.query.token ||
-      req.headers['x-access-token'] ||
-      req.cookies.token;
-
-  console.log(req.body.cookies);
-
-  if (!token) {
-    res.status(401).send('Unauthorized: No token provided');
-  } else {
-    jwt.verify(token, secret, function(err, decoded) {
-      if (err) {
-        res.status(401).send('Unauthorized: Invalid token');
-      } else {
-        req.email = decoded.email;
-        next();
-      }
-    });
-  }
-};
-
-app.post('/cookie', (req, res) => {
-    res.cookie('sprawdz czy dziala', '234', {httpOnly: true}).sendStatus(200);
-});
-
-app.get('/api/home', function(req, res) {
-  res.send('Welcome!');
-});
-
-app.get('/api/secret', function(req, res) {
-  res.json('The password is potato');
-});
 
 const User = require('./model/user-model');
 
@@ -118,7 +84,6 @@ const secret = 'mysecreetsshhh';
 
 
 app.post('/api/authenticate', function(req, res) {
-    console.log(req.body);
   const { email, password } = req.body;
   User.findOne({ email }, function(err, user) {
     if (err) {
@@ -157,7 +122,28 @@ app.post('/api/authenticate', function(req, res) {
     }
   });
 });
+const withAuth = function(req, res, next) {
+  const token =
+      req.body.token ||
+      req.query.token ||
+      req.headers['x-access-token'] ||
+      req.cookies.token;
 
+  console.log(req.cookies);
+
+  if (!token) {
+    res.status(401).send('Unauthorized: No token provided');
+  } else {
+    jwt.verify(token, secret, function(err, decoded) {
+      if (err) {
+        res.status(401).send('Unauthorized: Invalid token');
+      } else {
+        req.email = decoded.email;
+        next();
+      }
+    });
+  }
+};
 
 app.get('/checktoken', withAuth, (req, res)=>{
   res.sendStatus(200);

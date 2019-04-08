@@ -9,6 +9,7 @@ export default class App extends Component {
                     <li><Link to="/home">Home</Link></li>
                     <li><Link to="/secret">Secret</Link></li>
                     <li><Link to="/login">Login</Link></li>
+                    <li><Link to="/register">Register</Link></li>
 
                 </ul>
             </div>

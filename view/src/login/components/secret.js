@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 const data = {};
+//axios.defaults.withCredentials = true;
 
 export default class Secret extends Component {
     constructor() {
@@ -15,12 +16,16 @@ export default class Secret extends Component {
     };
 
     async getMessage(){
-        const response = await axios.post('http://localhost:5000/cookie', data,{
+        const response = await axios.get('http://localhost:5000/checktoken',{
             withCredentials: true,
             headers: {
                 'Content-Type': 'application/json'
             }
         });
+        console.log(response);
+        this.setState({message: response.data});
+
+
     }
 
 

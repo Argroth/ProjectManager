@@ -6,6 +6,8 @@ import AppLogin from './login/app';
 import Home from "./login/components/home";
 import Secret from './login/components/secret';
 import Login from './login/components/login';
+import Register from './login/components/register';
+import CreatePassword from './login/components/create-password';
 import withAuth from './withAuth';
 
 
@@ -15,8 +17,10 @@ const routing = (
             <Route exact path="/" component={DashBoard} />
             <Route path="/applogin" component={AppLogin} />
             <Route path="/home" component={Home} />
-            <Route path="/secret" component={withAuth({Secret})} />
+            <Route path="/secret" component={Secret} />
             <Route path="/login" component={Login} />
+            <Route path="/register" component={Register} />
+            <Route path="/createpassword/:token" component={CreatePassword} />
 
         </div>
     </Router>
