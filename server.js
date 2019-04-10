@@ -18,7 +18,6 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,Content-Type');
   res.setHeader('Access-Control-Allow-Credentials', true);
-
   next();
 });
 
@@ -48,80 +47,25 @@ const mongoose = require('mongoose');
 
 mongoose.connect(
     'mongodb://' + databaseCredentials.login + ":" + databaseCredentials.pwd + '@' + databaseConfig.url + '/' + databaseCredentials.authDatabase,
-    {useNewUrlParser: true, 
+    {useNewUrlParser: true,
      useCreateIndex: true}
     );
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
-  console.log("we are connected to database!");
+  console.log("we are connected to the database!");
 });
 
 //###########################################################     SANDBOX    ##############################################################################
 
 const User = require('./model/user-model');
 
-app.post('/api/register', function(req, res) {
-console.log(req.body.email);
-
-const newUser = new User();
-newUser.email = req.body.email;
-newUser.password = req.body.password;
-
-newUser.save(function(err) {
-  if (err) {
-    res.status(500)
-        .send("Error registering new user please try again.");
-  } else {
-    res.status(200).send("Sucessfully registered");
-  }
-  });
-});
-
 const jwt = require('jsonwebtoken');
 const secret = 'mysecreetsshhh';
 
 
-app.post('/api/authenticate', function(req, res) {
-  const { email, password } = req.body;
-  User.findOne({ email }, function(err, user) {
-    if (err) {
-      console.error(err);
-      res.status(500)
-          .json({
-            error: 'Internal error please try again'
-          });
-    } else if (!user) {
-      res.status(401)
-          .json({
-            error: 'Incorrect email or password'
-          });
-    } else {
-      user.isCorrectPassword(password, function(err, same) {
-        if (err) {
-          res.status(500)
-              .json({
-                error: 'Internal error please try again'
-              });
-        } else if (!same) {
-          res.status(401)
-              .json({
-                error: 'Incorrect email or password'
-              });
-        } else {
-          // Issue token
-          const payload = { email };
-          const token = jwt.sign(payload, secret, {
-            expiresIn: '1h'
-          });
-          console.log(token);
-              res.cookie('token', token, { httpOnly: true }).sendStatus(200);
-        }
-      });
-    }
-  });
-});
+
 const withAuth = function(req, res, next) {
   const token =
       req.body.token ||

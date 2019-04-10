@@ -8,7 +8,9 @@ import Secret from './login/components/secret';
 import Login from './login/components/login';
 import Register from './login/components/register';
 import CreatePassword from './login/components/create-password';
-import withAuth from './withAuth';
+import ResetPassword from './login/components/reset-password';
+import NewPassword from './login/components/change-password';
+import WithAuth from './withAuth';
 
 
 const routing = (
@@ -21,6 +23,9 @@ const routing = (
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
             <Route path="/createpassword/:token" component={CreatePassword} />
+            <Route path="/resetpassword" component={ResetPassword} />
+            <Route path="/newpass/:token" component={NewPassword} />
+
 
         </div>
     </Router>

@@ -1,9 +1,12 @@
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 
 const User = require('../model/user-model');
-
 require('../emailer/emailer-config');
+
+//TODO Change secret to env variable
+const secret = 'mysecreetsshhh';
 
 const token = crypto.randomBytes(12).toString('hex');
 
@@ -13,7 +16,7 @@ exports.register = (req, res) => {
         if(err){
             console.log(err);
         }else if(user){
-            res.json('Użytkownik z takim e-mailem już istnieje');
+            res.json('User with that email already exists');
         } else {
             const newUser = new User();
             newUser.email = req.body.email;
@@ -31,14 +34,14 @@ exports.register = (req, res) => {
                 from: 'dev@telemond-holding.com',
                 to: req.body.email,
                 subject: 'Utwórz hasło i aktywuj konto w TelemondApp!',
-                text: 'Kliknij w link, aby utworzyć hasło i aktywować konto: http://localhost:5000/verify/' + token
+                text: 'Kliknij w link, aby utworzyć hasło i aktywować konto: http://localhost:3000/createpassword/' + token
             };
 
-            transporter.sendMail(mailOptions, function(error, info){
-                if (error) {
-                    console.log(error);
+            transporter.sendMail(mailOptions, (err) => {
+                if (err) {
+                    console.log(err);
                 } else {
-                    console.log('Email sent' + info);
+                    console.log('Email sent');
                 }
             });
 
@@ -53,44 +56,65 @@ exports.register = (req, res) => {
     });
 };
 
-//TODO to cut controller list > create frontend get params, verify, and submit new password
-exports.verify = (req, res) => {
-    User.findOne({"token.tokenID": req.params.token}, (err, userSelected) => {
-        if(userSelected.token.isVerified === false){
-            User.findOne({email: userSelected.email}, (err, userVerifying) =>{
-                const userVerified = userVerifying.toString();
-                userSelected.token.tokenID === userVerifying.token.tokenID ?
-                    res.redirect('http://localhost:3000/createpassword/'+req.params.token):
-                    res.send('Błędny token');
+exports.login = (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    User.findOne({email: email}, function(err, user) {
+        if(!user){
+            res.json('User not found');
+        }
+        else if(user) {
+            bcrypt.compare(password, user.password, (err, passwordIsTheSame) => {
+                console.log(passwordIsTheSame);
+                if (passwordIsTheSame === false) {
+                    res.json('Password is not correct');
+                } else if (passwordIsTheSame === true) {
+                    const payload = { email };
+                    const token = jwt.sign(payload, secret, {
+                        expiresIn: '24h'
+                            });
+                    res.cookie('token', token, { httpOnly: true }).sendStatus(200);
+                }
             });
         }
     });
 };
 
-exports.verified = (req, res, userVerified) => {
-    User.findOne({"token.tokenID": userVerified.token.tokenID}, (err, user) => {
+//Verifying user token sent by email upon registration
+exports.verify = (req, res) => {
+    User.findOne({"token.tokenID": req.params.token}, (err, userSelected) => {
+        if(userSelected == null){
+            res.json('Token is incorrect')
+        }
+        else if(userSelected.token.isVerified === false && userSelected.token.expDate > Date.now()){
+            res.json('Token is correct')
+        }
+    });
+};
+
+
+//User creates password after token is verified
+exports.createPassword = (req, res) => {
+    User.findOne({"token.tokenID": req.body.token}, (err, user) => {
         user.token.tokenID = null;
+        user.token.expDate = null;
         user.token.isVerified = true;
         user.password = bcrypt.hashSync(req.body.password, 10, null);
-
         user.save(err => {
-            if(err) throw err;
+            if(err) console.log(err);
         });
     });
-    res.send('verified and active')
+    res.redirect('http://localhost:3000/login')
 };
 
-//show "enter email" form
-exports.changePass = (req, res) => {
-    res.sendFile(path.join(__dirname + '/reset.html'));
-};
-
-//sends email with token
-exports.resetPass = (req, res) => {
+//Sends token to pass change on email
+exports.sendEmailWithTokenToResetPassword = (req, res) => {
     const token = crypto.randomBytes(12).toString('hex');
 
     User.findOne({email: req.body.email}, (err, user) => {
         user.changePassword.tokenID = token;
+        user.changePassword.expDate = Date.now()+86400000;
+
 
         user.save(err => {
             if(err) throw err;
@@ -100,42 +124,47 @@ exports.resetPass = (req, res) => {
             from: 'dev@telemond-holding.com',
             to: user.email,
             subject: 'Reset hasła',
-            text: 'Kliknij w link, aby zresetować hasło: http://localhost:5000/newpass/' + token
+            text: 'Kliknij w link, aby zresetować hasło: http://localhost:3000/newpass/' + token
         };
 
         transporter.sendMail(mailOptions, function(error, info){
             if (error) {
-                console.log(error);
-            } else {
+                console.log('Problem with sending')
+            }
+            else {
                 console.log('Email sent');
             }
         });
 
 
     });
-    res.send('email sent');
+    res.json('Email with link sent');
 };
 
-//shows 'enter new pass form'
-exports.newPassForm = (req, res) => {
-    User.findOne({"changePassword.tokenID": req.params.token}, (err, userSelected) => {
-        User.findOne({email: userSelected.email}, (err, userVerifying) =>{
-            const userVerified = userVerifying.toString();
-            userSelected.changePassword.tokenID === userVerifying.changePassword.tokenID ?
-                res.sendFile(path.join(__dirname + '/test.html'), userVerified):
-                res.send('Błędny token');
-        });
+exports.verifyChangePasswordToken = (req, res) => {
+  User.findOne({"changePassword.tokenID": req.params.token}, (err, user) => {
+      if(err) {
+          console.log(err);
+      }
+      if(user && user.changePassword.expDate > Date.now()){
+          res.json('Token correct');
+      }
+      else{
+          res.json('Token incorrect');
+      }
     });
 };
 
 //sends new pass to database
-exports.newPass = (req, res, userVerified) => {
+exports.newPassword = (req, res) => {
     User.findOne({"changePassword.tokenID": req.body.token}, (err, user) =>{
-        user.token.tokenID = null;
-        user.password = bcrypt.hashSync(req.body.password, 10, null);
+            user.changePassword.tokenID = null;
+            user.changePassword.expDate = null;
+            user.password = bcrypt.hashSync(req.body.password, 10, null);
 
-        user.save(err => {
-            if(err) throw err;
-        });
+            user.save(err => {
+                if (err) throw err;
+            });
     });
+    res.json('Password changed. You can now log in with new password!');
 };
