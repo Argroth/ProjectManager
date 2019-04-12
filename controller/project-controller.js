@@ -20,7 +20,6 @@ exports.edit = (req, res) => {
     })
 };
 
-//TODO Add owner from passport
 //TODO Add data to gantt chart
 exports.create = (req, res) => {
      var project = new Project({

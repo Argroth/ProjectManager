@@ -5,7 +5,7 @@ const saltRounds = 10;
 const UserSchema = new mongoose.Schema({
         email : {type: String, unique: true},
         password : String,
-        role : {type: String, default: "User"},
+        globalRole : {type: String, default: "User"},
         meta: {
             name: String,
             department: String,
@@ -21,6 +21,10 @@ const UserSchema = new mongoose.Schema({
         changePassword: {
             tokenID: {type: String, default: null},
             expDate: {type: String, default: ''}
+        },
+        access: {
+            projectManager: {type: Boolean, default: false},
+            adminPanel: {type: Boolean, default: false}
         }
 });
 

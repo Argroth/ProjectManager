@@ -21,10 +21,9 @@ app.use((req, res, next) => {
   next();
 });
 
-//require('./routes/passport-routes')(app);
-require('./routes/index-routes')(app);
-require('./routes/project-routes')(app);
 require('./routes/auth-routes')(app);
+require('./routes/panel-routes')(app);
+require('./routes/project-routes')(app);
 
 
 
@@ -45,6 +44,7 @@ const databaseConfig = require("./database/config");
 const databaseCredentials = require("./database/credentials");
 const mongoose = require('mongoose');
 
+//TODO add `` syntax
 mongoose.connect(
     'mongodb://' + databaseCredentials.login + ":" + databaseCredentials.pwd + '@' + databaseConfig.url + '/' + databaseCredentials.authDatabase,
     {useNewUrlParser: true,
@@ -59,39 +59,12 @@ db.once('open', function() {
 
 //###########################################################     SANDBOX    ##############################################################################
 
-const User = require('./model/user-model');
+const middleware = require('./middlewares/auth-middleware');
 
-const jwt = require('jsonwebtoken');
-const secret = 'mysecreetsshhh';
-
-
-
-const withAuth = function(req, res, next) {
-  const token =
-      req.body.token ||
-      req.query.token ||
-      req.headers['x-access-token'] ||
-      req.cookies.token;
-
-  console.log(req.cookies);
-
-  if (!token) {
-    res.status(401).send('Unauthorized: No token provided');
-  } else {
-    jwt.verify(token, secret, function(err, decoded) {
-      if (err) {
-        res.status(401).send('Unauthorized: Invalid token');
-      } else {
-        req.email = decoded.email;
-        next();
-      }
-    });
-  }
-};
-
-app.get('/checktoken', withAuth, (req, res)=>{
+app.get('/checktoken', middleware.withAuth ,(req, res)=>{
   res.sendStatus(200);
 });
+
 
 //###########################################################     SANDBOX     ##############################################################################
 
