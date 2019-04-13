@@ -1,6 +1,6 @@
-# create-react-app React Project with Node Express Backend
+# TelemondApp 
 
-> Example on using create-react-app with a Node Express Backend
+> App based on M.E.R.N. stack with JWT based authentication. 
 
 ## Usage
 
