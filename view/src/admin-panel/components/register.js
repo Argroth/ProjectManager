@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import axios from 'axios';
+import axios from 'axios/index';
 
 class Register extends Component {
     constructor(props) {

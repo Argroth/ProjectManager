@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import { selectSong } from '../actions';
+import SelectedSong from './selected-song';
 
 class SongList extends Component {
 
@@ -19,18 +20,23 @@ class SongList extends Component {
     };
 
     render() {
+        console.log(this.props);
         return (
             //this.props === {songs: state.songs}
             //from mapStateToProps
             <div>
                 {this.renderList()}
+
+                <div>
+                    <br/><br/><br/>
+                    <SelectedSong />
+                </div>
             </div>
         );
     }
 }
 
 const mapStateToProps = (state) => {
-    console.log(state);
   return {songs: state.songs};
 };
 

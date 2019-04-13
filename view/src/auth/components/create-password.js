@@ -1,30 +1,44 @@
 import React, {Component} from 'react';
-import axios from 'axios';
+import axios from "axios/index";
 
-class ChangePassword extends Component {
+class CreatePassword extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
+            resMessage: null,
             password: '',
-            passwordCheck: '',
-            token: null,
-            resMessage: null
+            passwordCheck: ''
         };
 
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
         this.handlePasswordCheckChange = this.handlePasswordCheckChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+
     };
 
-    handlePasswordChange = (event) => {
+    componentDidMount() {
+        this.checkToken();
+    };
+
+    async checkToken(){
+        const response = await axios.get('http://localhost:5000/verify/' + this.props.match.params.token, {
+            withCredentials: true
+        });
+        this.setState({resMessage: response.data});
+        console.log(response);
+    };
+
+    handlePasswordChange(event){
         this.setState({password: event.target.value});
     };
 
-    handlePasswordCheckChange = (event) => {
+    handlePasswordCheckChange(event){
         this.setState({passwordCheck: event.target.value});
     };
 
-    handleSubmit = (event) => {
+
+    handleSubmit(event){
         event.preventDefault();
         this.checkPassword();
     };
@@ -35,49 +49,34 @@ class ChangePassword extends Component {
             this.submitNewPassword();
         }
         else{
-            this.setState({resMessage: 'Passwords must be the same'})
+            console.log('missmatch');
         }
     };
 
-    async submitNewPassword(){
-        const response = await axios.post('http://localhost:5000/newpassword', {
+    submitNewPassword(){
+        const response = axios.post('http://localhost:5000/createpassword',{
             password: this.state.password,
             token: this.props.match.params.token
-        },
-         {
-                withCredentials: true
-            });
-        this.setState({resMessage: response.data, password: '', passwordCheck: ''});
-    };
-
-    async checkToken(){
-        const response = await axios.get('http://localhost:5000/verifytoken/'+this.props.match.params.token,{
+        },{
             withCredentials: true
         });
-        this.setState({resMessage: response.data});
+
+        console.log(response);
     };
 
-    componentDidMount(){
-        this.checkToken();
-    }
+
+
 
     render() {
         if(!this.state.resMessage){
             return (
                 <div>
-                    <h1>Loading ...</h1>
+                   Checking Token...
                 </div>
             )
         }
-        if(this.state.resMessage === 'Token incorrect'){
-            return(
-                <div>
-                    <p>{this.state.resMessage}</p>
-                </div>
-            )
-        }
-        return (
-            <div>
+        if(this.state.resMessage === 'Token is correct'){
+            return (
                 <div>
                     <p>{this.state.resMessage}</p>
                     <input disabled value={this.props.match.params.token}/>
@@ -88,9 +87,16 @@ class ChangePassword extends Component {
                         <input type="submit" value="Wyślij"/>
                     </form>
                 </div>
-            </div>
-        );
+            )
+        }
+        if(this.state.resMessage === 'Token is incorrect'){
+            return (
+                <div>
+                    {this.state.resMessage}
+                </div>
+            )
+        }
     }
 }
 
-export default ChangePassword;
+export default CreatePassword;
