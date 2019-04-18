@@ -1,27 +1,24 @@
-import React, { Component } from 'react';
-import {Switch, Route} from 'react-router-dom';
+import React, {Component} from 'react';
+import {createStore, applyMiddleware} from "redux";
+import {Provider} from 'react-redux';
+import thunk from 'redux-thunk';
 
-import Login from '../auth/components/login';
-import Dummy from '../common-components/dummy-component';
-import TestComp from './components/app';
-import NotFound from "../not-found/app";
-import SongsComponent from './components/app';
+import reducers from './reducers';
+import Apps from './components/app';
+const store = createStore(reducers, applyMiddleware(thunk));
 
-export default class App extends Component {
+class App extends Component {
     render() {
         return (
             <div>
-                <p>Test component</p>
-                <SongsComponent />
 
-                    <Switch>
-                        <Route exact path="/test/" component={Dummy} />
-                        <Route exact path="/test/22" component={TestComp} />
-                        <Route exact path="/test/login" component={Login} />
-                        <Route path="*"  component={NotFound} />
-                    </Switch>
 
+                <Provider store={store}>
+                    <Apps />
+                </Provider>
             </div>
         );
     }
 }
+
+export default App;

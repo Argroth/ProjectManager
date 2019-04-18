@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-
+//TODO Emailer change to new address
 const User = require('../model/user-model');
 require('../emailer/emailer-config');
 

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/nr.iml" filepath="$PROJECT_DIR$/.idea/nr.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/TelemondAppReact.iml" filepath="$PROJECT_DIR$/.idea/TelemondAppReact.iml" />
     </modules>
   </component>
 </project>

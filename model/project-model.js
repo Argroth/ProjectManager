@@ -7,15 +7,16 @@ const projectSchema = mongoose.Schema({
    owner: String,
    projectNumber: String,
    tags: [String],
-    meta:{
+   meta:{
        createdAt: Date,
        updatedAt: Date,
        createdBy: String,
        updatedBy: String
-    },
-    ganttChart:{
-       x: String,
-       y: String
+   },
+   permissions: [String],
+   ganttChart:{
+      x: String,
+      y: String
    }
 });
 

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios/index';
 
-class Register extends Component {
+class UserRegister extends Component {
     constructor(props) {
         super(props);
 
@@ -10,7 +10,8 @@ class Register extends Component {
             name: '',
             department: '',
             departmentRole: '',
-            company: ''
+            company: '',
+            resMessage: null
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -40,7 +41,7 @@ class Register extends Component {
             'Content-Type': 'application/json'
         }});
 
-        console.log(response);
+        this.setState({resMessage: response.data});
     };
 
 
@@ -66,6 +67,13 @@ class Register extends Component {
     };
 
     render() {
+        if(this.state.resMessage != null){
+            return (
+                <div>
+                    {this.state.resMessage}
+                </div>
+            )
+        }
         return (
             <div>
                 <form onSubmit={this.handleSubmit}>
@@ -107,4 +115,4 @@ class Register extends Component {
     }
 }
 
-export default Register;
+export default UserRegister;

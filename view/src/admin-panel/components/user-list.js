@@ -1,39 +1,67 @@
 import React, {Component} from 'react';
-import axios from 'axios';
+import { connect } from 'react-redux';
+import LinkButton from '../../common-components/link-button';
+
+
+import { fetchUsers, editUser } from '../actions';
 
 import ListItem from './user-list-item';
+import SearchBar from '../../common-components/search-bar';
 
 class UserList extends Component {
     constructor(props) {
         super(props);
         this.state = {
             userList: []
-        }
-    }
 
-    componentDidMount() {
-        this.getAllUsers();
-    }
-
-    async getAllUsers() {
-        const response = await axios.get('http://localhost:5000/getallusers');
-    this.setState({userList: response.data});
+        };
     };
 
+    componentDidMount() {
+       this.props.fetchUsers();
+    }
 
+    renderList(){
+        if(!this.props.userList){
+            return (
+                <div>
+                    Loading...
+                </div>
+            )
+        }
+        return this.props.userList.map(user => {
+            return(
+                <ul key={user._id}>
+                    <ListItem Item data={user} />
+                    <LinkButton to='/admin-panel/user-module/edit-user' onClick={() => this.props.selectUserToEdit(user)}>Edit User</LinkButton>
+                </ul>
 
+            )
+        })
+    };
 
     render() {
         return (
-            this.state.userList.map(x => {
-                return(
-                    <ul key={x._id}>
-                          <ListItem data={x}/>
-                    </ul>
-                )
-            })
-        );
+                <div>
+                    <SearchBar searchLabel='Search for user' />
+                    {this.renderList()}
+                </div>
+        )
     }
 }
 
-export default UserList;
+const mapStateToProps = (state) => {
+    console.log(state);
+    return {
+        selectedUser: state.selectedUser,
+        userList: state.users.data
+    }
+};
+
+const mapDispatchToProps = (dispatch) => ({
+   fetchUsers: () => dispatch(fetchUsers()),
+   selectUserToEdit: (user) => dispatch(editUser(user))
+});
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserList);

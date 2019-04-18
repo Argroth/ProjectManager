@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
 
 const UserSchema = new mongoose.Schema({
         email : {type: String, unique: true},
@@ -26,6 +25,7 @@ const UserSchema = new mongoose.Schema({
             projectManager: {type: Boolean, default: false},
             adminPanel: {type: Boolean, default: false}
         }
+
 });
 
 
