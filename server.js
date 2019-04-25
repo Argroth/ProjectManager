@@ -9,8 +9,6 @@ const passport = require('passport');
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(express.static('test'));
 
 app.use((req, res, next) => {
@@ -34,7 +32,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'view/build')));
 
   // Handle React routing, return all requests to React app
-  app.get('*', function(req, res) {
+  app.get('*', (req, res) => {
     //res.sendFile(path.join(__dirname, 'view/build', 'index.html'));
   });
 }
@@ -43,6 +41,8 @@ if (process.env.NODE_ENV === 'production') {
 const databaseConfig = require("./database/config");
 const databaseCredentials = require("./database/credentials");
 const mongoose = require('mongoose');
+const db = mongoose.connection;
+
 
 //TODO add `` syntax
 mongoose.connect(
@@ -51,9 +51,9 @@ mongoose.connect(
      useCreateIndex: true}
     );
 
-const db = mongoose.connection;
+
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
+db.once('open', () => {
   console.log("we are connected to the database!");
 });
 

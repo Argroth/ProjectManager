@@ -8,5 +8,6 @@ module.exports = (app) => {
     app.post('/createpassword', authController.createPassword);
     app.post('/resetpassword', authController.sendEmailWithTokenToResetPassword);
     app.post('/newpassword', authController.newPassword);
-    app.get('/verifytoken/:token', authController.verifyChangePasswordToken)
+    app.get('/verifytoken/:token', authController.verifyChangePasswordToken);
+
 };

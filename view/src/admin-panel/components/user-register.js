@@ -1,118 +1,80 @@
 import React, {Component} from 'react';
-import axios from 'axios/index';
+import { Field, reduxForm } from "redux-form";
+import { connect } from "react-redux";
+import { createUser } from "../actions";
 
 class UserRegister extends Component {
-    constructor(props) {
-        super(props);
 
-        this.state={
-            email: '',
-            name: '',
-            department: '',
-            departmentRole: '',
-            company: '',
-            resMessage: null
-        };
-
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleEmailChange = this.handleEmailChange.bind(this);
-        this.handleNameChange = this.handleNameChange.bind(this);
-        this.handleDepartmentChange = this.handleDepartmentChange.bind(this);
-        this.handleDepartmentRoleChange = this.handleDepartmentRoleChange.bind(this);
-        this.handleCompanyChange = this.handleCompanyChange.bind(this);
-    };
-
-    handleSubmit(event) {
-        event.preventDefault();
-        this.register();
-    }
-
-    async register(){
-        const response = await axios.post('http://localhost:5000/register', {
-                email: this.state.email,
-                name: this.state.name,
-                department: this.state.department,
-                departmentRole: this.state.departmentRole,
-                company: this.state.company
-            },
-            {
-            withCredentials: true,
-            headers: {
-            'Content-Type': 'application/json'
-        }});
-
-        this.setState({resMessage: response.data});
-    };
-
-
-
-    handleEmailChange(event){
-      this.setState({email: event.target.value});
-    };
-
-    handleNameChange(event){
-      this.setState({name: event.target.value})
-    };
-
-    handleDepartmentChange(event){
-      this.setState({department: event.target.value});
-    };
-
-    handleDepartmentRoleChange(event){
-        this.setState({departmentRole: event.target.value});
-    };
-
-    handleCompanyChange(event){
-      this.setState({company: event.target.value});
-    };
 
     render() {
-        if(this.state.resMessage != null){
-            return (
-                <div>
-                    {this.state.resMessage}
-                </div>
-            )
-        }
+        const { handleSubmit, submitting } = this.props;
         return (
-            <div>
-                <form onSubmit={this.handleSubmit}>
-                    <label>
-                        Email:
-                        <input type="email" value={this.state.email} onChange={this.handleEmailChange}/>
-                    </label>
-                    <br/>
-                    <label>
-                        Name:
-                    <input type="text" value={this.state.name} onChange={this.handleNameChange}/>
-                    </label>
-                    <br/>
-                    <label>
-                        Department:
-                    <input type="text" value={this.state.department} onChange={this.handleDepartmentChange}/>
-                    </label>
-                    <br/>
-                    <label>
-                        Department Role
-                    <input type="text" value={this.state.departmentRole} onChange={this.handleDepartmentRoleChange}/>
-                    </label>
-                    <br/>
-                    <label>
-                        Company:
-                        <select value={this.state.company} onChange={this.handleCompanyChange}>
-                            <option value="">Wybierz Firmę</option>
-                            <option value="Teleskop">Teleskop</option>
-                            <option value="Montel">Montel</option>
-                            <option value="Henschel">Henschel</option>
-                            <option value="Teleyard">Teleyard</option>
-                        </select>
-                    </label>
-                    <br/>
-                    <input type="submit" value="submit"/>
-                </form>
-            </div>
+            <form onSubmit={handleSubmit(this.props.createNewUser)}>
+                <Field name="name" type="text" component={renderField} label="Name"/>
+                <Field name="email" type="email" component={renderField} label="Email"/>
+                <Field name="department" type="text" component={renderField} label="Department"/>
+                <Field name="departmentRole" type="text" component={renderField} label="Department Role"/>
+                <Field name="company" component="select">
+                    <option></option>
+                    <option value="Teleskop">Teleskop</option>
+                    <option value="Montel">Montel</option>
+                    <option value="Henschel">Henschel</option>
+                    <option value="Teleyard">Teleyard</option>
+                </Field>
+                <div>
+                    <button type="submit" disabled={submitting}>Submit</button>
+                </div>
+            </form>
         );
     }
 }
 
-export default UserRegister;
+
+const validate = values => {
+    const errors = {};
+    if (!values.name) {
+        errors.name = 'Required'
+    }else if(values.name < 4){
+        errors.name = 'Name has to have at least 3 chars'
+    }
+    if (!values.email){
+        errors.email = 'Required'
+    } else if (!/^[A-Z.]+@telemond-holding.com$/i.test(values.email)) {
+        errors.email = 'Invalid email address'
+    }
+    if(!values.department){
+        errors.department = 'Required'
+    }
+    if(!values.departmentRole){
+        errors.departmentRole = 'Required'
+    }
+    if(!values.company){
+        errors.company = 'Required'
+    }
+
+    return errors
+};
+
+const renderField = ({ input, label, type, meta: { touched, error, warning } }) => (
+    <div>
+        <div>
+            <input {...input} placeholder={label} type={type}/>
+            {touched && ((error && <span>{error}</span>) || (warning && <span>{warning}</span>))}
+        </div>
+    </div>
+);
+
+const mapStateToProps = (state) => {
+    return state;
+};
+
+const mapDispatchToProps = (dispatch) => ({
+    createNewUser: (values) => dispatch(createUser(values))
+});
+
+export default reduxForm({
+    form: 'NewUserForm',
+    validate
+})(
+    connect(mapStateToProps, mapDispatchToProps)(UserRegister)
+);

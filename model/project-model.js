@@ -13,7 +13,11 @@ const projectSchema = mongoose.Schema({
        createdBy: String,
        updatedBy: String
    },
-   permissions: [String],
+   permissions: [{
+       owner: [String],
+       contributors: [String],
+       viewer: [String]
+   }],
    ganttChart:{
       x: String,
       y: String

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from "axios/index";
 
-class CreatePassword extends Component {
+class ForcePasswordChange extends Component {
     constructor(props) {
         super(props);
 
@@ -54,7 +54,7 @@ class CreatePassword extends Component {
     };
 
     submitNewPassword(){
-        const response = axios.post('http://localhost:5000/forcedpasswordchange',{
+        const response = axios.post('http://localhost:5000/createpassword',{
             password: this.state.password,
             token: this.props.match.params.token
         },{
@@ -71,7 +71,7 @@ class CreatePassword extends Component {
         if(!this.state.resMessage){
             return (
                 <div>
-                   Checking Token...
+                    Checking Token...
                 </div>
             )
         }
@@ -99,4 +99,4 @@ class CreatePassword extends Component {
     }
 }
 
-export default CreatePassword;
+export default ForcePasswordChange;

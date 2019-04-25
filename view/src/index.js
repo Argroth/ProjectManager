@@ -20,7 +20,7 @@ import Navbar from './common-components/navbar';
 import Test from './test/app';
 
 //import middlewares
-import withAuth from './withAuth';
+import withAuth from './middlewares/withAuth';
 
 
 const MainTemplateWithRouter = (

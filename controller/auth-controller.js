@@ -12,19 +12,20 @@ const token = crypto.randomBytes(12).toString('hex');
 
 
 exports.register = (req, res) => {
-    User.findOne({email: req.body.email}, (err, user) => {
+    console.log(req.body.user.email);
+    User.findOne({email: req.body.user.email}, (err, user) => {
         if(err){
             console.log(err);
         }else if(user){
             res.json('User with that email already exists');
         } else {
             const newUser = new User();
-            newUser.email = req.body.email;
+            newUser.email = req.body.user.email;
             newUser.password = crypto.randomBytes(20).toString('hex');
-            newUser.meta.name = req.body.name;
-            newUser.meta.department = req.body.department;
-            newUser.meta.departmentRole = req.body.departmentRole;
-            newUser.meta.company = req.body.company;
+            newUser.meta.name = req.body.user.name;
+            newUser.meta.department = req.body.user.department;
+            newUser.meta.departmentRole = req.body.user.departmentRole;
+            newUser.meta.company = req.body.user.company;
             newUser.meta.createdAt = Date.now();
             newUser.token.tokenID = token;
             newUser.token.expDate = Date.now()+86400000;
@@ -32,9 +33,9 @@ exports.register = (req, res) => {
 
             const mailOptions = {
                 from: 'dev@telemond-holding.com',
-                to: req.body.email,
+                to: req.body.user.email,
                 subject: 'Utwórz hasło i aktywuj konto w TelemondApp!',
-                text: 'Kliknij w link, aby utworzyć hasło i aktywować konto: http://localhost:3000/createpassword/' + token
+                text: 'Kliknij w link, aby utworzyć hasło i aktywować konto: http://localhost:3000/auth/create-password/' + token
             };
 
             transporter.sendMail(mailOptions, (err) => {
@@ -124,7 +125,7 @@ exports.sendEmailWithTokenToResetPassword = (req, res) => {
             from: 'dev@telemond-holding.com',
             to: user.email,
             subject: 'Reset hasła',
-            text: 'Kliknij w link, aby zresetować hasło: http://localhost:3000/newpass/' + token
+            text: 'Kliknij w link, aby zresetować hasło: http://localhost:3000/auth/change-password/' + token
         };
 
         transporter.sendMail(mailOptions, function(error, info){

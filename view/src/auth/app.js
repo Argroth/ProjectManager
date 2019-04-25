@@ -1,6 +1,8 @@
+//import dependencies
 import React, {Component} from 'react';
 import { Route, Switch, Link } from 'react-router-dom';
 
+//import components
 import Dummy from '../common-components/dummy-component';
 import Login from './components/login';
 import CreatePassword from './components/create-password';
@@ -29,6 +31,7 @@ class App extends Component {
                    <Route exact path="/auth/create-password/:token" component={CreatePassword} />
                    <Route exact path="/auth/reset-password" component={ResetPassword} />
                    <Route exact path="/auth/change-password/:token" component={ChangePassword} />
+                   <Route exact path="/auth/forced-password-change/:token" component={ChangePassword} />
                    <Route exact path="*"  component={NotFound} />
                </Switch>
             </div>

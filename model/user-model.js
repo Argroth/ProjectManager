@@ -5,6 +5,7 @@ const UserSchema = new mongoose.Schema({
         email : {type: String, unique: true},
         password : String,
         globalRole : {type: String, default: "User"},
+        isActive: {type: Boolean, default: true},
         meta: {
             name: String,
             department: String,
@@ -34,7 +35,7 @@ UserSchema.methods.isCorrectPassword = (password) => {
         if (err) {
             console.log(err);
         } else {
-            console.log(err, same)
+            console.log(err, same);
         }
     });
 };

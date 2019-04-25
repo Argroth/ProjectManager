@@ -1,32 +1,20 @@
 const Project = require('../model/project-model');
 
 exports.index = (req, res) => {
-     Project.find({}, (err, projectSelected) => {
-        return res.json({projectSelected});
+     Project.find({}, (err, projectList) => {
+         //TODO Add err handling
+        return res.json({projectList});
      })
-};
-
-exports.show = (req, res) => {
-    Project.findById({_id: req.params.project_id}, (err, projectSelected) => {
-       if(err) throw err;
-       return res.json({projectSelected});
-    });
-};
-
-exports.edit = (req, res) => {
-    Project.findById({_id: req.params.project_id}, (err, projectSelected) => {
-        if(err) throw err;
-        return res.json({projectSelected});
-    })
 };
 
 //TODO Add data to gantt chart
 exports.create = (req, res) => {
-     var project = new Project({
-         name: req.body.name,
-         description: req.body.description,
+    console.log(req.body.project.name);
+     const project = new Project({
+         name: req.body.project.name,
+         description: req.body.project.description,
          owner: 'Łukasz Gronczakiewicz',
-         tags: [req.body.tags],
+         tags: [req.body.project.tags],
          meta: {
              createdAt: Date.now(),
              updatedAt: Date.now(),
@@ -39,9 +27,12 @@ exports.create = (req, res) => {
          }
      });
 
-    project.save((err, projectDetails) => {
-       if(err) throw err;
-       res.send('Saved: ' + projectDetails);
+    project.save((err) => {
+       if(err){
+           res.json('Error creating project')
+       }else{
+        res.json('Project created successfully')
+       }
     });
 };
 
