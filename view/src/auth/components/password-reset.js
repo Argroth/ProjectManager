@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import { connect } from "react-redux";
 import {Field, reduxForm} from "redux-form";
-import { login } from "../actions";
+import { resetPassword } from "../actions";
 
-
-class Login extends Component {
+class PasswordReset extends Component {
     constructor(props) {
         super(props);
 
@@ -12,13 +11,11 @@ class Login extends Component {
 
     renderForm(){
         const {handleSubmit, submitting, } = this.props;
-
         return(
             <div>
-                {this.props.verifyMessage}
-                <form onSubmit={handleSubmit(this.props.loginUser)}>
-                    <Field name="email" type="email" component={renderField} label="Email"/>
-                    <Field name="password" type="password" component={renderField} label="Password"/>
+                {this.props.message}
+                <form onSubmit={handleSubmit(this.props.resetPassword)}>
+                    <Field name="email" type="email" component={renderField} label="E-mail"/>
                     <div>
                         <button type="submit" disabled={submitting}>Submit</button>
                     </div>
@@ -30,7 +27,7 @@ class Login extends Component {
     render() {
         return (
             <div>
-                {this.renderForm()}
+                {this.props.message? this.props.message : this.renderForm()}
             </div>
         );
     }
@@ -45,31 +42,29 @@ const renderField = ({ input, label, type, meta: { touched, error, warning } }) 
     </div>
 );
 
+
 const validate = values => {
     const errors = {};
     if(!values.email){
         errors.email = 'Required'
+    } else if (!/^[A-Z.]+@telemond-holding.com$/i.test(values.email)) {
+        errors.email = 'Invalid email address'
     }
-     if(!values.password){
-        errors.password = 'Required'
-    }
-
 
     return errors
 };
 
 const mapStateToProps = (state) => {
-    console.log(state);
-  return state;
+    return ({message: state.messageResettingPassword.data});
 };
 
 const mapDispatchToProps = (dispatch) => ({
-    loginUser: (values) => dispatch(login(values))
+    resetPassword: (values) => dispatch(resetPassword(values))
 });
 
 export default reduxForm({
-    form: 'CreatePasswordForm',
+    form: 'ResetPasswordForm',
     validate
 })(
-    connect(mapStateToProps, mapDispatchToProps)(Login)
+    connect(mapStateToProps, mapDispatchToProps)(PasswordReset)
 );

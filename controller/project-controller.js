@@ -21,10 +21,11 @@ exports.create = (req, res) => {
              createdBy: 'Łukasz Gronczakiewicz',
              updatedBy: 'Łukasz Gronczakiewicz'
          },
-         ganttChart: {
-             x: 22,
-             y: 33
-         }
+         ganttChart: [
+             "[{ type: 'string', label: 'Task ID' },{ type: 'string', label: 'Task Name' },{ type: 'date', label: 'Start Date' }" +
+             ",{ type: 'date', label: 'End Date' },{ type: 'number', label: 'Duration' },{ type: 'number', label: 'Percent Complete' }" +
+             ",{ type: 'string', label: 'Dependencies' },]"
+         ]
      });
 
     project.save((err) => {
@@ -69,6 +70,20 @@ exports.delete = (req, res) => {
     console.log(log);
     res.redirect('/projects')
     });
+};
+
+exports.createTask = (req, res) => {
+    Project.findOne({_id: '5cd3f8c95bf55625ac97ea7d'}, (err, projectSelected) => {
+        console.log(projectSelected);
+
+        projectSelected.ganttChart = [...projectSelected.ganttChart, 123];
+
+        projectSelected.save();
+
+        res.json('123');
+
+    });
+    res.json('123');
 };
 
 

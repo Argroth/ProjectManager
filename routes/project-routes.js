@@ -6,4 +6,5 @@ module.exports= (app) => {
      app.post('/project', projectController.create);
      app.post('/project/update', projectController.update);
      app.get('/project/delete/:project_id', projectController.delete);
+     app.get('/project/add-task', projectController.createTask);
 };

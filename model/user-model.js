@@ -13,12 +13,12 @@ const UserSchema = new mongoose.Schema({
             company: String,
             createdAt: Date
         },
-        token: {
-            tokenID: String,
+        authToken: {
+            tokenID: {type: String, default: null},
             expDate: String,
             isVerified: {type: Boolean, default: false}
         },
-        changePassword: {
+        changePasswordToken: {
             tokenID: {type: String, default: null},
             expDate: {type: String, default: ''}
         },

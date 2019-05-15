@@ -1,8 +1,8 @@
-import { GET_ALL_PROJECTS } from "../actions";
+import { GET_PROJECT_TO_VIEW } from "../actions";
 
 export default (state = [], action) => {
     switch(action.type){
-        case GET_ALL_PROJECTS:{
+        case GET_PROJECT_TO_VIEW:{
             return action.payload;
         }
         default:

@@ -51,7 +51,7 @@ const validate = values => {
     const errors = {};
     if (!values.name) {
         errors.name = 'Required'
-    }else if(values.name < 6){
+    }else if(values.name.length < 6){
         errors.name = 'Name has to have at least 5 chars'
     }
     if (!values.owner) {
@@ -67,14 +67,6 @@ const validate = values => {
 };
 
 
-const warn = values => {
-    const warnings = {};
-    if (values.age < 19) {
-        warnings.age = 'Hmm, you seem a bit young...'
-    }
-    return warnings
-};
-
 const mapStateToProps = (state) => {
     return ({message: state.projectCreate.data})
 };
@@ -85,8 +77,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default reduxForm({
     form: 'NewProjectForm',
-    validate,
-    warn
+    validate
 })(
     connect(mapStateToProps, mapDispatchToProps)(ProjectCreate)
 );

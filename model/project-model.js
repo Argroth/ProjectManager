@@ -18,10 +18,7 @@ const projectSchema = mongoose.Schema({
        contributors: [String],
        viewer: [String]
    }],
-   ganttChart:{
-      x: String,
-      y: String
-   }
+   ganttChart: []
 });
 
 module.exports = mongoose.model('Project', projectSchema);

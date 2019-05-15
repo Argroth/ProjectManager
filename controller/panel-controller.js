@@ -28,8 +28,8 @@ exports.forceUserToChangePassword = (req, res) => {
         res.json('There was an error finding user');
       }
         user.password = bcrypt.hashSync(crypto.randomBytes(20).toString('hex'), 10, null);
-        user.changePassword.tokenID = token;
-        user.changePassword.expDate = Date.now()+86400000;
+        user.changePasswordToken.tokenID = token;
+        user.changePasswordToken.expDate = Date.now()+86400000;
 
         user.save((err) => {
           if (err) throw err;
@@ -40,7 +40,7 @@ exports.forceUserToChangePassword = (req, res) => {
         from: 'dev@telemond-holding.com',
         to: req.body.user.email,
         subject: 'Administrator wymusił zmianę hasła do twojego konta!',
-        text: 'Kliknij w link, aby utworzyć nowe hasło: http://localhost:3000/auth/forced-password-change/' + token
+        text: 'Kliknij w link, aby utworzyć nowe hasło: http://localhost:3000/auth/create-password/' + token
       };
 
       transporter.sendMail(mailOptions, (err) => {
@@ -78,8 +78,8 @@ exports.enableUser = (req, res) => {
       res.json('There was an error finding user');
     }
     user.isActive = true;
-    user.changePassword.tokenID = token;
-    user.changePassword.expDate = Date.now()+86400000;
+    user.changePasswordToken.tokenID = token;
+    user.changePasswordToken.expDate = Date.now()+86400000;
 
     user.save((err) => {
       if (err) throw err;
@@ -90,7 +90,7 @@ exports.enableUser = (req, res) => {
       from: 'dev@telemond-holding.com',
       to: req.body.user.email,
       subject: 'Utwórz nowe hasło Telemond APP',
-      text: 'Kliknij w link, aby utworzyć nowe hasło: http://localhost:3000/auth/forced-password-change/' + token
+      text: 'Kliknij w link, aby utworzyć nowe hasło: http://localhost:3000/auth/create-password/' + token
     };
 
     transporter.sendMail(mailOptions, (err) => {

@@ -12,6 +12,7 @@ class UserListItem extends Component {
         return (
             <div>
                 <li>{this.props.data.meta.name}</li>
+
             </div>
         );
     }

@@ -4,7 +4,6 @@ const cookieParser = require('cookie-parser');
 const port = process.env.PORT || 5000;
 const path = require('path');
 const bodyParser = require('body-parser');
-const passport = require('passport');
 
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -37,16 +36,16 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-//###########################################################       Database connection        #################################################################
+//###########################################################       Database         ######################################################################
 const databaseConfig = require("./database/config");
 const databaseCredentials = require("./database/credentials");
 const mongoose = require('mongoose');
 const db = mongoose.connection;
 
 
-//TODO add `` syntax
+
 mongoose.connect(
-    'mongodb://' + databaseCredentials.login + ":" + databaseCredentials.pwd + '@' + databaseConfig.url + '/' + databaseCredentials.authDatabase,
+    `mongodb://${databaseCredentials.login}:${databaseCredentials.pwd}@${databaseConfig.url}/${databaseCredentials.authDatabase}`,
     {useNewUrlParser: true,
      useCreateIndex: true}
     );

@@ -8,7 +8,7 @@ export const ENABLE_USER = 'ENABLE_USER';
 export const CREATE_USER = 'CREATE_USER';
 
 export const createUser = (user) => async dispatch => {
-  const response = await axios.post('http://localhost:5000/register', {user});
+  const response = await axios.post('http://localhost:5000/auth/register', {user});
   console.log(response);
   dispatch({type: CREATE_USER, payload: response});
 };

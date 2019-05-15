@@ -1,8 +1,8 @@
-import { GET_ALL_PROJECTS } from "../actions";
+import {VERIFY_TOKEN} from '../actions';
 
-export default (state = [], action) => {
+export default (state= [], action) => {
     switch(action.type){
-        case GET_ALL_PROJECTS:{
+        case VERIFY_TOKEN:{
             return action.payload;
         }
         default:

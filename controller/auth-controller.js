@@ -1,10 +1,8 @@
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-//TODO Emailer change to new address
 const User = require('../model/user-model');
 require('../emailer/emailer-config');
-
 //TODO Change secret to env variable
 const secret = 'mysecreetsshhh';
 
@@ -15,7 +13,7 @@ exports.register = (req, res) => {
     console.log(req.body.user.email);
     User.findOne({email: req.body.user.email}, (err, user) => {
         if(err){
-            console.log(err);
+            res.json('There was an error while creating new user');
         }else if(user){
             res.json('User with that email already exists');
         } else {
@@ -27,8 +25,8 @@ exports.register = (req, res) => {
             newUser.meta.departmentRole = req.body.user.departmentRole;
             newUser.meta.company = req.body.user.company;
             newUser.meta.createdAt = Date.now();
-            newUser.token.tokenID = token;
-            newUser.token.expDate = Date.now()+86400000;
+            newUser.authToken.tokenID = token;
+            newUser.authToken.expDate = Date.now()+86400000;
 
 
             const mailOptions = {
@@ -40,7 +38,7 @@ exports.register = (req, res) => {
 
             transporter.sendMail(mailOptions, (err) => {
                 if (err) {
-                    console.log(err);
+                    res.json('Problem with e-mail sending');
                 } else {
                     console.log('Email sent');
                 }
@@ -58,9 +56,9 @@ exports.register = (req, res) => {
 };
 
 exports.login = (req, res) => {
-    const email = req.body.email;
-    const password = req.body.password;
-    User.findOne({email: email}, function(err, user) {
+    const email = req.body.user.email;
+    const password = req.body.user.password;
+    User.findOne({email: email},(err, user) => {
         if(!user){
             res.json('User not found');
         }
@@ -81,91 +79,66 @@ exports.login = (req, res) => {
     });
 };
 
-//Verifying user token sent by email upon registration
-exports.verify = (req, res) => {
-    User.findOne({"token.tokenID": req.params.token}, (err, userSelected) => {
-        if(userSelected == null){
-            res.json('Token is incorrect')
-        }
-        else if(userSelected.token.isVerified === false && userSelected.token.expDate > Date.now()){
-            res.json('Token is correct')
-        }
-    });
-};
 
 
 //User creates password after token is verified
 exports.createPassword = (req, res) => {
-    User.findOne({"token.tokenID": req.body.token}, (err, user) => {
-        user.token.tokenID = null;
-        user.token.expDate = null;
-        user.token.isVerified = true;
-        user.password = bcrypt.hashSync(req.body.password, 10, null);
-        user.save(err => {
-            if(err) console.log(err);
-        });
+    User.findOne({$or:[{"authToken.tokenID": req.body.token}, {"changePasswordToken.tokenID": req.body.token}]}, (err, userSelected) => {
+        if(err){
+            res.json('Token is incorrect');
+        }
+        else if(userSelected){
+            userSelected.authToken.tokenID = null;
+            userSelected.authToken.expDate = null;
+            userSelected.authToken.isVerified = true;
+
+            userSelected.changePasswordToken.tokenID = null;
+            userSelected.changePasswordToken.expDate = null;
+
+            userSelected.password = bcrypt.hashSync(req.body.values.password, 10, null);
+
+            userSelected.save(err => {
+                if(err){
+                    res.json('There was a problem with creating a password');
+                }
+             res.json('Password created successfully');
+            });
+        }
     });
-    res.redirect('http://localhost:3000/login')
 };
 
 //Sends token to pass change on email
 exports.sendEmailWithTokenToResetPassword = (req, res) => {
-    const token = crypto.randomBytes(12).toString('hex');
+   const token = crypto.randomBytes(12).toString('hex');
+    User.findOne({email: req.body.values.email}, (err, user) => {
+        if(err){
+            res.json('User with that e-mail is not existing');
+        } else {
+            user.changePasswordToken.tokenID = token;
+            user.changePasswordToken.expDate = Date.now() + 86400000;
 
-    User.findOne({email: req.body.email}, (err, user) => {
-        user.changePassword.tokenID = token;
-        user.changePassword.expDate = Date.now()+86400000;
-
-
-        user.save(err => {
-            if(err) throw err;
-        });
-
-        const mailOptions = {
-            from: 'dev@telemond-holding.com',
-            to: user.email,
-            subject: 'Reset hasła',
-            text: 'Kliknij w link, aby zresetować hasło: http://localhost:3000/auth/change-password/' + token
-        };
-
-        transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-                console.log('Problem with sending')
-            }
-            else {
-                console.log('Email sent');
-            }
-        });
-
-
-    });
-    res.json('Email with link sent');
-};
-
-exports.verifyChangePasswordToken = (req, res) => {
-  User.findOne({"changePassword.tokenID": req.params.token}, (err, user) => {
-      if(err) {
-          console.log(err);
-      }
-      if(user && user.changePassword.expDate > Date.now()){
-          res.json('Token correct');
-      }
-      else{
-          res.json('Token incorrect');
-      }
-    });
-};
-
-//sends new pass to database
-exports.newPassword = (req, res) => {
-    User.findOne({"changePassword.tokenID": req.body.token}, (err, user) =>{
-            user.changePassword.tokenID = null;
-            user.changePassword.expDate = null;
-            user.password = bcrypt.hashSync(req.body.password, 10, null);
 
             user.save(err => {
-                if (err) throw err;
+                if(err) {
+                    res.json('Error');
+                }
             });
+
+            const mailOptions = {
+                from: 'dev@telemond-holding.com',
+                to: user.email,
+                subject: 'Reset hasła',
+                text: 'Kliknij w link, aby zresetować hasło: http://localhost:3000/auth/create-password/' + token
+            };
+
+            transporter.sendMail(mailOptions, (err) => {
+                if (err) {
+                    res.json('There was a problem with sending e-mail, try one more time');
+                } else {
+                    res.json('Email with link to reset password sent');
+                }
+            });
+
+        }
     });
-    res.json('Password changed. You can now log in with new password!');
 };

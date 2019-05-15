@@ -13,6 +13,7 @@ import SubNavBar from "./components/navbar";
 import CreateProject from './components/project-create';
 import ListProjects from './components/project-list';
 import ContributedProjects from './components/project-contributed';
+import ProjectView from './components/project-view';
 
 
 //import combined reducers
@@ -37,6 +38,7 @@ class App extends Component {
                         <Route exact path="/project-manager/" component={Dummy} />
                         <Route exact path="/project-manager/create-project" component={CreateProject} />
                         <Route exact path="/project-manager/project-list" component={ListProjects} />
+                        <Route exact path="/project-manager/project" component={ProjectView} />
                         <Route exact path="/project-manager/contributed-projects" component={ContributedProjects} />
                         <Route path="*"  component={NotFound} />
                     </Switch>

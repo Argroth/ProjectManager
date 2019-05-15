@@ -1,13 +1,12 @@
 const authController = require('../controller/auth-controller');
+const authMiddleware = require('../middlewares/auth-middleware');
 
 module.exports = (app) => {
 
-    app.post('/login', authController.login);
-    app.post('/register', authController.register);
-    app.get('/verify/:token', authController.verify);
-    app.post('/createpassword', authController.createPassword);
-    app.post('/resetpassword', authController.sendEmailWithTokenToResetPassword);
-    app.post('/newpassword', authController.newPassword);
-    app.get('/verifytoken/:token', authController.verifyChangePasswordToken);
+        app.post('/auth/login', authController.login);
+        app.post('/auth/register', authController.register);
+        app.post('/auth/verify', authMiddleware.verifyToken);
+        app.post('/auth/create-password', authMiddleware.verifyToken, authController.createPassword);
+        app.post('/auth/reset-password', authController.sendEmailWithTokenToResetPassword);
 
 };

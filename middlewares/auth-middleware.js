@@ -2,8 +2,10 @@ const jwt = require('jsonwebtoken');
 //TODO make secret env variable
 const secret = 'mysecreetsshhh';
 
+const User = require('../model/user-model');
 
-exports.withAuth = function(req, res, next) {
+
+exports.withAuth = (req, res, next) => {
     const token =
         req.body.token ||
         req.query.token ||
@@ -20,6 +22,37 @@ exports.withAuth = function(req, res, next) {
                 req.email = decoded.email;
                 next();
             }
+        });
+    }
+};
+
+
+exports.verifyToken = (req, res, next) => {
+    //just verify token
+    if(req.body.action === 'verify'){
+        User.findOne({
+                $or: [
+                    {'authToken.tokenID': req.body.token},
+                    {'changePasswordToken.tokenID': req.body.token}]
+            },
+            (err, userSelected) => {
+
+            if(userSelected){
+                res.json('Token is correct');
+            }else{
+                res.json('Token is incorrect');
+            }
+
+            });
+    }
+    else{
+        //verify token and pass token to controller
+        User.findOne({
+                $or: [
+                    {'authToken.tokenID': req.body.token},
+                    {'changePasswordToken.tokenID': req.body.token}]
+            }, () => {
+            next();
         });
     }
 };
