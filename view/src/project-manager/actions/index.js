@@ -7,22 +7,18 @@ export const CREATE_NEW_TASK = 'CREATE_NEW_TASK';
 
 
 export const createProject = (project) => async dispatch => {
-    const response = await axios.post('http://localhost:5000/project',
+    const response = await axios.post('http://localhost:5000/project-manager/create-project',
         {project});
     dispatch({type: CREATE_PROJECT, payload: response});
 };
 
 export const getAllProjects = () => async dispatch => {
-    const response = await axios.get('http://localhost:5000/projects');
+    const response = await axios.get('http://localhost:5000/project-manager/list-projects');
     dispatch({type: GET_ALL_PROJECTS, payload: response.data})
 };
 
-
-export const getProjectToView = (project) => {
-    return{
-        type: GET_PROJECT_TO_VIEW,
-        payload: project
-    }
+export const fetchProjectData = () => async dispatch => {
+    const response = await axios.get('http://localhost:5000/projectproject')
 };
 
 export const createNewTask = (task, ownProps) => async dispatch => {

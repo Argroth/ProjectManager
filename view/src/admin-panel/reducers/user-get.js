@@ -1,8 +1,8 @@
-import { EDIT_USER } from '../actions';
+import { GET_USER_BY_ID } from '../actions';
 
-export default (state= [], action) => {
+export default (state = [], action) => {
     switch(action.type){
-        case EDIT_USER:{
+        case GET_USER_BY_ID:{
             return action.payload;
         }
         default:

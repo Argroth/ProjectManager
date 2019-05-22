@@ -23,7 +23,6 @@ import reducers from './reducers';
 class App extends Component {
     constructor(props) {
         super(props);
-        //create isolated store with thunk middleware
         this.store = createStore(reducers, applyMiddleware(thunk)
             );
     };
@@ -38,7 +37,7 @@ class App extends Component {
                         <Route exact path="/project-manager/" component={Dummy} />
                         <Route exact path="/project-manager/create-project" component={CreateProject} />
                         <Route exact path="/project-manager/project-list" component={ListProjects} />
-                        <Route exact path="/project-manager/project" component={ProjectView} />
+                        <Route exact path="/project-manager/project/:projectID" component={ProjectView} />
                         <Route exact path="/project-manager/contributed-projects" component={ContributedProjects} />
                         <Route path="*"  component={NotFound} />
                     </Switch>

@@ -35,10 +35,10 @@ class App extends Component {
 
                 <Switch>
                     <Route exact path="/admin-panel/" component={Dummy} />
+                    <Route exact path="/admin-panel/user-module/edit-user/:user" component={EditUser} />
                     <Route exact path="/admin-panel/user-module" component={UserModule} />
                     <Route exact path="/admin-panel/user-module/create-user" component={CreateNewUser} />
                     <Route exact path="/admin-panel/user-module/user-list" component={UserList} />
-                    <Route exact path="/admin-panel/user-module/edit-user" component={EditUser} />
                     <Route exact path="/admin-panel/project-manager" component={ProjectManager} />
                     <Route exact path="/admin-panel/project-manager/project-list" component={ProjectManagerList} />
                     <Route path="*"  component={NotFound} />

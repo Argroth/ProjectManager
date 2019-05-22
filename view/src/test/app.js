@@ -4,7 +4,7 @@ import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
 
 import reducers from './reducers';
-import Apps from './components/app';
+import Apps from '../admin-panel/components/user-edit';
 const store = createStore(reducers, applyMiddleware(thunk));
 
 class App extends Component {

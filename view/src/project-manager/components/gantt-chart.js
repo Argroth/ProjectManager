@@ -41,7 +41,7 @@ export default class GanttChart extends Component {
                         [
                             'Research',
                             'Find sources',
-                            new Date(2017, 2, 5),
+                            new Date(2018, 2, 5),
                             new Date(2018, 2, 7),
                             null,
                             25,
@@ -75,7 +75,7 @@ export default class GanttChart extends Component {
                             'Write',
                         ]
                     ]}
-                    rootProps={{ 'data-testid': '1' }}
+                    rootProps={{ 'data-testid': '4' }}
                     controls={[
                         {
                             controlType: 'DateRangeFilter',

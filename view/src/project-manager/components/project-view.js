@@ -6,9 +6,10 @@ import GanttChart from './gantt-chart';
 class ProjectView extends Component {
     constructor(props) {
         super(props);
-        this.state = {showChart: false};
 
-        this.project = this.props.project;
+        console.log(props);
+        this.state = {showChart: false};
+        this.project = this.props.match.params.projectID;
     };
 
     handleClick = () => {
@@ -34,8 +35,8 @@ class ProjectView extends Component {
     }
 
 }
-const mapStateToProps = (state) => {
-    console.log(state);
+const mapStateToProps = (state, ownProps) => {
+    //console.log(ownProps.match.params.projectID);
     return ({project: state.viewProject});
 };
 

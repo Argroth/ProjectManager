@@ -12,6 +12,18 @@ exports.getAllUsers = (req, res) => {
   });
 };
 
+exports.getUserById = (req, res) => {
+  User.findOne({_id: req.body.userID}, (err, userSelected) => {
+    if(err){
+      res.json('There was a problem with fetching user!');
+    } else if (!userSelected){
+      res.json('User not found!')
+    } else {
+      res.json(userSelected);
+    }
+  })
+};
+
 exports.getAllInactiveUsers = (req, res) => {
   User.find({isActive: 'false'}, (err, users) => {
     if(err){

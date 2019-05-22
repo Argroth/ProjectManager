@@ -27,7 +27,7 @@ class PasswordReset extends Component {
     render() {
         return (
             <div>
-                {this.props.message? this.props.message : this.renderForm()}
+                {this.renderForm()}
             </div>
         );
     }

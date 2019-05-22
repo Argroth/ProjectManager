@@ -82,10 +82,9 @@ const validate = values => {
     return errors
 };
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     console.log(state);
     return ({
-        initialValues: ownProps.match.params.token,
         verifyMessage: state.messageToken.data,
         passwordMessage: state.messageCreatingPassword.data
     });

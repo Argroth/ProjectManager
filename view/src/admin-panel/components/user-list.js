@@ -4,7 +4,6 @@ import LinkButton from '../../common-components/link-button';
 
 
 import {fetchUsers,
-        editUser,
         forceChangePassword,
         disableUser,
         enableUser
@@ -38,7 +37,7 @@ class UserList extends Component {
             return(
                 <ul key={user._id}>
                     <ListItem Item data={user} />
-                    <LinkButton to='/admin-panel/user-module/edit-user' onClick={() => this.props.selectUserToEdit(user)}>Edit User</LinkButton>
+                    <LinkButton to={`/admin-panel/user-module/edit-user/${user._id}`}>View user</LinkButton>
                     <LinkButton onClick={() => {if(window.confirm('Do you really want to force user to change his password?'))this.props.forceUserToChangePassword(user)}}>Force Password Change</LinkButton>
                     <LinkButton onClick={() => {if(window.confirm('Disable user?'))this.props.disableUser(user)}}>Disable user</LinkButton>
                     <LinkButton onClick={() => {if(window.confirm('Enable user?'))this.props.enableUser(user)}}>Enable user</LinkButton>
@@ -60,8 +59,6 @@ class UserList extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state);
-    //TODO Add message: from combined reducers!
     return {
         selectedUser: state.selectedUser,
         userList: state.users.data
@@ -70,7 +67,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
    fetchUsers: () => dispatch(fetchUsers()),
-   selectUserToEdit: (user) => dispatch(editUser(user)),
    forceUserToChangePassword: (user) => dispatch(forceChangePassword(user)),
    disableUser: (user) => dispatch(disableUser(user)),
    enableUser: (user) => dispatch(enableUser(user))

@@ -1,94 +1,118 @@
 import React, {Component} from 'react';
 import { connect } from "react-redux";
-import { Checkbox } from "semantic-ui-react";
-
+import {Field, reduxForm} from "redux-form";
+import { getUser } from "../actions";
 
 class UserEdit extends Component {
     constructor(props) {
         super(props);
-        this.state = {
+
+    }
+
+    componentDidMount() {
+        this.props.getUserData(this.props.userID);
+    };
+
+
+    renderForm(){
+        const {handleSubmit, submitting, } = this.props;
+
+        return(
+            <div>
+                <form onSubmit={handleSubmit(this.props.submitEditedUser)}>
+                    <Field name="name" type="text" component={renderField} label="Name"/>
+                    <Field name='company' component='select'>
+                        <option value="Teleskop">Teleskop</option>
+                        <option value="Montel">Montel</option>
+                        <option value="Henschel">Henschel</option>
+                        <option value="Teleyard">Teleyard</option>
+                    </Field>
+                    <Field name="department" type="text" component={renderField} label="Department"/>
+                    <Field name="departmentRole" type="text" component={renderField} label="Department Role"/>
+                    <Field name='globalRole' component='select'>
+                        <option value="User">User</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Supervisor">Supervisor</option>
+                    </Field>
+                    <div>
+                        <label>Permissions</label>
+                        <label><Field name="adminPanel" component={renderField} type="checkbox" value="adminPanel"/>Panel Admin</label>
+                        <label><Field name="projectManager" component={renderField} type="checkbox" value="projectManager"/>Project Manager</label>
+                    </div>
+                    <div>
+                        <button type="submit" disabled={submitting}>Submit</button>
+                    </div>
+                </form>
+            </div>
+        )
+    }
+
+    render() {
+        return (
+            <div>
+                {this.renderForm()}
+            </div>
+        );
+    }
+}
+
+const renderField = ({ input, label, type, meta: { touched, error, warning } }) => (
+    <div>
+        <div>
+            <input {...input} placeholder={label} type={type}/>
+            {touched && ((error && <span>{error}</span>) || (warning && <span>{warning}</span>))}
+        </div>
+    </div>
+);
+
+//TODO Validate
+const validate = values => {
+    const errors = {};
+    return errors
+};
+
+//TODO error on edit user missed id - add 404 component as default
+const mapStateToProps = (state, ownProps) => {
+if(!state.selectedUserToEdit.data){
+    return ({
+        userID: ownProps.match.params.user,
+        initialValues: {
             name: '',
             company: '',
             department: '',
             departmentRole: '',
             globalRole: '',
-            panelAdminPermission: this.props.editUser.access.adminPanel,
-            projectManagerPermission: this.props.editUser.access.projectManager
-        };
-        console.log(this.state);
-        this.onChangeAdminPerm = this.onChangeAdminPerm.bind(this);
-        this.onChangeProjectManagerPerm = this.onChangeProjectManagerPerm.bind(this);
-    };
-
-    onChangeAdminPerm(){
-        if(this.state.panelAdminPermission === false){
-            this.setState({panelAdminPermission: true});
+            adminPanel: '',
+            projectManager: ''
         }
-
-        if(this.state.panelAdminPermission === true){
-            this.setState({panelAdminPermission: false});
-
-        }
-    };
-
-    onChangeProjectManagerPerm(){
-
-        if(this.state.projectManagerPermission === false){
-            this.setState({projectManagerPermission: true});
-        }
-
-        if(this.state.projectManagerPermission === true){
-            this.setState({projectManagerPermission: false});
-
-        }
-    };
-
-    getState = () => {
-        console.log(this.state);
-    };
-
-    render() {
-      if(!this.props.editUser){
-          return(
-              <div>Loading...</div>
-          )
-      }else{
-          return (
-              <div>
-                  Edit User:
-                  <form action=""><br/>
-                      <input type="text" defaultValue={this.props.editUser.meta.name}/><br/>
-                            <select>
-                                <option defaultValue={this.props.editUser.meta.company}>{this.props.editUser.meta.company}</option>
-                                <option value="Teleskop">Teleskop</option>
-                                <option value="Montel">Montel</option>
-                                <option value="Henschel">Henschel</option>
-                                <option value="Teleyard">Teleyard</option>
-                            </select><br/>
-                      <input type="text" defaultValue={this.props.editUser.meta.department}/><br/>
-                      <input type="text" defaultValue={this.props.editUser.meta.departmentRole}/><br/>
-                      <input type="text" defaultValue={this.props.editUser.globalRole}/><br/>
-                      <div>
-                          <span>
-                              <p>Permissions :</p>
-                      <Checkbox toggle label='Panel Admin' onClick={this.onChangeAdminPerm}/><br/>
-                      <Checkbox toggle  label='Project Manager' onClick={this.onChangeProjectManagerPerm}/>
-                          </span>
-                      </div>
-                      <input type="submit" value='Submit'/>
-                  </form>
-
-                  <button onClick={this.getState}>GetState</button>
-              </div>
-          )
-      }
+    })
+ } else{
+        return({
+            userID: ownProps.match.params.user,
+            initialValues: {
+                name: state.selectedUserToEdit.data.meta.name,
+                company: state.selectedUserToEdit.data.meta.company,
+                department: state.selectedUserToEdit.data.meta.department,
+                departmentRole: state.selectedUserToEdit.data.meta.departmentRole,
+                globalRole: state.selectedUserToEdit.data.globalRole,
+                adminPanel: state.selectedUserToEdit.data.access.adminPanel,
+                projectManager: state.selectedUserToEdit.data.access.projectManager
+            }
+        })
     }
-}
-
-
-
-const mapStateToProps = (state) => {
-    return ({editUser: state.selectedUser});
 };
 
-export default connect(mapStateToProps, null)(UserEdit);
+const mapDispatchToProps = (dispatch) => ({
+    getUserData: (userID) => dispatch(getUser(userID)),
+    submitEditedUser: () => dispatch()
+});
+
+
+//TODO edit export order in other files!!!!@#!@#!#!$@!$@!
+export default connect(mapStateToProps, mapDispatchToProps)(reduxForm({
+    form: 'EditUserForm',
+    validate,
+    enableReinitialize: true
+})(UserEdit));
+
+

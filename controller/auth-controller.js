@@ -64,7 +64,6 @@ exports.login = (req, res) => {
         }
         else if(user) {
             bcrypt.compare(password, user.password, (err, passwordIsTheSame) => {
-                console.log(passwordIsTheSame);
                 if (passwordIsTheSame === false) {
                     res.json('Password is not correct');
                 } else if (passwordIsTheSame === true) {
@@ -113,7 +112,10 @@ exports.sendEmailWithTokenToResetPassword = (req, res) => {
     User.findOne({email: req.body.values.email}, (err, user) => {
         if(err){
             res.json('User with that e-mail is not existing');
-        } else {
+        } else if(!user){
+            res.json('User does not exist');
+        }
+        else{
             user.changePasswordToken.tokenID = token;
             user.changePasswordToken.expDate = Date.now() + 86400000;
 

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { connect } from "react-redux";
 import { getAllProjects } from "../actions";
-import { getProjectToView } from "../actions";
 import ListItem from "./project-list-item";
 import LinkButton from "../../common-components/link-button";
 
@@ -22,7 +21,7 @@ class ProjectList extends Component {
             return(
                 <ul key={project._id}>
                     <ListItem data={project} />
-                    <LinkButton to='/project-manager/project' onClick={() => this.props.selectProjectToView(project)}>Show Project</LinkButton>
+                    <LinkButton to={`/project-manager/project/${project._id}`}>Show Project</LinkButton>
                 </ul>
 
             )
@@ -49,8 +48,8 @@ const mapStateToProps = (state) =>{
 };
 
 const mapDispatchToProps = (dispatch) => ({
-    getAllProjects: () => dispatch(getAllProjects()),
-    selectProjectToView: (project) => dispatch(getProjectToView(project))
+    getAllProjects: () => dispatch(getAllProjects())
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectList);
