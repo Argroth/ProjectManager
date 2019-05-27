@@ -10,6 +10,7 @@ class UserRegister extends Component {
         const { handleSubmit, submitting } = this.props;
         return (
             <form onSubmit={handleSubmit(this.props.createNewUser)}>
+                {this.props.message}
                 <Field name="name" type="text" component={renderField} label="Name"/>
                 <Field name="email" type="email" component={renderField} label="Email"/>
                 <Field name="department" type="text" component={renderField} label="Department"/>

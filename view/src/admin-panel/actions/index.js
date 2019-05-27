@@ -9,7 +9,6 @@ export const GET_USER_BY_ID = 'GET_USER_BY_ID';
 
 export const createUser = (user) => async dispatch => {
   const response = await axios.post('http://localhost:5000/auth/register', {user});
-  console.log(response);
   dispatch({type: CREATE_USER, payload: response});
 };
 

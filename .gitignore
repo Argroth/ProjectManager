@@ -5,6 +5,7 @@ node_modules
 
 #vulnerable data
 database
+emailer
 
 # testing
 coverage

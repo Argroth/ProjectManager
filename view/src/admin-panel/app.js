@@ -16,6 +16,7 @@ import EditUser from './components/user-edit';
 import ProjectManager from './components/project-manager';
 import ProjectManagerList from './components/project-manager-list';
 import SubNavBar from './components/navbar';
+import Calendar from './components/calendar';
 
 //import combined reducers
 import AdminPanelReducer from './reducers';
@@ -41,6 +42,7 @@ class App extends Component {
                     <Route exact path="/admin-panel/user-module/user-list" component={UserList} />
                     <Route exact path="/admin-panel/project-manager" component={ProjectManager} />
                     <Route exact path="/admin-panel/project-manager/project-list" component={ProjectManagerList} />
+                    <Route exact path="/admin-panel/calendar" component={Calendar} />
                     <Route path="*"  component={NotFound} />
                 </Switch>
             </div>

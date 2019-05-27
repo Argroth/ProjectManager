@@ -57,12 +57,21 @@ db.once('open', () => {
 });
 
 //###########################################################     SANDBOX    ##############################################################################
+const moment = require('moment-business-days');
 
-const middleware = require('./middlewares/auth-middleware');
+const holidays = ['21-05-2019', '22-05-2019', '20-05-2019', '23-05-2019'];
 
-app.get('/checktoken', middleware.withAuth ,(req, res)=>{
-  res.sendStatus(200);
+moment.updateLocale('pl', {
+    holidays: holidays,
+    holidayFormat: 'DD-MM-YYYY'
 });
+
+
+//const diff = moment('01-01-2019', 'DD-MM-YYYY').businessDiff(moment('30-05-2019','DD-MM-YYYY'));
+const diff = moment('01-01-2019', 'DD-MM-YYYY').monthBusinessDays();
+
+console.log(diff[1]);
+
 
 
 //###########################################################     SANDBOX     ##############################################################################

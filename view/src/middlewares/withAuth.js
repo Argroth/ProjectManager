@@ -20,7 +20,7 @@ export default function withAuth(ComponentToProtect) {
         }
 
         async checkToken(){
-            const response = await axios.get('http://localhost:5000/checktoken', {
+            const response = await axios.post('http://localhost:5000/auth/check-user-token', {}, {
                 withCredentials: true
             });
 

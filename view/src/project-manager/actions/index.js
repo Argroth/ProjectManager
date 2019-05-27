@@ -17,12 +17,12 @@ export const getAllProjects = () => async dispatch => {
     dispatch({type: GET_ALL_PROJECTS, payload: response.data})
 };
 
-export const fetchProjectData = () => async dispatch => {
-    const response = await axios.get('http://localhost:5000/projectproject')
+export const fetchProjectData = (id) => async dispatch => {
+    const response = await axios.post('http://localhost:5000/project-manager/project-data', {projectID: id}, {withCredentials: true});
+    dispatch({type: GET_PROJECT_TO_VIEW, payload: response.data})
 };
 
 export const createNewTask = (task, ownProps) => async dispatch => {
-    console.log(task);
     const response = await axios.post('http://localhost:5000/project/add-task', {
         task,
         projectID: ownProps

@@ -8,7 +8,7 @@ import getProjectToView from './project-view-reducer';
 export default combineReducers({
     projectCreate: createProjectReducer,
     projectsList: getAllProjectsReducer,
-    viewProject: getProjectToView,
+    projectViewData: getProjectToView,
     form: formReducer
     }
 );

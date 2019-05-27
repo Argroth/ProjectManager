@@ -8,5 +8,9 @@ module.exports = (app) => {
         app.post('/auth/verify', authMiddleware.verifyToken);
         app.post('/auth/create-password', authMiddleware.verifyToken, authController.createPassword);
         app.post('/auth/reset-password', authController.sendEmailWithTokenToResetPassword);
+        app.post('/auth/check-user-token', authMiddleware.withAuth);
+
+
+        app.get('/test', authController.test);
 
 };

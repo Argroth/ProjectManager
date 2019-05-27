@@ -7,6 +7,8 @@ exports.index = (req, res) => {
      })
 };
 
+
+
 //TODO Add data to gantt chart
 exports.create = (req, res) => {
     console.log(req.body.project.name);
@@ -21,11 +23,7 @@ exports.create = (req, res) => {
              createdBy: 'Łukasz Gronczakiewicz',
              updatedBy: 'Łukasz Gronczakiewicz'
          },
-         ganttChart: [
-             "[{ type: 'string', label: 'Task ID' },{ type: 'string', label: 'Task Name' },{ type: 'date', label: 'Start Date' }" +
-             ",{ type: 'date', label: 'End Date' },{ type: 'number', label: 'Duration' },{ type: 'number', label: 'Percent Complete' }" +
-             ",{ type: 'string', label: 'Dependencies' },]"
-         ]
+         ganttChart: []
      });
 
     project.save((err) => {
@@ -73,17 +71,34 @@ exports.delete = (req, res) => {
 };
 
 exports.createTask = (req, res) => {
-    Project.findOne({_id: '5cd3f8c95bf55625ac97ea7d'}, (err, projectSelected) => {
-        console.log(projectSelected);
+    Project.findOne({_id: '5ce696ef03cd9f1cb86236f6'}, (err, projectSelected) => {
 
-        projectSelected.ganttChart = [...projectSelected.ganttChart, 123];
+        const x = [
+            'Research',
+            'Find sources',
+            new Date(2018, 2, 5),
+            new Date(2018, 2, 7),
+            null,
+            25,
+            null,
+        ];
+        projectSelected.ganttChart = [...projectSelected.ganttChart, x];
 
         projectSelected.save();
 
-        res.json('123');
+        res.json(projectSelected);
 
     });
-    res.json('123');
+};
+
+exports.getProjectData = (req, res) => {
+    Project.findOne({_id: req.body.projectID}, (err, projectSelected) => {
+        if(err){
+            res.json('Invalid project ID');
+        }else{
+           res.json(projectSelected);
+        }
+    });
 };
 
 

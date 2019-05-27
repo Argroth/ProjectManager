@@ -10,7 +10,6 @@ const token = crypto.randomBytes(12).toString('hex');
 
 
 exports.register = (req, res) => {
-    console.log(req.body.user.email);
     User.findOne({email: req.body.user.email}, (err, user) => {
         if(err){
             res.json('There was an error while creating new user');
@@ -30,7 +29,7 @@ exports.register = (req, res) => {
 
 
             const mailOptions = {
-                from: 'dev@telemond-holding.com',
+                from: 'development@telemond-holding.com',
                 to: req.body.user.email,
                 subject: 'Utwórz hasło i aktywuj konto w TelemondApp!',
                 text: 'Kliknij w link, aby utworzyć hasło i aktywować konto: http://localhost:3000/auth/create-password/' + token
@@ -50,8 +49,7 @@ exports.register = (req, res) => {
                 return (newUser);
             });
 
-            res.json('User created!');
-        }
+            res.json('User created!');        }
     });
 };
 
@@ -106,6 +104,24 @@ exports.createPassword = (req, res) => {
     });
 };
 
+
+//TODO GET THIS OUT OF THIS SHIT
+const Calendar = require('../model/calendar-model');
+exports.test = (req, res) => {
+
+    const newDay = new Calendar();
+    newDay.day = Date.now()+86400000;
+
+    newDay.save(err=> {
+    });
+
+
+    Calendar.find({}, (err, list) => {
+        res.json(list);
+    });
+
+};
+
 //Sends token to pass change on email
 exports.sendEmailWithTokenToResetPassword = (req, res) => {
    const token = crypto.randomBytes(12).toString('hex');
@@ -127,7 +143,7 @@ exports.sendEmailWithTokenToResetPassword = (req, res) => {
             });
 
             const mailOptions = {
-                from: 'dev@telemond-holding.com',
+                from: 'development@telemond-holding.com',
                 to: user.email,
                 subject: 'Reset hasła',
                 text: 'Kliknij w link, aby zresetować hasło: http://localhost:3000/auth/create-password/' + token

@@ -7,7 +7,7 @@ import AddTaskForm from './task-add-form';
 export default class GanttChart extends Component {
     constructor(props) {
         super(props);
-
+        console.log(this.props.data);
         this.state = {
             showAddTaskForm: false
         };
@@ -41,39 +41,13 @@ export default class GanttChart extends Component {
                         [
                             'Research',
                             'Find sources',
-                            new Date(2018, 2, 5),
-                            new Date(2018, 2, 7),
+                            '2018-03-06T23:00:00.000Z',
+                            '2018-04-06T23:00:00.000Z',
                             null,
                             25,
                             null,
-                        ],
-                        [
-                            'Write',
-                            'Write paper',
-                            new Date(2019, 2, 5),
-                            new Date(2019, 5, 9),
-                            259200000,
-                            25,
-                            null,
-                        ],
-                        [
-                            'Read',
-                            'Read Docs',
-                            new Date(2019, 6, 5),
-                            new Date(2019, 8, 9),
-                            259200000,
-                            25,
-                            'Research',
-                        ],
-                        [
-                            'Get',
-                            'Get Data',
-                            new Date(2019, 5, 12),
-                            new Date(2019, 5, 22),
-                            259200000,
-                            25,
-                            'Write',
-                        ]
+                        ], this.props.data[7], this.props.data[7]
+
                     ]}
                     rootProps={{ 'data-testid': '4' }}
                     controls={[
@@ -82,6 +56,7 @@ export default class GanttChart extends Component {
                             options: {
                                 filterColumnLabel: 'Start Date',
                                 ui: { format: { pattern: 'MM' } },
+                                explorer: {axis: 'horizontal'}
                             },
                         },
                     ]}

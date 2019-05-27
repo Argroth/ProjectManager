@@ -1,6 +1,16 @@
 const mongoose = require('mongoose');
 
 
+const ganttConfig = [
+    { type: 'string', label: 'Task ID' },
+    { type: 'string', label: 'Task Name' },
+    { type: 'date', label: 'Start Date' },
+    { type: 'date', label: 'End Date' },
+    { type: 'number', label: 'Duration' },
+    { type: 'number', label: 'Percent Complete' },
+    { type: 'string', label: 'Dependencies' },
+];
+
 const projectSchema = mongoose.Schema({
    name: String,
    description: String,
