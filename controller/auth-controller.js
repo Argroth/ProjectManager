@@ -105,22 +105,6 @@ exports.createPassword = (req, res) => {
 };
 
 
-//TODO GET THIS OUT OF THIS SHIT
-const Calendar = require('../model/calendar-model');
-exports.test = (req, res) => {
-
-    const newDay = new Calendar();
-    newDay.day = Date.now()+86400000;
-
-    newDay.save(err=> {
-    });
-
-
-    Calendar.find({}, (err, list) => {
-        res.json(list);
-    });
-
-};
 
 //Sends token to pass change on email
 exports.sendEmailWithTokenToResetPassword = (req, res) => {

@@ -6,6 +6,9 @@ export const DISABLE_USER = 'DISABLE_USER';
 export const ENABLE_USER = 'ENABLE_USER';
 export const CREATE_USER = 'CREATE_USER';
 export const GET_USER_BY_ID = 'GET_USER_BY_ID';
+export const FETCH_CALENDAR = 'FETCH_CALENDAR';
+export const DAY_SELECTED = "DAY_SELECTED";
+export const UPDATE_DATE = "UPDATE_DATE";
 
 export const createUser = (user) => async dispatch => {
   const response = await axios.post('http://localhost:5000/auth/register', {user});
@@ -35,4 +38,21 @@ export const disableUser = (user) => async dispatch => {
 export const getUser = (userID) => async dispatch => {
   const response = await axios.post('http://localhost:5000/admin-panel/get-user', {userID}, {withCredentials: true});
   dispatch({type: GET_USER_BY_ID, payload: response});
+};
+
+export const fetchCalendar = () => async dispatch => {
+    const response = await axios.get('http://localhost:5000/calendar/get-dates');
+    dispatch({type: FETCH_CALENDAR, payload: response});
+};
+
+export const selectDate = (date) =>{
+    return {
+        type: DAY_SELECTED,
+        payload: date
+    }
+};
+
+export const updateDate = (date) => async dispatch => {
+    const response = await axios.post('http://localhost:5000/calendar/date-update', {date});
+    dispatch({type: UPDATE_DATE, payload: response});
 };

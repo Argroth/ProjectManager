@@ -11,6 +11,4 @@ module.exports = (app) => {
         app.post('/auth/check-user-token', authMiddleware.withAuth);
 
 
-        app.get('/test', authController.test);
-
 };

@@ -4,8 +4,8 @@
 node_modules
 
 #vulnerable data
-database
-emailer
+/database
+/emailer
 
 # testing
 coverage

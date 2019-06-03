@@ -102,6 +102,7 @@ if(!state.selectedUserToEdit.data){
     }
 };
 
+
 const mapDispatchToProps = (dispatch) => ({
     getUserData: (userID) => dispatch(getUser(userID)),
     submitEditedUser: () => dispatch()

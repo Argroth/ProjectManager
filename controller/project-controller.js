@@ -11,11 +11,10 @@ exports.index = (req, res) => {
 
 //TODO Add data to gantt chart
 exports.create = (req, res) => {
-    console.log(req.body.project.name);
      const project = new Project({
          name: req.body.project.name,
          description: req.body.project.description,
-         owner: 'Łukasz Gronczakiewicz',
+         owner: req.body.project.owner,
          tags: [req.body.project.tags],
          meta: {
              createdAt: Date.now(),

@@ -21,6 +21,7 @@ app.use((req, res, next) => {
 require('./routes/auth-routes')(app);
 require('./routes/panel-routes')(app);
 require('./routes/project-routes')(app);
+require('./routes/calendar-routes')(app);
 
 
 
@@ -57,20 +58,6 @@ db.once('open', () => {
 });
 
 //###########################################################     SANDBOX    ##############################################################################
-const moment = require('moment-business-days');
-
-const holidays = ['21-05-2019', '22-05-2019', '20-05-2019', '23-05-2019'];
-
-moment.updateLocale('pl', {
-    holidays: holidays,
-    holidayFormat: 'DD-MM-YYYY'
-});
-
-
-//const diff = moment('01-01-2019', 'DD-MM-YYYY').businessDiff(moment('30-05-2019','DD-MM-YYYY'));
-const diff = moment('01-01-2019', 'DD-MM-YYYY').monthBusinessDays();
-
-console.log(diff[1]);
 
 
 
