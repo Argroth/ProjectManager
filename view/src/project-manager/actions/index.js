@@ -7,6 +7,7 @@ export const CREATE_NEW_TASK = 'CREATE_NEW_TASK';
 
 
 export const createProject = (project) => async dispatch => {
+    console.log(project);
     const response = await axios.post('http://localhost:5000/project-manager/create-project',
         {project});
     dispatch({type: CREATE_PROJECT, payload: response});
@@ -28,4 +29,8 @@ export const createNewTask = (task, ownProps) => async dispatch => {
         projectID: ownProps
     });
     dispatch({type: CREATE_NEW_TASK, payload: response});
+};
+
+export const getAllTasks = () => async dispatch => {
+    const response = await axios.post('http://localhost:5000/project/get-tasks',{},)
 };

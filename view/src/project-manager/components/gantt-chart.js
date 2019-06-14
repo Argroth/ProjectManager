@@ -7,12 +7,42 @@ import AddTaskForm from './task-add-form';
 export default class GanttChart extends Component {
     constructor(props) {
         super(props);
-        console.log(this.props.data);
         this.state = {
-            showAddTaskForm: false
+            showAddTaskForm: false,
+            taskDate: null
         };
     };
 
+
+     getData = () => {
+         const taskData = [
+             [
+                 { type: 'string', label: 'Task ID' },
+                 { type: 'string', label: 'Task Name' },
+                 { type: 'date', label: 'Start Date' },
+                 { type: 'date', label: 'End Date' },
+                 { type: 'number', label: 'Duration' },
+                 { type: 'number', label: 'Percent Complete' },
+                 { type: 'string', label: 'Dependencies' },
+             ],
+         ];
+
+         this.props.data.map(task => {
+            task.data.map(task => {
+                 return taskData.push([
+                     task[0],
+                     task[1],
+                     new Date(task[2]),
+                     new Date(task[3]),
+                     task[4],
+                     task[5],
+                     task[6],
+                 ])
+             })
+         });
+
+         return (taskData);
+     };
 
     showFormToAddTask = () => {
         this.setState({showAddTaskForm: true})
@@ -20,6 +50,7 @@ export default class GanttChart extends Component {
 
     render() {
         return (
+
             <div>
                 <input type="button" value="Add task" onClick={this.showFormToAddTask}/>
                 {this.state.showAddTaskForm? <AddTaskForm projectID={this.props.projectID}/> : null}
@@ -28,35 +59,18 @@ export default class GanttChart extends Component {
                     height={'400px'}
                     chartType="Gantt"
                     loader={<div>Loading Chart</div>}
-                    data={[
-                        [
-                            { type: 'string', label: 'Task ID' },
-                            { type: 'string', label: 'Task Name' },
-                            { type: 'date', label: 'Start Date' },
-                            { type: 'date', label: 'End Date' },
-                            { type: 'number', label: 'Duration' },
-                            { type: 'number', label: 'Percent Complete' },
-                            { type: 'string', label: 'Dependencies' },
-                        ],
-                        [
-                            'Research',
-                            'Find sources',
-                            '2018-03-06T23:00:00.000Z',
-                            '2018-04-06T23:00:00.000Z',
-                            null,
-                            25,
-                            null,
-                        ], this.props.data[7], this.props.data[7]
+                    data= {this.getData()}
 
-                    ]}
                     rootProps={{ 'data-testid': '4' }}
                     controls={[
                         {
-                            controlType: 'DateRangeFilter',
+                            controlType: 'StringFilter',
                             options: {
-                                filterColumnLabel: 'Start Date',
-                                ui: { format: { pattern: 'MM' } },
-                                explorer: {axis: 'horizontal'}
+                                filterColumnIndex: 1,
+                                matchType: 'any', // 'prefix' | 'exact',
+                                ui: {
+                                    label: 'Search by name',
+                                },
                             },
                         },
                     ]}

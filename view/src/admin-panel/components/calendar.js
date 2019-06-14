@@ -8,6 +8,9 @@ class Calendar extends Component {
     constructor(props) {
         super(props);
 
+        this.state={
+            calendarToShow: '123'
+        };
     };
 
     componentDidMount() {
@@ -21,37 +24,35 @@ class Calendar extends Component {
     };
 
     filterTable = (option) => {
-
         switch(option){
             case 'freeDays':{
                 let isFreeDay = (value) => {
                     return value.offWork === true && value.description !== 'Weekend'
                 };
-
                 console.log(this.props.calendar.filter(isFreeDay));
                 break;
             }
             case '2019':{
                 console.log('2019');
                 let is2019 = (value) => {
-                  return value.day > '2019' && value.day < '2020'
+                    return value.day.startsWith('2019');
                 };
+                //this.setState({calendarToShow: this.props.calendar.filter(is2019)});
                 console.log(this.props.calendar.filter(is2019));
                 break;
             }
             case '2020':{
                 console.log('2020');
                 let is2020 = (value) => {
-                  return value.day > '2020' && value.day < '2021'
+                    return value.day.startsWith('2020');
                 };
+                //this.setState({calendarToShow: this.props.calendar.filter(is2020)});
                 console.log(this.props.calendar.filter(is2020));
                 break;
             }
             default:
                 console.log('err');
         }
-
-
     };
 
 
@@ -102,6 +103,7 @@ class Calendar extends Component {
 }
 
 const mapStateToProps = (state) => {
+    console.log(state);
         return ({
             calendar: state.calendar.data,
             daySelected: state.selectedDay,

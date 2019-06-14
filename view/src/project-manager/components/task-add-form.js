@@ -20,9 +20,17 @@ class TaskAddForm extends Component {
                         <Field name="taskId" type="text" component={renderField} label="TaskID"/>
                         <Field name="taskName" type="text" component={renderField} label="Task Name"/>
                         <Field name="startDate" type="date" component={renderField} label="Start Date"/>
-                        <Field name="endDate" type="date" component={renderField} label="End Date"/>
+                        <Field name="duration" type="number" component={renderField} label="Ending in: ... days"/>
+                        Ignore free days?<Field name="freeDays" type="checkbox" defaultChecked={true} value="true" component={renderField}/>
                         <Field name="percentage" type="number" component={renderField} label="Percent Completion"/>
-                        <Field name="dependencies" type="text" component={renderField} label="Dependent of"/>
+                        Select dependent task: <Field name="dependencies" component="select">
+                            <option></option>
+                            {this.props.projectViewData.ganttChart.map(outerArray => {
+                                 return outerArray.data.map(innerArrayObject => {
+                                           return <option value={innerArrayObject[0]}>{innerArrayObject[1]}</option>
+                                })
+                            })}
+                        </Field>
                         <div>
                             <button type="submit" disabled={submitting}>Submit</button>
                         </div>
@@ -73,7 +81,7 @@ const renderField = ({ input, label, type, meta: { touched, error } }) => (
 
 const mapStateToProps = (state) => {
     return ({
-        state: state
+        projectViewData: state.projectViewData
     })
 };
 
@@ -83,8 +91,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 
 export default reduxForm({
-    form: 'addNewTaskForm',
-    validate
+     form: 'addNewTaskForm'
+    // validate
 })(
     connect(mapStateToProps, mapDispatchToProps)(TaskAddForm)
 );

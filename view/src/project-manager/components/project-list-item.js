@@ -11,7 +11,7 @@ class ProjectListItem extends Component {
         return (
             <div>
                 <li>{this.props.data._id}</li>
-                <li>{this.props.data.name}</li>
+                <li>{this.props.data.projectName}</li>
             </div>
         );
     }

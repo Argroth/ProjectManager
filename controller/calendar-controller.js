@@ -10,7 +10,7 @@ exports.getCalendar = (req, res) => {
             let calendarArray = [];
 
                 for(let i=0; i<calendar.length; i++){
-                    calendarArray.push({_id: calendar[i]._id, day: moment(calendar[i].day).format("YYYY-MM-DD"), offWork: calendar[i].offWork, description: calendar[i].description, name: calendar[i].name});
+                    calendarArray.push({_id: calendar[i]._id, day: moment(calendar[i].day).format('YYYY-MM-DD'), offWork: calendar[i].offWork, description: calendar[i].description, name: calendar[i].name});
                 }
 
             res.json(calendarArray);
@@ -30,27 +30,21 @@ exports.updateDate = (req, res) => {
     });
 };
 
-exports.sortDate = (req, res) => {
-    //Calendar.find({day: {$gte: '2019-05-01', $lt: '2019-06-01'}}, (err, calendar) => {
-
-    Calendar.find({day: {$regex: "2019", "$options": "i"}},(err, results) => {
-      res.json(results);
-  });
-};
 
 //new Calendar generation
 //Use only once!
 exports.generateCalendar = (req, res) => {
-    const dayName = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
+    const dayName = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'];
     let days = [];
-    for(let i=1; i<730; i++) {
+    for(let i=0; i<3650; i++) {
 
         const dayOfTheWeek = new Date(new Date().getFullYear(), 0, i).getDay();
-        if(dayOfTheWeek === 0 || dayOfTheWeek === 6){
-            days.push({day: new Date(new Date().getFullYear(), 0, i), offWork: true, description: 'Weekend', name: dayName[dayOfTheWeek]});
+        if(dayOfTheWeek === 5 || dayOfTheWeek === 6){
+            days.push({day: moment().startOf('year').add(i, 'days').format('YYYY-MM-DD'), offWork: true, description: 'Weekend', name: dayName[dayOfTheWeek]})
         }
         else{
-            days.push({day: new Date(new Date().getFullYear(), 0, i), offWork: false, description: ' ', name: dayName[dayOfTheWeek]});
+            days.push({day: moment().startOf('year').add(i, 'days').format('YYYY-MM-DD'), offWork: false, description: ' ', name: dayName[dayOfTheWeek]})
+
         }
     }
 

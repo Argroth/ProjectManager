@@ -1,4 +1,5 @@
 const Project = require('../model/project-model');
+const moment = require('moment');
 
 exports.index = (req, res) => {
      Project.find({}, (err, projectList) => {
@@ -9,14 +10,47 @@ exports.index = (req, res) => {
 
 
 
-//TODO Add data to gantt chart
 exports.create = (req, res) => {
+    const {
+        projectName,
+        projectGoal,
+        projectScope,
+        projectReasons,
+        projectBenefits,
+        projectStartDate,
+        projectEndDate,
+        projectBudget,
+        currency,
+        projectManager,
+        projectSteeringComitee,
+        projectTeam,
+        projectStage,
+        projectKPI,
+        projectRisk,
+        projectOrganization
+    } = req.body.project;
+
+    console.log(req.body.project);
      const project = new Project({
-         name: req.body.project.name,
-         description: req.body.project.description,
-         owner: req.body.project.owner,
-         tags: [req.body.project.tags],
-         meta: {
+         projectName: projectName,
+         projectGoal: projectGoal,
+         projectScope: projectScope,
+         projectReasons: projectReasons,
+         projectBenefits: projectBenefits,
+         projectStartDate: projectStartDate,
+         projectEndDate: projectEndDate,
+         projectBudget:{
+             value: projectBudget,
+             currency: currency
+         },
+         projectManager: projectManager,
+         projectSteeringComitee: projectSteeringComitee,
+         projectTeam: projectTeam,
+         projectStages: projectStage,
+         projectKPI: projectKPI,
+         projectRisk: projectRisk,
+         projectOrganization: projectOrganization,
+             meta: {
              createdAt: Date.now(),
              updatedAt: Date.now(),
              createdBy: 'Łukasz Gronczakiewicz',
@@ -27,7 +61,7 @@ exports.create = (req, res) => {
 
     project.save((err) => {
        if(err){
-           res.json('Error creating project')
+           res.json('Error creating project' +err)
        }else{
         res.json('Project created successfully')
        }
@@ -70,23 +104,29 @@ exports.delete = (req, res) => {
 };
 
 exports.createTask = (req, res) => {
-    Project.findOne({_id: '5ce696ef03cd9f1cb86236f6'}, (err, projectSelected) => {
+    console.log(req.body);
+    Project.findOne({_id: req.body.projectID}, (err, projectSelected) => {
 
-        const x = [
-            'Research',
-            'Find sources',
-            new Date(2018, 2, 5),
-            new Date(2018, 2, 7),
-            null,
-            25,
-            null,
-        ];
+
+        if(req.body.ignoreWeekends === true){
+
+        }
+
+
+        const x = {data: [
+            [
+            req.body.task.taskId,
+            req.body.task.taskName,
+            req.body.task.startDate,
+            moment(req.body.task.startDate).add(req.body.task.duration, 'days').format('YYYY-MM-DD'),
+            req.body.task.duration,
+            req.body.task.percentage,
+            req.body.task.dependencies
+            ]
+        ]};
         projectSelected.ganttChart = [...projectSelected.ganttChart, x];
-
         projectSelected.save();
-
         res.json(projectSelected);
-
     });
 };
 
