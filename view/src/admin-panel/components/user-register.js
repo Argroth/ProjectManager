@@ -13,14 +13,18 @@ class UserRegister extends Component {
                 {this.props.message}
                 <Field name="name" type="text" component={renderField} label="Name"/>
                 <Field name="email" type="email" component={renderField} label="Email"/>
+                <Field name="telephone" type="text" component={renderField} label="Telephone Number"/>
                 <Field name="department" type="text" component={renderField} label="Department"/>
                 <Field name="departmentRole" type="text" component={renderField} label="Department Role"/>
-                <Field name="company" component="select">
-                    <option></option>
+                Select Company<Field name="company" component="select">
                     <option value="Teleskop">Teleskop</option>
                     <option value="Montel">Montel</option>
                     <option value="Henschel">Henschel</option>
                     <option value="Teleyard">Teleyard</option>
+                </Field><br/>
+                Select Default Language<Field name="defaultLanguage" component="select">
+                    <option value="PL">Polski</option>
+                    <option value="ENG">Angielski</option>
                 </Field>
                 <div>
                     <button type="submit" disabled={submitting}>Submit</button>
@@ -74,8 +78,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default reduxForm({
-    form: 'NewUserForm',
-    validate
+    form: 'NewUserForm'
 })(
     connect(mapStateToProps, mapDispatchToProps)(UserRegister)
 );

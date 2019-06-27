@@ -8,8 +8,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Route, Switch, BrowserRouter as Router} from 'react-router-dom';
 
-
-
 //import main components
 import DashBoard from './dashboard/app';
 import Auth from './auth/app';
@@ -18,31 +16,37 @@ import ProjectManager from './project-manager/app';
 import NotFound from './not-found/app';
 import Navbar from './common-components/navbar';
 import Test from './test/app';
+import Language from './common-components/language';
 
 //import middlewares
 import withAuth from './middlewares/withAuth';
 
+import { LanguageContext } from '../src/context';
+const {Provider} = LanguageContext;
+
 
 const MainTemplateWithRouter = (
 <div>
-  <Router>
-
-    <div>
+<Router>
+      <div>
         <h1>Telemond App</h1>
-    </div>
-    <Navbar />
-
-
-       <Switch>
-           <Route exact path="/" component={DashBoard} />
-           <Route path="/auth" component={Auth} />
-           <Route path="/admin-panel" component={AdminPanel} />
-           <Route path="/project-manager" component={ProjectManager} />
-           <Route path="/test" component={Test} />
-           <Route path="*"  component={NotFound} />
-       </Switch>
-   </Router>
+          <Language />
+      </div>
+            <Provider value='PL'>
+                <Navbar />
+                   <Switch>
+                       <Route exact path="/" component={withAuth(DashBoard)} />
+                       <Route path="/auth" component={Auth} />
+                       <Route path="/admin-panel" component={AdminPanel} />
+                       <Route path="/project-manager" component={ProjectManager} />
+                       <Route path="/test" component={Test} />
+                       <Route path="*"  component={NotFound} />
+                   </Switch>
+            </Provider>
+</Router>
 </div>
 );
+
+
 
 ReactDOM.render(MainTemplateWithRouter, document.querySelector('#root'));

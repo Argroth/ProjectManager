@@ -11,41 +11,33 @@ export default function withAuth(ComponentToProtect) {
             this.state = {
                 loading: true,
                 redirect: false,
-                response: ''
+                response: null
             };
-        }
+        };
 
         componentDidMount() {
             this.checkToken();
-        }
+        };
 
         async checkToken(){
             const response = await axios.post('http://localhost:5000/auth/check-user-token', {}, {
                 withCredentials: true
             });
-
-            this.setState({response: response.status});
-
-            if(!this.state.response === ''){
+            this.setState({response: response.data});
+            if(this.state.response === 'Unauthorized'){
                 this.setState({loading: false, redirect: true})
             } else {
-                this.setState({loading: false})
+                this.setState({loading: false, redirect: false})
             }
-            // if(response.status === 200){
-            //     this.setState({loading: false});
-            // } else if(response == null){
-            //     this.setState({loading: false, redirect: true});
-            // }
-        }
+        };
 
         render() {
             const { loading, redirect } = this.state;
-            console.log(this.state);
             if (loading) {
-                return <div>Loading ...</div>;
+                return <div>Loading...</div>;
             }
             if (redirect) {
-                return <Redirect to="/login" />;
+                return <Redirect to="/auth/login" />;
             }
             return (
                 <React.Fragment>

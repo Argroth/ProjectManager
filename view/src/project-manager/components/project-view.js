@@ -39,15 +39,16 @@ class ProjectView extends Component {
                 <h4>Project budget: {project.projectBudget.value + project.projectBudget.currency} </h4>
                 <h4>Project manager: {project.projectManager}</h4>
 
-                <h4>{project.projectSteeringComitee.length === 1? 'Project owner: ' : 'Steering comitee: '}</h4>
+                <h4>{project.projectSteeringComitee.length <= 1? 'Project owner: ' : 'Steering comitee: '}</h4>
                 {project.projectSteeringComitee.map(member => {
-                    let div = <>
-                        <div key={member.steeringComiteeMember}>
-                            <h4>{member.steeringComiteeMember}</h4>
-                        </div>
-                    </>;
+                    return(
+                            <div key={member.steeringComiteeMember}>
+                                <h4>{member.steeringComiteeMember}</h4>
+                            </div>
+                    )
                 })}
                 <br/>
+                <h4>Project team:</h4>
                 {project.projectTeam.map(teamMember => {
                     return(
                         <div key={teamMember.projectTeamMember}>

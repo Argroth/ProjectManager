@@ -20,6 +20,8 @@ class Calendar extends Component {
     componentWillReceiveProps(nextProps, nextContext) {
         if(nextProps.message === 'Record updated successfully'){
             window.location='/admin-panel/calendar';
+            //this.forceUpdate();
+            //this.props.getCalendar();
         }
     };
 

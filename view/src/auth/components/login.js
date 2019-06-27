@@ -3,18 +3,22 @@ import { connect } from "react-redux";
 import {Field, reduxForm} from "redux-form";
 import { login } from "../actions";
 
+import { LanguageContext } from "../../context";
+
 
 class Login extends Component {
     constructor(props) {
         super(props);
-
     }
 
     renderForm(){
         const {handleSubmit, submitting, } = this.props;
-
+        const { Consumer } = LanguageContext;
         return(
             <div>
+                <Consumer>
+                    {x => <p>{ x }</p>}
+                </Consumer>
                 {this.props.verifyMessage}
                 <form onSubmit={handleSubmit(this.props.loginUser)}>
                     <Field name="email" type="email" component={renderField} label="Email"/>

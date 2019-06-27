@@ -2,6 +2,7 @@
 
 # dependencies
 node_modules
+/mockup/ui-mock/node_modules
 
 #vulnerable data
 /database

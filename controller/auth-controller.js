@@ -26,6 +26,7 @@ exports.register = (req, res) => {
             newUser.meta.createdAt = Date.now();
             newUser.authToken.tokenID = token;
             newUser.authToken.expDate = Date.now()+86400000;
+            newUser.meta.telephoneNumber = req.body.user.telephone;
 
 
             const mailOptions = {
@@ -143,4 +144,13 @@ exports.sendEmailWithTokenToResetPassword = (req, res) => {
 
         }
     });
+};
+
+
+exports.authMiddlewareResponse = (req, res) => {
+    if(req.email){
+        res.json('Authorized');
+    }else{
+        res.json('Unauthorized');
+    }
 };

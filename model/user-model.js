@@ -11,7 +11,9 @@ const UserSchema = new mongoose.Schema({
             department: String,
             departmentRole: String,
             company: String,
-            createdAt: Date
+            createdAt: Date,
+            defaultLanguage: {type: String, enum: ['PL', 'ENG'], default: 'PL'},
+            telephoneNumber: String
         },
         authToken: {
             tokenID: {type: String, default: null},

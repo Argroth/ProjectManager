@@ -17,11 +17,10 @@ class ProjectList extends Component {
                 </div>
             )
         }
-        return this.props.projectList.reverse().map(project => {
+        return this.props.projectList.map(project => {
             return(
                 <ul key={project._id}>
                     <ListItem data={project} />
-                    <LinkButton to={`/project-manager/project/${project._id}`}>Show Project</LinkButton>
                 </ul>
 
             )
@@ -45,7 +44,8 @@ class ProjectList extends Component {
 }
 
 const mapStateToProps = (state) =>{
-    return ({projectList: state.projectsList.projectList})
+    console.log(state);
+    return ({projectList: state.projectsList.orderedProjectList})
 };
 
 const mapDispatchToProps = (dispatch) => ({

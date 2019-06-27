@@ -2,14 +2,14 @@ import axios from 'axios';
 
 export const CREATE_PROJECT = 'CREATE_PROJECT';
 export const GET_ALL_PROJECTS = 'GET_ALL_PROJECTS';
-export const GET_PROJECT_TO_VIEW = 'GET_PROJECT_TO_VIEW';
+export const GET_PROJECT_TO_VIEW = 'GET_SPECIFIC_PROJECT_LIST';
 export const CREATE_NEW_TASK = 'CREATE_NEW_TASK';
 
 
 export const createProject = (project) => async dispatch => {
     console.log(project);
     const response = await axios.post('http://localhost:5000/project-manager/create-project',
-        {project});
+        {project}, {withCredentials: true});
     dispatch({type: CREATE_PROJECT, payload: response});
 };
 

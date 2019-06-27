@@ -13,11 +13,15 @@ exports.withAuth = (req, res, next) => {
         req.cookies.token;
 
     if (!token) {
-        res.status(401).send('Unauthorized: No token provided');
+        req.error = 401;
+        req.errorMessage = 'Unauthorized: No token provided';
+        next();
     } else {
         jwt.verify(token, secret, (err, decoded) => {
             if (err) {
-                res.status(401).send('Unauthorized: Invalid token');
+                req.error = 404;
+                req.errorMessage = 'Token not decoded';
+                next();
             } else {
                 req.email = decoded.email;
                 next();
