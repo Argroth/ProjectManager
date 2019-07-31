@@ -4,7 +4,7 @@
 
 
 //import dependencies
-import React from 'react';
+import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import {Route, Switch, BrowserRouter as Router} from 'react-router-dom';
 
@@ -14,9 +14,13 @@ import Auth from './auth/app';
 import AdminPanel from './admin-panel/app';
 import ProjectManager from './project-manager/app';
 import NotFound from './not-found/app';
-import Navbar from './common-components/navbar';
 import Test from './test/app';
-import Language from './common-components/language';
+
+import Navbar from './common-components/navbar';
+import Sidebar from './common-components/sidebar';
+import Wrapper from './common-components/wrapper';
+import Main from './common-components/main';
+import Footer from './common-components/footer';
 
 //import middlewares
 import withAuth from './middlewares/withAuth';
@@ -27,23 +31,25 @@ const {Provider} = LanguageContext;
 
 const MainTemplateWithRouter = (
 <div>
-<Router>
-      <div>
-        <h1>Telemond App</h1>
-          <Language />
-      </div>
+ <Router>
+    <Wrapper>
+        <Sidebar />
+        <Main>
+            <Navbar />
             <Provider value='PL'>
-                <Navbar />
                    <Switch>
                        <Route exact path="/" component={withAuth(DashBoard)} />
                        <Route path="/auth" component={Auth} />
                        <Route path="/admin-panel" component={AdminPanel} />
-                       <Route path="/project-manager" component={ProjectManager} />
+                       <Route path="/project-manager" component={ProjectManager}/>
                        <Route path="/test" component={Test} />
                        <Route path="*"  component={NotFound} />
                    </Switch>
             </Provider>
-</Router>
+            <Footer />
+        </Main>
+    </Wrapper>
+ </Router>
 </div>
 );
 

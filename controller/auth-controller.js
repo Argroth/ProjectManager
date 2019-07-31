@@ -20,6 +20,8 @@ exports.register = (req, res) => {
             newUser.email = req.body.user.email;
             newUser.password = crypto.randomBytes(20).toString('hex');
             newUser.meta.name = req.body.user.name;
+            newUser.value = req.body.user.name;
+            newUser.label = req.body.user.name;
             newUser.meta.department = req.body.user.department;
             newUser.meta.departmentRole = req.body.user.departmentRole;
             newUser.meta.company = req.body.user.company;

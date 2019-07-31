@@ -17,12 +17,14 @@ class UserRegister extends Component {
                 <Field name="department" type="text" component={renderField} label="Department"/>
                 <Field name="departmentRole" type="text" component={renderField} label="Department Role"/>
                 Select Company<Field name="company" component="select">
+                <option value=""></option>
                     <option value="Teleskop">Teleskop</option>
                     <option value="Montel">Montel</option>
                     <option value="Henschel">Henschel</option>
                     <option value="Teleyard">Teleyard</option>
                 </Field><br/>
                 Select Default Language<Field name="defaultLanguage" component="select">
+                <option value=""></option>
                     <option value="PL">Polski</option>
                     <option value="ENG">Angielski</option>
                 </Field>

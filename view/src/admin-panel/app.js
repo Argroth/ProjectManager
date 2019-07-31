@@ -19,6 +19,7 @@ import SubNavBar from './components/navbar';
 import Calendar from './components/calendar';
 
 //import combined reducers
+import Navbar from '../common-components/navbar'
 import AdminPanelReducer from './reducers';
 
 class App extends Component {

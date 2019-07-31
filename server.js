@@ -60,13 +60,15 @@ db.once('open', () => {
 //###########################################################     SANDBOX    ##############################################################################
 const _ = require('lodash');
 
-const a = [1,2] ;
-const b = [2,3];
+const users = [
+  { user: 'barney',  'age': 36, 'active': true },
+  { user: 'fred',    'age': 40, 'active': false },
+  { user: 'pebbles', 'age': 1,  'active': true }
+];
 
-console.log(_.difference(a, b));
+const x = _.find(users, ["user", "fred"]);
 
 
-//app.use(express.static('../view/public'));
 //###########################################################     SANDBOX     ##############################################################################
 
 

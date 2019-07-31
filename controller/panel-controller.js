@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 require('../emailer/emailer-config');
 
 exports.getAllUsers = (req, res) => {
-  User.find({}, (err, users) => {
+  User.find({}, '-password -authToken -changePasswordToken -access' ,(err, users) => {
     if(err){
       res.json('Error finding users');
     }

@@ -12,19 +12,19 @@ const projectSchema = mongoose.Schema({
         value: {type: Number, default: null},
         currency: {type: String, default: null}
     },
-    projectManager: {type: String, default: null},
+    projectManager: [],
     projectSteeringComitee: [],
     projectTeam: [],
     projectStages: [],
-    projectKPI: [],
     projectRisk: [],
     projectOrganization: [],
+    projectCommunication: [],
     meta: {
         createdBy: String,
         createdAt: Date,
         updatedBy: String,
         updatedAt: Date,
-        status: {type: String, enum: ['Created', 'In Preparation', 'In Progress', 'Finished'], default: 'Created'}
+        status: {type: String, enum: ['InPreparation', 'InProgress', 'Finished'], default: 'InPreparation'}
     },
     tags: {},
     changeLog:[],

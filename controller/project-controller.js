@@ -31,11 +31,13 @@ exports.create = (req, res) => {
         projectManager,
         projectSteeringComitee,
         projectTeam,
-        projectStage,
-        projectKPI,
-        projectRisk,
-        projectOrganization
+        projectStages,
+        projectRisks,
+        projectOrganization,
+        projectCommunication
     } = req.body.project;
+
+    console.log(req.body.project);
 
      const project = new Project({
          projectName: projectName,
@@ -52,10 +54,10 @@ exports.create = (req, res) => {
          projectManager: projectManager,
          projectSteeringComitee: projectSteeringComitee,
          projectTeam: projectTeam,
-         projectStages: projectStage,
-         projectKPI: projectKPI,
-         projectRisk: projectRisk,
+         projectStages: projectStages,
+         projectRisk: projectRisks,
          projectOrganization: projectOrganization,
+         projectCommunication: projectCommunication,
              meta: {
              createdAt: Date.now(),
              updatedAt: Date.now(),
