@@ -60,10 +60,10 @@ class ProjectCreate extends Component {
     render() {
         const {handleSubmit, submitting, reset} = this.props;
 
-        const RenderField = ({ input, label, type, meta: { touched, error, warning } }) => (
+        const RenderField = ({ input, label, type, meta: { touched, error } }) => (
             <div>
                 <Input {...input} type={type} placeholder={label}/>
-                {touched && ((error && <span>{error}</span>) || (warning && <span>{warning}</span>))}
+                {touched && error && <span>{error}</span>}
             </div>
         );
 
@@ -262,7 +262,7 @@ class ProjectCreate extends Component {
                             const handleChange = (event) => {
                                 const newArray = this.state.projectBudgetArray;
 
-                                event.target.value >0? newArray[index] = {value: event.target.value} : newArray[index] = {value: 0};
+                                event.target.value > 0 ? newArray[index] = {value: event.target.value} : newArray[index] = {value: 0};
                                 let sum = 0;
 
                                 newArray.map(item => {
@@ -593,9 +593,29 @@ const validate = values => {
     if (!values.projectName) {
         errors.projectName = 'Required'
     }
+    if(values.projectEndDate < values.projectStartDate){
+        errors.projectStartDate = 'Start date cannot be greater than end date';
+        errors.projectEndDate = 'Start date cannot be greater than end date';
+    }
+     const projectStagesErrors = [];
+     if(!values.projectStages){
+     } else {
+        values.projectStages.map((stage, index) => {
+            const stageErrors = {};
+            if(stage === undefined){
+            } else {
+                if(stage.budget < 0){
+                    stageErrors.name = "Must be greater than 0";
+                    projectStagesErrors[index] = stageErrors;
+                }
+            }
+        });
+        errors.stages = projectStagesErrors;
+    }
+
+     console.log(errors);
     return errors
 };
-
 
 const mapStateToProps = (state, ownProps) => {
     return ({...ownProps,
