@@ -7,10 +7,10 @@ import {fetchUsers,
         forceChangePassword,
         disableUser,
         enableUser
-                    } from '../actions';
+                    } from '../../actions/admin-panel-actions';
 
 import ListItem from './user-list-item';
-import SearchBar from '../../common-components/search-bar';
+import SearchBar from '../../layouts/search-bar';
 
 class UserList extends Component {
     constructor(props) {

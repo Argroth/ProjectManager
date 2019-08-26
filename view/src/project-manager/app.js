@@ -1,8 +1,5 @@
 //import dependencies
 import React, {Component} from 'react';
-import { createStore, applyMiddleware } from "redux";
-import thunk from "redux-thunk";
-import {Provider} from "react-redux";
 import { Route, Switch } from "react-router-dom";
 
 
@@ -19,20 +16,10 @@ import ProjectImplementation from './components/project-implementation';
 import ProjectFinished from './components/project-finished';
 
 
-//import combined reducers
-import reducers from './reducers';
-
 
 class App extends Component {
-    constructor(props) {
-        super(props);
-        this.store = createStore(reducers, applyMiddleware(thunk)
-            );
-    };
-
     render() {
         return (
-            <Provider store={this.store}>
                     <Switch>
                         <Route exact path="/project-manager/" component={Dummy} />
                         <Route exact path="/project-manager/create-project" component={CreateProject} />
@@ -45,7 +32,6 @@ class App extends Component {
                         <Route exact path="/project-manager/contributed-projects" component={ContributedProjects} />
                         <Route path="*"  component={NotFound} />
                     </Switch>
-            </Provider>
         );
     }
 }

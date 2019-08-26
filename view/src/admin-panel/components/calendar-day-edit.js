@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from "react-redux";
 import {Field, reduxForm} from "redux-form";
-import { updateDate } from "../actions";
+import { updateDate } from "../../actions/admin-panel-actions";
 
 class CalendarDayEdit extends Component {
     render() {

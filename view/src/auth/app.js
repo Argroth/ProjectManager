@@ -8,30 +8,17 @@ import Login from './components/login';
 import CreatePassword from './components/password-create';
 import ResetPassword from './components/password-reset';
 import NotFound from '../not-found/app';
-import {applyMiddleware, createStore} from "redux";
-import AuthReducer from "./reducers";
-import thunk from "redux-thunk";
-import {Provider} from "react-redux";
+
 
 class App extends Component {
-    constructor(props) {
-        super(props);
-        this.store = createStore(AuthReducer, applyMiddleware(thunk));
-
-    }
-
     render() {
         return (
-            <Provider store={this.store}>
-                <div>
-
+            <div>
 
 
                     <li><Link to="/auth/login">Login</Link></li>
                     <li><Link to="/auth/reset-password">Reset Password</Link></li>
                     <li><Link to="/auth/create-password">Create password (mock to backend)</Link></li>
-
-
 
 
 
@@ -43,7 +30,6 @@ class App extends Component {
                        <Route exact path="*"  component={NotFound} />
                    </Switch>
                 </div>
-            </Provider>
         );
     }
 }

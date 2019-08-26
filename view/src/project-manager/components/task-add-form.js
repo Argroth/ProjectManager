@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
 
-import { createNewTask } from "../actions";
+import { createNewTask } from "../../actions/project-manager-actions";
 
 
 class TaskAddForm extends Component {

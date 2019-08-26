@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Field, FieldArray, reduxForm} from "redux-form";
 import { connect } from "react-redux";
-import { createProject, getAllUsers } from "../actions";
+import { createProject, getAllUsers } from "../../actions/project-manager-actions";
 import _ from 'lodash';
 
 import {

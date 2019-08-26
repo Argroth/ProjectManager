@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { connect } from "react-redux";
-import { fetchCalendar, selectDate } from "../actions";
+import { fetchCalendar, selectDate } from "../../actions/admin-panel-actions";
 import EditDate from './calendar-day-edit';
 
 

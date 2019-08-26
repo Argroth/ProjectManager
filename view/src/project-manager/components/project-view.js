@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from "react-redux";
 import GanttChart from './gantt-chart';
-import { fetchProjectData } from "../actions";
+import { fetchProjectData } from "../../actions/project-manager-actions";
 
 
 class ProjectView extends Component {

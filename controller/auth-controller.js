@@ -79,6 +79,10 @@ exports.login = (req, res) => {
     });
 };
 
+exports.logout = (req, res) => {
+    console.log(req);
+    res.clearCookie('token').status(200).json('User Logged out');
+};
 
 
 //User creates password after token is verified
@@ -145,6 +149,12 @@ exports.sendEmailWithTokenToResetPassword = (req, res) => {
             });
 
         }
+    });
+};
+
+exports.userSession = (req, res) => {
+    User.findOne({email: req.body.user.email}, '-password -authToken -changePasswordToken -access' , (err, user) => {
+        res.json(user);
     });
 };
 

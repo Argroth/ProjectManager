@@ -3,9 +3,11 @@ const authMiddleware = require('../middlewares/auth-middleware');
 
 module.exports = (app) => {
         app.post('/auth/login', authController.login);
+        app.post('/auth/logout', authController.logout);
         app.post('/auth/register', authController.register);
         app.post('/auth/verify', authMiddleware.verifyToken);
         app.post('/auth/create-password', authMiddleware.verifyToken, authController.createPassword);
         app.post('/auth/reset-password', authController.sendEmailWithTokenToResetPassword);
         app.post('/auth/check-user-token', authMiddleware.withAuth, authController.authMiddlewareResponse);
+        app.post('/auth/user-session', authController.userSession);
 };

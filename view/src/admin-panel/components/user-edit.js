@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { connect } from "react-redux";
 import {Field, reduxForm} from "redux-form";
-import { getUser } from "../actions";
+import { getUser } from "../../actions/admin-panel-actions";
 
 class UserEdit extends Component {
     constructor(props) {

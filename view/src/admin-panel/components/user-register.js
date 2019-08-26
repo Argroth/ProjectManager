@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
-import { createUser } from "../actions";
+import { createUser } from "../../actions/admin-panel-actions";
 
 class UserRegister extends Component {
 
@@ -10,7 +10,7 @@ class UserRegister extends Component {
         const { handleSubmit, submitting } = this.props;
         return (
             <form onSubmit={handleSubmit(this.props.createNewUser)}>
-                {this.props.message}
+                {this.props.createUser.data}
                 <Field name="name" type="text" component={renderField} label="Name"/>
                 <Field name="email" type="email" component={renderField} label="Email"/>
                 <Field name="telephone" type="text" component={renderField} label="Telephone Number"/>
@@ -72,6 +72,7 @@ const renderField = ({ input, label, type, meta: { touched, error, warning } }) 
 );
 
 const mapStateToProps = (state) => {
+    console.log(state);
     return state;
 };
 
@@ -80,7 +81,8 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default reduxForm({
-    form: 'NewUserForm'
+    form: 'NewUserForm',
+    validate
 })(
     connect(mapStateToProps, mapDispatchToProps)(UserRegister)
 );

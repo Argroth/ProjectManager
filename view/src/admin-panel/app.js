@@ -1,10 +1,6 @@
 //import dependencies
 import React, {Component} from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import {createStore, applyMiddleware} from "redux";
-
 
 //import components
 import Dummy from "../common-components/dummy-component";
@@ -18,23 +14,12 @@ import ProjectManagerList from './components/project-manager-list';
 import SubNavBar from './components/navbar';
 import Calendar from './components/calendar';
 
-//import combined reducers
-import Navbar from '../common-components/navbar'
-import AdminPanelReducer from './reducers';
-
 class App extends Component {
-    constructor(props) {
-        super(props);
-        //create isolated store with thunk middleware
-        this.store = createStore(AdminPanelReducer, applyMiddleware(thunk));
-    }
 
     render() {
         return (
-            <Provider store={this.store}>
             <div>
                 <SubNavBar />
-
                 <Switch>
                     <Route exact path="/admin-panel/" component={Dummy} />
                     <Route exact path="/admin-panel/user-module/edit-user/:user" component={EditUser} />
@@ -47,7 +32,6 @@ class App extends Component {
                     <Route path="*"  component={NotFound} />
                 </Switch>
             </div>
-            </Provider>
         );
     }
 }

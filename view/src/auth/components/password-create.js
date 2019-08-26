@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
-import { verifyToken, createPassword } from "../actions";
+import { verifyToken, createPassword } from "../../actions/auth-actions";
 
 class PasswordCreate extends Component {
     constructor(props) {
