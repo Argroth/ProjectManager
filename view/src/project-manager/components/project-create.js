@@ -38,7 +38,6 @@ const optionsCurrency =[
     {value: "EUR", label: "EUR"}
 ];
 
-
 class ProjectCreate extends Component {
     constructor(props) {
         super(props);
@@ -48,12 +47,28 @@ class ProjectCreate extends Component {
             benefits: [],
             projectTeam: [],
             projectBudgetArray: [],
-            projectBudget: 0
+            projectBudget: 0,
+            PL: {
+                projectCard: 'Karta Projektu',
+                info: 'Informacje',
+                projectName: 'Nazwa Projektu',
+                startDate: 'Data Rozpoczęcia',
+                endDate: 'Data Zakończenia',
+            },
+            EN: {
+                projectCard: 'Project Card',
+                info: 'Basic Informations',
+                projectName: 'Project Name',
+                startDate: 'Start Date',
+                endDate: 'End Date',
+            },
+            textToShow: {name: '22'}
         }
     };
 
     componentDidMount() {
         this.props.getTeam();
+        this.props.language === 'PL'? this.setState({textToShow: this.state.PL}) : this.setState({textToShow: this.state.EN});
     }
 
 
@@ -394,34 +409,34 @@ class ProjectCreate extends Component {
                     <Card>
                         <CardHeader>
                             <CardTitle tag="h5" className="mb-0">
-                                Karta projektu
+                                {this.state.textToShow.projectCard}
                             </CardTitle>
                         </CardHeader>
                         <CardBody>
                             <Card>
                                 <CardHeader>
                                     <CardTitle tag="h5" className="mb-0">
-                                        Informacje podstawowe
+                                        {this.state.textToShow.info}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardBody>
                                     <Row form>
                                         <Col md={8}>
                                             <FormGroup>
-                                                <Label for="projectName">Nazwa projektu</Label>
-                                                <Field name="projectName" type="text" component={RenderField} label="Project Name"/>
+                                                <Label for="projectName">{this.state.textToShow.projectName}</Label>
+                                                <Field name="projectName" type="text" component={RenderField} label={this.state.textToShow.projectName}/>
                                             </FormGroup>
                                         </Col>
                                         <Col md={2}>
                                             <FormGroup>
-                                                <Label for="startdate">Termin rozpoczęcia</Label>
-                                                <Field name="projectStartDate" type="date" component={RenderField} label="Project Start Date"/>
+                                                <Label for="startdate">{this.state.textToShow.startDate}</Label>
+                                                <Field name="projectStartDate" type="date" component={RenderField} label={this.state.textToShow.startDate}/>
                                             </FormGroup>
                                         </Col>
                                         <Col md={2}>
                                             <FormGroup>
-                                                <Label for="endDate">Termin zakończenia</Label>
-                                                <Field name="projectEndDate" type="date" component={RenderField} label="Project End Date"/>
+                                                <Label for="endDate">{this.state.textToShow.endDate}</Label>
+                                                <Field name="projectEndDate" type="date" component={RenderField} label={this.state.textToShow.endDate}/>
                                             </FormGroup>
                                         </Col>
                                     </Row>
@@ -613,15 +628,16 @@ const validate = values => {
         errors.stages = projectStagesErrors;
     }
 
-     console.log(errors);
     return errors
 };
 
 const mapStateToProps = (state, ownProps) => {
     return ({...ownProps,
         message: state.projectCreate.data,
-        userList: state.userList
-    })
+        userList: state.userList,
+        language: state.language,
+       });
+
 };
 
 const mapDispatchToProps = (dispatch) => ({

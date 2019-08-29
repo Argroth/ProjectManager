@@ -58,16 +58,43 @@ db.once('open', () => {
 });
 
 //###########################################################     SANDBOX    ##############################################################################
-const _ = require('lodash');
+const io = require('socket.io')(80);
 
-const users = [
-  { user: 'barney',  'age': 36, 'active': true },
-  { user: 'fred',    'age': 40, 'active': false },
-  { user: 'pebbles', 'age': 1,  'active': true }
+const notifications = [
+  {
+    type: "important",
+    title: "Update completed",
+    description: "Restart server 12 to complete the update.",
+    time: "2h ago"
+  },
+  {
+    type: "default",
+    title: "Lorem ipsum",
+    description: "Aliquam ex eros, imperdiet vulputate hendrerit et.",
+    time: "6h ago"
+  },
+  {
+    type: "login",
+    title: "Login from 192.186.1.1",
+    description: "",
+    time: "6h ago"
+  },
+  {
+    type: "request",
+    title: "New connection",
+    description: "Anna accepted your request.",
+    time: "12h ago"
+  }
 ];
 
-const x = _.find(users, ["user", "fred"]);
+io.on('connection',  (socket) => {
+  socket.emit('news', notifications);
+  socket.on('my other event', (data) => {
+    const newMessage = [...notifications, data];
 
+    io.emit('news', newMessage);
+  });
+});
 
 //###########################################################     SANDBOX     ##############################################################################
 

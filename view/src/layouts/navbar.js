@@ -1,7 +1,8 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import { toggleSidebar } from "../actions/sidebar-actions";
 import { logoutUser } from '../actions/auth-actions';
+import { switchLanguage } from "../actions/language-actions";
 
 
 import {
@@ -26,7 +27,6 @@ import {
   BellOff,
   Home,
   MessageCircle,
-  PieChart,
   Settings,
   User,
   UserPlus
@@ -68,6 +68,8 @@ const notifications = [
     time: "12h ago"
   }
 ];
+
+
 
 const messages = [
   {
@@ -138,166 +140,198 @@ const NavbarDropdownItem = ({ icon, title, description, time, spacing }) => (
 
 
 
-const NavbarComponent = ({ dispatch }) => {
 
-  const logout = () => {
-    let name = "token";
-    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    localStorage.clear();
-    sessionStorage.clear();
-    dispatch(logoutUser());
-  };
+class NavbarComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {language: window.sessionStorage.getItem('language')};
+  }
+
+
+  render() {
+
+    const logout = () => {
+      localStorage.clear();
+      sessionStorage.clear();
+      this.props.logoutUser();
+    };
+
+    const handleLanguageChange = (value) => {
+      window.sessionStorage.setItem("language", value);
+      this.setState({language: value});
+      this.props.switchLanguage(value);
+
+    };
 
     return (
-    <Navbar color="white" light expand>
+        <div>
+          <Navbar color="white" light expand>
       <span
           className="sidebar-toggle d-flex mr-2"
           onClick={() => {
-            dispatch(toggleSidebar());
+
           }}
       >
         <i className="hamburger align-self-center" />
       </span>
 
-      <Form inline>
-        {/*<Input*/}
-        {/*  type="text"*/}
-        {/*  placeholder="Search projects..."*/}
-        {/*  aria-label="Search"*/}
-        {/*  className="form-control-no-border mr-sm-2"*/}
-        {/*/>*/}
-        <renderSelect />
-      </Form>
+            <Form inline>
+              {/*<Input*/}
+              {/*  type="text"*/}
+              {/*  placeholder="Search projects..."*/}
+              {/*  aria-label="Search"*/}
+              {/*  className="form-control-no-border mr-sm-2"*/}
+              {/*/>*/}
+              <renderSelect />
+            </Form>
 
-      <Collapse navbar>
-        <Nav className="ml-auto" navbar>
-          <NavbarDropdown
-            header="New Messages"
-            footer="Show all messages"
-            icon={MessageCircle}
-            count={messages.length}
-            showBadge
-          >
-            {messages.map((item, key) => {
-              return (
-                <NavbarDropdownItem
-                  key={key}
-                  icon={
-                    <img
-                      className="avatar img-fluid rounded-circle"
-                      src={item.avatar}
-                      alt={item.name}
-                    />
-                  }
-                  title={item.name}
-                  description={item.description}
-                  time={item.time}
-                  spacing
-                />
-              );
-            })}
-          </NavbarDropdown>
+            <Collapse navbar>
+              <Nav className="ml-auto" navbar>
+                <NavbarDropdown
+                    header="New Messages"
+                    footer="Show all messages"
+                    icon={MessageCircle}
+                    count={messages.length}
+                    showBadge
+                >
+                  {messages.map((item, key) => {
+                    return (
+                        <NavbarDropdownItem
+                            key={key}
+                            icon={
+                              <img
+                                  className="avatar img-fluid rounded-circle"
+                                  src={item.avatar}
+                                  alt={item.name}
+                              />
+                            }
+                            title={item.name}
+                            description={item.description}
+                            time={item.time}
+                            spacing
+                        />
+                    );
+                  })}
+                </NavbarDropdown>
 
-          <NavbarDropdown
-            header="New Notifications"
-            footer="Show all notifications"
-            icon={BellOff}
-            count={notifications.length}
-          >
-            {notifications.map((item, key) => {
-              let icon = <Bell size={18} className="text-warning" />;
+                <NavbarDropdown
+                    header="New Notifications"
+                    footer="Show all notifications"
+                    icon={BellOff}
+                    count={notifications.length}
+                >
+                  {notifications.map((item, key) => {
+                    let icon = <Bell size={18} className="text-warning" />;
 
-              if (item.type === "important") {
-                icon = <AlertCircle size={18} className="text-danger" />;
-              }
+                    if (item.type === "important") {
+                      icon = <AlertCircle size={18} className="text-danger" />;
+                    }
 
-              if (item.type === "login") {
-                icon = <Home size={18} className="text-primary" />;
-              }
+                    if (item.type === "login") {
+                      icon = <Home size={18} className="text-primary" />;
+                    }
 
-              if (item.type === "request") {
-                icon = <UserPlus size={18} className="text-success" />;
-              }
+                    if (item.type === "request") {
+                      icon = <UserPlus size={18} className="text-success" />;
+                    }
 
-              return (
-                <NavbarDropdownItem
-                  key={key}
-                  icon={icon}
-                  title={item.title}
-                  description={item.description}
-                  time={item.time}
-                />
-              );
-            })}
-          </NavbarDropdown>
+                    return (
+                        <NavbarDropdownItem
+                            key={key}
+                            icon={icon}
+                            title={item.title}
+                            description={item.description}
+                            time={item.time}
+                        />
+                    );
+                  })}
+                </NavbarDropdown>
 
-          <UncontrolledDropdown nav inNavbar className="mr-2">
-            <DropdownToggle nav caret className="nav-flag">
-              <img src={usFlag} alt="English" />
-            </DropdownToggle>
-            <DropdownMenu right>
-              <DropdownItem>
-                <img
-                  src={usFlag}
-                  alt="English"
-                  width="20"
-                  className="align-middle mr-1"
-                />
-                <span className="align-middle">English</span>
-              </DropdownItem>
-              <DropdownItem>
-                <img
-                  src={plFlag}
-                  alt="Polish"
-                  width="20"
-                  className="align-middle mr-1"
-                />
-                <span className="align-middle">Polish</span>
-              </DropdownItem>
 
-            </DropdownMenu>
-          </UncontrolledDropdown>
+                <UncontrolledDropdown nav inNavbar className="mr-2">
+                  <DropdownToggle nav caret className="nav-flag">
+                    { this.props.language === 'PL'? <img src={plFlag} alt="Polish" /> : <img src={usFlag} alt="English" /> }
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <div onClick={() => handleLanguageChange('EN')}>
+                    <DropdownItem>
+                      <img
+                          src={usFlag}
+                          alt="English"
+                          width="20"
+                          className="align-middle mr-1"
+                      />
+                      <span className="align-middle">English</span>
+                    </DropdownItem>
+                    </div>
+                    <div  onClick={() => handleLanguageChange('PL')}>
+                    <DropdownItem>
+                      <img
+                          src={plFlag}
+                          alt="Polish"
+                          width="20"
+                          className="align-middle mr-1"
+                      />
+                      <span className="align-middle">Polish</span>
+                    </DropdownItem>
+                    </div>
 
-          <UncontrolledDropdown nav inNavbar>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+
+                <UncontrolledDropdown nav inNavbar>
             <span className="d-inline-block d-sm-none">
               <DropdownToggle nav caret>
                 <Settings size={18} className="align-middle" />
               </DropdownToggle>
             </span>
-            <span className="d-none d-sm-inline-block">
+                  <span className="d-none d-sm-inline-block">
               <DropdownToggle nav caret>
                 <img
-                  src={avatar1}
-                  className="avatar img-fluid rounded-circle mr-1"
-                  alt="Chris Wood"
+                    src={avatar1}
+                    className="avatar img-fluid rounded-circle mr-1"
+                    alt="Chris Wood"
                 />
                 <span className="text-dark">{window.sessionStorage.getItem("name")}</span>
               </DropdownToggle>
             </span>
-            <DropdownMenu right>
-              <DropdownItem>
-                <User size={18} className="align-middle mr-2" />
-                Profile
-              </DropdownItem>
-              <DropdownItem onClick={logout}>Sign out</DropdownItem>
-            </DropdownMenu>
-          </UncontrolledDropdown>
-        </Nav>
-      </Collapse>
-    </Navbar>
-  );
-};
+                  <DropdownMenu right>
+                    <DropdownItem>
+                      <User size={18} className="align-middle mr-2" />
+                      Profile
+                    </DropdownItem>
+                    <DropdownItem onClick={logout}>Sign out</DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              </Nav>
+            </Collapse>
+          </Navbar>
+        </div>
+    );
+  }
+
+}
 
 const mapStateToProps = (state) => {
   if(state.session.meta === undefined){
-    return ({name: ''})
-  }else {
+    return({
+      name: '',
+      language: state.language
+    })
+  }else{
     window.sessionStorage.setItem("name", state.session.meta.name);
     window.sessionStorage.setItem("language", state.session.meta.defaultLanguage);
     return ({
       name: state.session.meta.name,
+      language: state.session.meta.defaultLanguage
     });
   }
 };
 
-export default connect(mapStateToProps)(NavbarComponent);
+const mapDispatchToProps = (dispatch) =>({
+      logoutUser: () => dispatch(logoutUser()),
+      switchLanguage: (language) => dispatch(switchLanguage(language))
+});
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavbarComponent);

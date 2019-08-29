@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {LANGUAGE_CHANGE} from "./language-actions";
 
 export const VERIFY_TOKEN = 'VERIFY_TOKEN';
 export const CREATE_PASSWORD = 'CREATE_PASSWORD';
@@ -32,6 +33,7 @@ export const login = (user) => async dispatch => {
         let sessionData = await axios.post ('http://localhost:5000/auth/user-session', {user}, {withCredentials: true});
         dispatch({type: LOGIN_USER, payload: response});
         dispatch({type: USER_SESSION, payload: sessionData.data});
+        dispatch({type: LANGUAGE_CHANGE, payload: sessionData.data.meta.defaultLanguage});
     }
 };
 

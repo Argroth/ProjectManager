@@ -20,6 +20,7 @@ import createTaskReducer from "./project-manager-reducers/project-create-task-re
 import getAllUsersReducer from "./project-manager-reducers/project-create-user-list";
 import sidebar from './layout-reducers/sidebar-reducer';
 import session from './auth-reducers/session-reducer';
+import language from './layout-reducers/language-reducer';
 
 export default combineReducers({
         users: userReducer,
@@ -40,7 +41,8 @@ export default combineReducers({
         createTask: createTaskReducer,
         userList: getAllUsersReducer,
         session: session,
-        sidebar,
+        sidebar: sidebar,
+        language: language,
         form: formReducer
     }
 );
