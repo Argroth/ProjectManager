@@ -47,22 +47,7 @@ class ProjectCreate extends Component {
             benefits: [],
             projectTeam: [],
             projectBudgetArray: [],
-            projectBudget: 0,
-            PL: {
-                projectCard: 'Karta Projektu',
-                info: 'Informacje',
-                projectName: 'Nazwa Projektu',
-                startDate: 'Data Rozpoczęcia',
-                endDate: 'Data Zakończenia',
-            },
-            EN: {
-                projectCard: 'Project Card',
-                info: 'Basic Informations',
-                projectName: 'Project Name',
-                startDate: 'Start Date',
-                endDate: 'End Date',
-            },
-            textToShow: {name: '22'}
+            projectBudget: 0
         }
     };
 
@@ -145,7 +130,7 @@ class ProjectCreate extends Component {
                             event.target.checked === true? fields.push() : fields.remove(0)
                         }}/>
                     </InputGroupText>
-                    <InputGroupText>Korzyść mierzalna</InputGroupText>
+                    <InputGroupText>{this.props.textToShow.projectBenefitMeas}</InputGroupText>
                 </InputGroupAddon>
 
                     {fields.map((kpi, index) => (
@@ -160,12 +145,12 @@ class ProjectCreate extends Component {
                                 />
                             </FormGroup>
                             <FormGroup>
-                                <Label for="kpiValue">Wartość docelowa miernika</Label>
+                                <Label for="kpiValue">{this.props.textToShow.projectKPITargetValue}</Label>
                                 <Field
                                     name={`${kpi}.value`}
                                     type="text"
                                     component={RenderField}
-                                    label="KPI Value"
+                                    label={this.props.textToShow.projectKPIValue}
                                 />
                             </FormGroup>
                             </InputGroup>
@@ -178,14 +163,14 @@ class ProjectCreate extends Component {
             <Card>
                 <CardHeader>
                     <CardTitle tag="h5" className="mb-0">
-                        Korzyści z projektu
+                        {this.props.textToShow.projectBenefits}
                     </CardTitle>
                 </CardHeader>
                 <CardBody>
                     <Row form inline>
                         <Col md={12}>
                             <FormGroup>
-                                <Label for="projectBenefit">Korzyść</Label>
+                                <Label for="projectBenefit">{this.props.textToShow.projectBenefit}</Label>
                                 <Row inline>
                                     {fields.map((benefit, index) => (
                                         <InputGroup key={index}>
@@ -194,7 +179,7 @@ class ProjectCreate extends Component {
                                                         name={`${benefit}.benefit`}
                                                         type="text"
                                                         component={RenderField}
-                                                        label="cośtam korzyść"
+                                                        label={this.props.textToShow.projectBenefitDesc}
                                                     />
                                             <FieldArray name={`${benefit}.kpi`} component={RenderKPIs} />
 
@@ -252,24 +237,24 @@ class ProjectCreate extends Component {
                 <div>
                     <CardHeader>
                         <CardTitle tag="h5" className="mb-0">
-                            Etapy i rezultaty projektu
+                            {this.props.textToShow.projectStages}
                         </CardTitle>
                     </CardHeader>
                     <CardBody>
                         <Row form>
                             <Col md={5}>
                                 <FormGroup>
-                                    <Label for="projectStage">Etap</Label>
+                                    <Label for="projectStage">{this.props.textToShow.projectStage}</Label>
                                 </FormGroup>
                             </Col>
                             <Col md={2}>
                                 <FormGroup>
-                                    <Label for="stageBudget">Budżet</Label>
+                                    <Label for="stageBudget">{this.props.textToShow.projectBudget}</Label>
                                 </FormGroup>
                             </Col>
                             <Col md={5}>
                                 <FormGroup>
-                                    <Label for="stageResults">Rezultat etapu</Label>
+                                    <Label for="stageResults">{this.props.textToShow.projectStageResult}</Label>
                                 </FormGroup>
                             </Col>
                         </Row>
@@ -295,7 +280,7 @@ class ProjectCreate extends Component {
                                                 name={`${stage}.name`}
                                                 type="text"
                                                 component={RenderField}
-                                                label="Etap projektu"
+                                                label={this.props.textToShow.projectStage}
                                             />
                                         </FormGroup>
                                     </Col>
@@ -308,7 +293,7 @@ class ProjectCreate extends Component {
                                                     component={RenderField}
                                                     value={input.value}
                                                     onBlur={(event) => handleChange(event)}
-                                                    label="Budżet etapu"
+                                                    label={this.props.textToShow.projectBudget}
                                                 />
                                                 <InputGroupAddon addonType="append">{this.state.currency}</InputGroupAddon>
                                             </InputGroup>
@@ -320,7 +305,7 @@ class ProjectCreate extends Component {
                                                 name={`${stage}.result`}
                                                 type="text"
                                                 component={RenderField}
-                                                label="Rezultaty/produkty które powinny być efektem etapu projektowego"
+                                                label={this.props.textToShow.projectStageResultDesc}
                                             />
                                         </FormGroup>
                                     </Col>
@@ -330,7 +315,7 @@ class ProjectCreate extends Component {
                         <PlusCircle className="align-baseline" size={24} onClick={() => handleClick()}/>
                         <div className="mb-4">
                             <br />
-                            <h4>Budżet projektu: {this.state.projectBudget} {this.state.currency}</h4>
+                            <h4>{this.props.textToShow.projectBudgetCalc} {this.state.projectBudget} {this.state.currency}</h4>
                         </div>
                     </CardBody>
                 </div>
@@ -342,12 +327,12 @@ class ProjectCreate extends Component {
             <Card>
                 <CardHeader>
                     <CardTitle tag="h5" className="mb-0">
-                        Kluczowe ryzyka projektu
+                        {this.props.textToShow.projectRisks}
                     </CardTitle>
                 </CardHeader>
                 <CardBody>
                     <FormGroup>
-                        <Label for="projectRisks">Ryzyka</Label>
+                        <Label for="projectRisks">{this.props.textToShow.projectRisk}</Label>
                         {fields.map((risk, index) => (
                             <Row key={index}>
                                 <Col md={12}>
@@ -356,7 +341,7 @@ class ProjectCreate extends Component {
                                     name={`${risk}.name`}
                                     id="projectRisks"
                                     component={RenderField}
-                                    label="Wskazanie kluczowych i najważniejszych zagrożeń dla projektu" />
+                                    label={this.props.textToShow.projectRisksDesc} />
                                     <br />
                                 </Col>
                             </Row>
@@ -376,7 +361,7 @@ class ProjectCreate extends Component {
                             name={`${option}.name`}
                             id="projectMeetings"
                             component={RenderField}
-                            label="Opisanie typów spotkań i ich częstotliwości" />
+                            label={this.props.textToShow.projectOrganizationMeetingsDesc} />
                         <br/>
                     </div>
 
@@ -409,65 +394,65 @@ class ProjectCreate extends Component {
                     <Card>
                         <CardHeader>
                             <CardTitle tag="h5" className="mb-0">
-                                {this.state.textToShow.projectCard}
+                                {this.props.textToShow.projectCard}
                             </CardTitle>
                         </CardHeader>
                         <CardBody>
                             <Card>
                                 <CardHeader>
                                     <CardTitle tag="h5" className="mb-0">
-                                        {this.state.textToShow.info}
+                                        {this.props.textToShow.info}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardBody>
                                     <Row form>
                                         <Col md={8}>
                                             <FormGroup>
-                                                <Label for="projectName">{this.state.textToShow.projectName}</Label>
-                                                <Field name="projectName" type="text" component={RenderField} label={this.state.textToShow.projectName}/>
+                                                <Label for="projectName">{this.props.textToShow.projectName}</Label>
+                                                <Field name="projectName" type="text" component={RenderField} label={this.props.textToShow.projectNameDesc}/>
                                             </FormGroup>
                                         </Col>
                                         <Col md={2}>
                                             <FormGroup>
-                                                <Label for="startdate">{this.state.textToShow.startDate}</Label>
-                                                <Field name="projectStartDate" type="date" component={RenderField} label={this.state.textToShow.startDate}/>
+                                                <Label for="startdate">{this.props.textToShow.startDate}</Label>
+                                                <Field name="projectStartDate" type="date" component={RenderField} label={this.props.textToShow.startDate}/>
                                             </FormGroup>
                                         </Col>
                                         <Col md={2}>
                                             <FormGroup>
-                                                <Label for="endDate">{this.state.textToShow.endDate}</Label>
-                                                <Field name="projectEndDate" type="date" component={RenderField} label={this.state.textToShow.endDate}/>
+                                                <Label for="endDate">{this.props.textToShow.endDate}</Label>
+                                                <Field name="projectEndDate" type="date" component={RenderField} label={this.props.textToShow.endDate}/>
                                             </FormGroup>
                                         </Col>
                                     </Row>
                                     <FormGroup>
-                                        <Label for="projectGoal">Cel główny</Label>
-                                        <Field name="projectGoal" type="textarea" rows="4" component={RenderField} label="Wskazanie głównego celu/ów realizacji projektu zgodnego z zasadą SMART"/>
+                                        <Label for="projectGoal">{this.props.textToShow.projectGoal}</Label>
+                                        <Field name="projectGoal" type="textarea" rows="4" component={RenderField} label={this.props.textToShow.projectGoalDesc}/>
                                     </FormGroup>
                                     <FormGroup>
-                                        <Label for="projectScope">Zakres projektu</Label>
-                                        <Field name="projectScope" type="textarea" rows="4" component={RenderField} label="Wskazanie zakresu projektu (co wchodzi a co nie wchodzi w zakres projektu: in/out)"/>
+                                        <Label for="projectScope">{this.props.textToShow.projectScope}</Label>
+                                        <Field name="projectScope" type="textarea" rows="4" component={RenderField} label={this.props.textToShow.projectScopeDesc}/>
                                     </FormGroup>
                                     <FormGroup>
-                                        <Label for="projectReasons">Przyczyny uruchomienia projektu</Label>
-                                        <Field name="projectReasons" type="textarea" rows="4" component={RenderField} label="Krótki opis sytuacji wyjściowej, dlaczego uruchamiamy projekt"/>
+                                        <Label for="projectReasons">{this.props.textToShow.projectReasons}</Label>
+                                        <Field name="projectReasons" type="textarea" rows="4" component={RenderField} label={this.props.textToShow.projectReasonsDesc}/>
                                     </FormGroup>
                                     <Row>
                                         <Col md={4} sm={12}>
                                             <FormGroup>
-                                                <Label>Kierownik projektu</Label>
+                                                <Label>{this.props.textToShow.projectManager}</Label>
                                                 <Field name="projectManager"  component={RenderSelect}/>
                                             </FormGroup>
                                         </Col>
                                         <Col md={6} sm={12}>
                                             <FormGroup>
-                                                <Label>Właściciel projektu / komitet sterujący</Label>
+                                                <Label>{this.props.textToShow.projectOwner}</Label>
                                                 <Field name="projectSteeringComitee"  component={RenderSelectMulti}/>
                                             </FormGroup>
                                         </Col>
                                         <Col md={2} sm={12}>
                                             <FormGroup>
-                                                <Label>Waluta projektu</Label>
+                                                <Label>{this.props.textToShow.projectCurrency}</Label>
                                                 <Field name="projectCurrency"  component={RenderSelectCurrency}/>
                                             </FormGroup>
                                         </Col>
@@ -480,7 +465,7 @@ class ProjectCreate extends Component {
                             <Card>
                                 <CardHeader>
                                     <CardTitle tag="h5" className="mb-0">
-                                        Zespół projektowy
+                                        {this.props.textToShow.projectTeam}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardBody>
@@ -495,10 +480,10 @@ class ProjectCreate extends Component {
                                                 <thead>
                                                 <tr>
                                                     <th></th>
-                                                    <th>Imię i nazwisko</th>
-                                                    <th>Firma</th>
-                                                    <th>Dział</th>
-                                                    <th>Stanowisko</th>
+                                                    <th>{this.props.textToShow.projectTeamName}</th>
+                                                    <th>{this.props.textToShow.projectTeamCompany}</th>
+                                                    <th>{this.props.textToShow.projectTeamDepartment}</th>
+                                                    <th>{this.props.textToShow.projectTeamDepartmentRole}</th>
                                                     <th></th>
                                                 </tr>
                                                 </thead>
@@ -554,21 +539,21 @@ class ProjectCreate extends Component {
                             <Card>
                                 <CardHeader>
                                     <CardTitle tag="h5" className="mb-0">
-                                        Organizacja projektu
+                                        {this.props.textToShow.projectOrganization}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardBody>
                                     <FormGroup>
-                                        <Label for="projectMeetings">Spotkania zespołu</Label>
+                                        <Label for="projectMeetings">{this.props.textToShow.projectOrganizationMeetings}</Label>
                                         <FieldArray name="projectMeetings" component={RenderMeetings}/>
                                     </FormGroup>
                                     <FormGroup>
-                                        <Label>Bieżącza komunikaja projektowa</Label>
+                                        <Label>{this.props.textToShow.projectOrganizationCommunication}</Label>
                                         <Field name="projectCommunication"  component={RenderCommunication}/>
                                     </FormGroup>
                                     <FormGroup>
-                                        <Label for="projectOrganization">Opisanie pozostałych kwestii organizacyjnych</Label>
-                                        <Field name="projectOrganization" type="textarea" rows="4" component={RenderField} label="Opisanie pozostałych kwestii organizacyjnych"/>
+                                        <Label for="projectOrganization">{this.props.textToShow.projectOrganizationOther}</Label>
+                                        <Field name="projectOrganization" type="textarea" rows="4" component={RenderField} label={this.props.textToShow.projectOrganizationOther}/>
                                     </FormGroup>
                                 </CardBody>
                             </Card>
@@ -579,14 +564,14 @@ class ProjectCreate extends Component {
                                     className="mr-1 mb-1"
                                     type="submit"
                                 >
-                                    Zapisz
+                                    {this.props.language === 'PL'? 'Zapisz' : 'Save'}
                                 </Button>
                                 <Button
                                     color="danger"
                                     className="mr-1 mb-1"
                                     onClick={reset}
                                 >
-                                    Anuluj
+                                    {this.props.language === 'PL'? 'Anuluj' : 'Abort'}
                                 </Button>
                             </div>
                         </CardBody>
@@ -631,13 +616,109 @@ const validate = values => {
     return errors
 };
 
-const mapStateToProps = (state, ownProps) => {
-    return ({...ownProps,
-        message: state.projectCreate.data,
-        userList: state.userList,
-        language: state.language,
-       });
+const PL = {PL: {
+    projectCard: 'Karta Projektu',
+        info: 'Informacje',
+        projectName: 'Nazwa Projektu',
+        projectNameDesc: 'Krótka nazwa określająca główną istotę projektu',
+        startDate: 'Data Rozpoczęcia',
+        endDate: 'Data Zakończenia',
+        projectGoal: 'Cel Główny',
+        projectGoalDesc: 'Wskazanie głównego celu/ów realizacji projektu zgodnego z zasadą SMART',
+        projectScope: 'Zakres Projektu',
+        projectScopeDesc: 'Wskazanie zakresu projektu(co wchodzi a co nie wchodzi w zakres projektu: in/out)',
+        projectReasons: 'Przyczyny uruchomienia projektu',
+        projectReasonsDesc: 'Krótki opis sytuacji wyjściowej, dlaczego uruchamiany jest projekt',
+        projectManager: 'Kierownik projektu',
+        projectOwner: 'Właściciel projektu/komitet sterujący',
+        projectCurrency: 'Waluta projektu',
+        projectTeam: 'Zespół projektowy',
+        projectTeamName: 'Imię i nazwisko',
+        projectTeamCompany: 'Firma',
+        projectTeamDepartment: 'Dział',
+        projectTeamDepartmentRole: 'Stanowisko',
+        projectStages: 'Etapy i rezultaty projektu',
+        projectStage: 'Etap',
+        projectBudget: 'Budżet',
+        projectBudgetCalc: 'Budżet projektu: ',
+        projectStageResult: 'Rezultat Etapu',
+        projectStageResultDesc: 'Produkty, które powinny być efektem etapu projektu',
+        projectRisks: 'Kluczowe ryzyka projektu',
+        projectRisk: 'Ryzyka',
+        projectRisksDesc: 'Wskazanie kluczowych i najważniejszych zagrożeń dla projektu',
+        projectOrganization: 'Organizacja projektu',
+        projectOrganizationMeetings: 'Spotkania zespołu',
+        projectOrganizationCommunication: 'Opisanie typów spotkań i ich częstotliwości',
+        projectOrganizationOther: 'Opisanie pozostałych kwestii organizacyjnych',
+        projectOrganizationMeetingsDesc: 'Opisanie typów spotkań i ich częstotliwości',
+        projectBenefit: 'Korzyść',
+        projectBenefits: 'Korzyści z projektu',
+        projectBenefitDesc: 'Wskazanie korzyści, które zostaną osiągnięte w wyniku zrealizowanego projektu',
+        projectBenefitMeas: 'Korzyść mierzalna?',
+        projectKPITargetValue: 'Wartość docelowa miernika',
+        projectKPIValue: 'KPI',
+}};
+const EN = {EN: {
+    projectCard: 'Project Card',
+        info: 'Basic Informations',
+        projectName: 'Project Name',
+        projectNameDesc: 'A short name defining the main essence of the project',
+        startDate: 'Start Date',
+        endDate: 'End Date',
+        projectGoal: 'Project Goal',
+        projectGoalDesc: 'Indication of the main objective of the project in line with SMART principle',
+        projectScope: 'Scope of the project',
+        projectScopeDesc: 'Indication of the scope of the project(what is and what is not in the scope of the project: in/out)',
+        projectReasons: 'Reasons for starting the project',
+        projectReasonsDesc: 'A brief description of the initial situation, why we launch the project',
+        projectManager: 'Project Manager',
+        projectOwner: 'Project owner/Steering comitee',
+        projectCurrency: 'Project Currency',
+        projectTeam: 'Project Team',
+        projectTeamName: 'Name and surname',
+        projectTeamCompany: 'Company',
+        projectTeamDepartment: 'Department',
+        projectTeamDepartmentRole: 'Department Role',
+        projectStages: 'Stages of the project',
+        projectStage: 'Stage',
+        projectBudget: 'Budget',
+        projectBudgetCalc: 'Project budget: ',
+        projectStageResult: 'Stage result',
+        projectStageResultDesc: 'Result of the project stage',
+        projectRisks: 'Key project risks',
+        projectRisk: 'Risks',
+        projectRisksDesc: 'Indication of the key and most important threats to the project',
+        projectOrganization: 'Project Organization',
+        projectOrganizationMeetings: 'Project meetings',
+        projectOrganizationCommunication: 'Project communication',
+        projectOrganizationOther: 'Other methods of communication in project',
+        projectOrganizationMeetingsDesc: 'Describing types of meetings and their frequency',
+        projectBenefit: 'Benefit',
+        projectBenefits: 'Benefits of the project',
+        projectBenefitDesc: 'Indicating key point and benefit that will be achieved as a result of the project',
+        projectBenefitMeas: 'Benefit measurable?',
+        projectKPITargetValue: 'KPI Target Value',
+        projectKPIValue: 'KPI',
+}};
 
+const mapStateToProps = (state, ownProps) => {
+    if(state.language === 'PL'){
+        return ({
+            ...ownProps,
+            message: state.projectCreate.data,
+            userList: state.userList,
+            language: state.language,
+            textToShow: PL.PL
+        })
+    }else{
+        return ({
+            ...ownProps,
+            message: state.projectCreate.data,
+            userList: state.userList,
+            language: state.language,
+            textToShow: EN.EN
+        })
+    }
 };
 
 const mapDispatchToProps = (dispatch) => ({

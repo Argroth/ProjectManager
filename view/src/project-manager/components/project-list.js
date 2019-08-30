@@ -4,75 +4,42 @@ import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 import filterFactory from "react-bootstrap-table2-filter";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
+import { connect } from 'react-redux';
+import {getAllProjects} from "../../actions/project-manager-actions";
 
 const {SearchBar, ClearSearchButton } = Search;
 
-const initialProjects = [
-    {
-        status: 1,
-        idProject: 1,
-        nameProject: "Projekt jeden",
-        startDate: "2019-03-10",
-        endDate: "2019-06-15",
-        projectManager: "Kamil Olszewski"
-    },
-    {
-        status: 2,
-        idProject: 2,
-        nameProject: "Projekt dwa",
-        startDate: "2019-01-05",
-        endDate: "2019-03-12",
-        projectManager: "Barbara Walczak"
-    },
-    {
-        status: 2,
-        idProject: 3,
-        nameProject: "Projekt trzy",
-        startDate: "2018-11-08",
-        endDate: "2019-02-13",
-        projectManager: "Kamil Olszewski"
-    }
-];
-
 const tableColumns = [
     {
-        dataField: "idProject",
-        text: "Id",
+        dataField:'projectName',
+        text: "Nazwa",
         sort: true,
         headerStyle: () => {
-            return { width: "5%" };
+            return { width: "50%" };
         }
     },
     {
-        dataField: "nameProject",
-        text: "Nazwa projektu",
-        sort: true,
-        headerStyle: () => {
-            return { width: "60%" };
-        }
-    },
-    {
-        dataField: "startDate",
+        dataField: "projectStartDate",
         text: "Data rozpoczęcia",
         sort: true,
         headerStyle: () => {
-            return { width: "10%" };
+            return { width: "15%" };
         }
     },
     {
-        dataField: "endDate",
+        dataField: "projectEndDate",
         text: "Data zakończenia",
         sort: true,
         headerStyle: () => {
-            return { width: "10%" };
+            return { width: "15%" };
         }
     },
     {
-        dataField: "projectManager",
+        dataField: 'projectManager',
         text: "Kierownik projektu",
         sort: true,
         headerStyle: () => {
-            return { width: "15%" };
+            return { width: "20%" };
         }
     },
 ];
@@ -82,14 +49,19 @@ class ProjectList extends React.Component {
         super(props);
 
         this.state = {
-            projects: [...initialProjects],
             status: props.status
         };
     }
 
+
+    componentDidMount() {
+        this.props.getAllProjects();
+    }
+
+
     render() {
 
-        const projectListArray = this.state.projects.filter(item => item.status === this.state.status);
+        const projectListArray = this.props.projectList.filter(item => item.meta.status === this.state.status);
 
         return (
             <>
@@ -139,5 +111,23 @@ class ProjectList extends React.Component {
     }
 }
 
+const mapDispatchToProps = (dispatch) => ({
+    getAllProjects: () => dispatch(getAllProjects())
+});
 
-export default ProjectList;
+const mapStateToProps = (state, ownProps) => {
+    if(!state.projectsList.orderedProjectList){
+        return ({
+            ...ownProps,
+            projectList: []
+        })
+    }else {
+        return ({
+            ...ownProps,
+            projectList: state.projectsList.orderedProjectList,
+            language: state.language
+        })
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectList);

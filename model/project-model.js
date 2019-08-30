@@ -12,7 +12,8 @@ const projectSchema = mongoose.Schema({
         value: {type: Number, default: null},
         currency: {type: String, default: null}
     },
-    projectManager: [],
+    projectManager: {type: String, default: null},
+    projectManagerObject: [],
     projectSteeringComitee: [],
     projectTeam: [],
     projectStages: [],
@@ -24,7 +25,7 @@ const projectSchema = mongoose.Schema({
         createdAt: Date,
         updatedBy: String,
         updatedAt: Date,
-        status: {type: String, enum: ['InPreparation', 'InProgress', 'Finished'], default: 'InPreparation'}
+        status: {type: String, enum: ['InPreparation', 'InImplementation', 'Finished'], default: 'InPreparation'}
     },
     tags: {},
     changeLog:[],

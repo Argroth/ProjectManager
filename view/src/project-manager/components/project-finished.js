@@ -3,7 +3,7 @@ import ProjectList from "./project-list";
 
 
 const Finished = () => (
-    <ProjectList status={3}/>
+    <ProjectList status={'Finished'}/>
 );
 
 export default Finished;

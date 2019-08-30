@@ -3,7 +3,7 @@ import ProjectList from "./project-list"
 
 
 const Preparation = () => (
-    <ProjectList status={1}/>
+    <ProjectList status={'InPreparation'}/>
 );
 
 export default Preparation;

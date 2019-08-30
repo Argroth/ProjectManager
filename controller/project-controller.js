@@ -37,7 +37,7 @@ exports.create = (req, res) => {
         projectCommunication
     } = req.body.project;
 
-    console.log(req.body.project);
+    console.log(projectManager);
 
      const project = new Project({
          projectName: projectName,
@@ -51,7 +51,8 @@ exports.create = (req, res) => {
              value: projectBudget,
              currency: currency
          },
-         projectManager: projectManager,
+         projectManager: projectManager.value,
+         projectManagerObject: projectManager,
          projectSteeringComitee: projectSteeringComitee,
          projectTeam: projectTeam,
          projectStages: projectStages,
