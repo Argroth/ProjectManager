@@ -1,8 +1,8 @@
-import { GET_PROJECT_TO_VIEW } from "../../actions/project-manager-actions";
+import { GET_PROJECT_DATA } from "../../actions/project-manager-actions";
 
 export default (state = [], action) => {
     switch(action.type){
-        case GET_PROJECT_TO_VIEW:{
+        case GET_PROJECT_DATA:{
             return action.payload;
         }
         default:

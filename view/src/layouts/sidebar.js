@@ -44,7 +44,7 @@ class Sidebar extends React.Component {
                                     {this.props.language === 'PL'? 'W Przygotowaniu' : 'In Preparation' }
                                 </NavLink>
                                 <NavLink to='/project-manager/project-list/implementation' className="sidebar-link" activeClassName="active">
-                                    {this.props.language === 'PL'? 'W Realizacji' : 'In Realization' }
+                                    {this.props.language === 'PL'? 'W Realizacji' : 'In Implementation' }
                                 </NavLink>
                                 <NavLink to='/project-manager/project-list/finished' className="sidebar-link" activeClassName="active">
                                     {this.props.language === 'PL'? 'Zakończone' : 'Finished' }
@@ -54,26 +54,6 @@ class Sidebar extends React.Component {
                     </ul>
 
 
-                        {/*<div className="sidebar-bottom d-none d-lg-block">*/}
-                        {/*    <div className="media">*/}
-                        {/*        <img*/}
-                        {/*            className="rounded-circle mr-3"*/}
-                        {/*            alt="Kamil Olszewski"*/}
-                        {/*            width="40"*/}
-                        {/*            height="40"*/}
-                        {/*        />*/}
-                        {/*        <div className="media-body">*/}
-                        {/*            <h5 className="mb-1">Kamil Olszewski</h5>*/}
-                        {/*            <div>*/}
-                        {/*                <FontAwesomeIcon*/}
-                        {/*                    icon={faCircle}*/}
-                        {/*                    className="text-success"*/}
-                        {/*                />{" "}*/}
-                        {/*                Online*/}
-                        {/*            </div>*/}
-                        {/*        </div>*/}
-                        {/*    </div>*/}
-                        {/*</div>*/}
                 </PerfectScrollbar>
             </div>
             </div>

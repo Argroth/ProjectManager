@@ -18,7 +18,6 @@ import {
   ListGroup,
   ListGroupItem,
   Form,
-  Input
 } from "reactstrap";
 
 import {
@@ -182,7 +181,7 @@ class NavbarComponent extends Component {
               {/*  aria-label="Search"*/}
               {/*  className="form-control-no-border mr-sm-2"*/}
               {/*/>*/}
-              <renderSelect />
+              {/*<renderSelect />*/}
             </Form>
 
             <Collapse navbar>

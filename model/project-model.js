@@ -12,13 +12,15 @@ const projectSchema = mongoose.Schema({
         value: {type: Number, default: null},
         currency: {type: String, default: null}
     },
+    projectCurrency: [],
     projectManager: {type: String, default: null},
     projectManagerObject: [],
     projectSteeringComitee: [],
     projectTeam: [],
     projectStages: [],
-    projectRisk: [],
+    projectRisks: [],
     projectOrganization: [],
+    projectMeetings: [],
     projectCommunication: [],
     meta: {
         createdBy: String,

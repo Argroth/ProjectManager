@@ -2,9 +2,9 @@ import axios from 'axios';
 
 export const CREATE_PROJECT = 'CREATE_PROJECT';
 export const GET_ALL_PROJECTS = 'GET_ALL_PROJECTS';
-export const GET_PROJECT_TO_VIEW = 'GET_SPECIFIC_PROJECT_LIST';
 export const CREATE_NEW_TASK = 'CREATE_NEW_TASK';
 export const GET_ALL_USERS = 'GET_ALL_USERS';
+export const GET_PROJECT_DATA = 'GET_PROJECT_DATA';
 
 
 export const createProject = (project) => async dispatch => {
@@ -19,10 +19,6 @@ export const getAllProjects = () => async dispatch => {
     dispatch({type: GET_ALL_PROJECTS, payload: response.data})
 };
 
-export const fetchProjectData = (id) => async dispatch => {
-    const response = await axios.post('http://localhost:5000/project-manager/project-data', {projectID: id}, {withCredentials: true});
-    dispatch({type: GET_PROJECT_TO_VIEW, payload: response.data})
-};
 
 export const createNewTask = (task, ownProps) => async dispatch => {
     const response = await axios.post('http://localhost:5000/project/add-task', {
@@ -39,4 +35,9 @@ export const getAllTasks = () => async dispatch => {
 export const getAllUsers = () => async dispatch => {
     const response = await axios.get('http://localhost:5000/admin-panel/user-list');
     dispatch({type: GET_ALL_USERS, payload: response.data})
+};
+
+export const getProjectData = (projectID) => async dispatch => {
+    const response = await axios.post('http://localhost:5000/project-manager/project-data', {projectID});
+    dispatch({type: GET_PROJECT_DATA, payload: response.data})
 };

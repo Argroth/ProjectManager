@@ -9,11 +9,11 @@ import NotFound from "../not-found/app";
 import CreateProject from './components/project-create';
 import ListProjects from './components/project-list';
 import ContributedProjects from './components/project-contributed';
-import ProjectView from './components/project-view';
 import ProjectEdit from './components/project-edit';
 import ProjectPreparation from './components/project-preparation';
 import ProjectImplementation from './components/project-implementation';
 import ProjectFinished from './components/project-finished';
+import ProjectCard from './components/project/project-card';
 
 
 
@@ -27,8 +27,7 @@ class App extends Component {
                         <Route exact path="/project-manager/project-list/implementation" component={ProjectImplementation} />
                         <Route exact path="/project-manager/project-list/preparation" component={ProjectPreparation} />
                         <Route exact path="/project-manager/project-list/finished" component={ProjectFinished} />
-                        <Route exact path="/project-manager/project/:projectID" component={ProjectView} />
-                        <Route exact path="/project-manager/project-edit/:projectID" component={ProjectEdit} />
+                        <Route exact path="/project-manager/project-edit/:projectID" component={ProjectCard} />
                         <Route exact path="/project-manager/contributed-projects" component={ContributedProjects} />
                         <Route path="*"  component={NotFound} />
                     </Switch>

@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import {Field, FieldArray, reduxForm} from "redux-form";
 import { connect } from "react-redux";
-import { createProject, getAllUsers } from "../../actions/project-manager-actions";
+import { getAllUsers } from "../../actions/project-manager-actions";
+import { getProjectData } from "../../actions/project-manager-actions";
 import _ from 'lodash';
+import moment from 'moment';
 
 import {
     Button,
@@ -51,11 +53,20 @@ class ProjectEdit extends Component {
         }
     };
 
-    componentDidMount() {
-        this.props.getTeam();
-        this.props.language === 'PL'? this.setState({textToShow: this.state.PL}) : this.setState({textToShow: this.state.EN});
-    }
 
+
+    // static getDerivedStateFromProps(nextProps, prevState){
+    //   console.log(prevState);
+    //     if(prevState.projectTeam !== nextProps.initialValues.projectTeam) {
+    //         nextProps.initialValues.projectTeam === undefined? console.log('123'):{
+    //             projectTeam: nextProps.initialValues.projectTeam
+    //         }
+    //     }else {
+    //         return  null
+    //     }
+    // }
+
+    //add function
 
     render() {
         const {handleSubmit, submitting, reset} = this.props;
@@ -78,6 +89,8 @@ class ProjectEdit extends Component {
                 <div>
                     <Select
                         {...input}
+                        id="projectCurrency"
+                        name="projectCurrency"
                         className="react-select-container"
                         classNamePrefix="react-select"
                         value={input.value}
@@ -126,7 +139,7 @@ class ProjectEdit extends Component {
             <div>
                 <InputGroupAddon addonType="append">
                     <InputGroupText>
-                        <input type="checkbox" onChange={(event) => {
+                        <input id="measurable" name="measurable" type="checkbox" onChange={(event) => {
                             event.target.checked === true? fields.push() : fields.remove(0)
                         }}/>
                     </InputGroupText>
@@ -258,8 +271,10 @@ class ProjectEdit extends Component {
                                 </FormGroup>
                             </Col>
                         </Row>
+
+
                         {fields.map((stage, index, input) => {
-                            const handleChange = (event) => {
+                                const handleChange = (event) => {
                                 const newArray = this.state.projectBudgetArray;
 
                                 event.target.value > 0 ? newArray[index] = {value: event.target.value} : newArray[index] = {value: 0};
@@ -386,11 +401,11 @@ class ProjectEdit extends Component {
                 </div>
             )
         };
-
+//<form onSubmit={handleSubmit(this.props.createNewProject)}>
 
         return(
             <div>
-                <form onSubmit={handleSubmit(this.props.createNewProject)}>
+                <form>
                     <Card>
                         <CardHeader>
                             <CardTitle tag="h5" className="mb-0">
@@ -414,13 +429,13 @@ class ProjectEdit extends Component {
                                         </Col>
                                         <Col md={2}>
                                             <FormGroup>
-                                                <Label for="startdate">{this.props.textToShow.startDate}</Label>
+                                                <Label for="projectStartDate">{this.props.textToShow.startDate}</Label>
                                                 <Field name="projectStartDate" type="date" component={RenderField} label={this.props.textToShow.startDate}/>
                                             </FormGroup>
                                         </Col>
                                         <Col md={2}>
                                             <FormGroup>
-                                                <Label for="endDate">{this.props.textToShow.endDate}</Label>
+                                                <Label for="projectEndDate">{this.props.textToShow.endDate}</Label>
                                                 <Field name="projectEndDate" type="date" component={RenderField} label={this.props.textToShow.endDate}/>
                                             </FormGroup>
                                         </Col>
@@ -702,31 +717,30 @@ const EN = {EN: {
     }};
 
 const mapStateToProps = (state, ownProps) => {
-    if(state.language === 'PL'){
-        return ({
+    //Determine used language
+    let lang;
+    state.language === 'PL'? lang = PL.PL : lang = EN.EN;
+
+    //determine date
+    const list = state.projectData;
+    list.projectStartDate = moment(list.projectStartDate).format('YYYY-MM-DD');
+    list.projectEndDate = moment(list.projectEndDate).format('YYYY-MM-DD');
+    list.projectManager = list.projectManagerObject;
+
+
+    return ({
             ...ownProps,
             message: state.projectCreate.data,
             userList: state.userList,
             language: state.language,
-            textToShow: PL.PL
+            textToShow: lang,
+            initialValues: state.projectData
         })
-    }else{
-        return ({
-            ...ownProps,
-            message: state.projectCreate.data,
-            userList: state.userList,
-            language: state.language,
-            textToShow: EN.EN
-        })
-    }
 };
 
-const mapDispatchToProps = (dispatch) => ({
-
-});
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(reduxForm({
+export default connect(mapStateToProps, null)(reduxForm({
     form: 'EditProjectForm',
     validate,
     enableReinitialize: true

@@ -586,7 +586,7 @@ class ProjectCreate extends Component {
 
 
 
-
+//TODO Validate project manager
 
 const validate = values => {
     const errors = {};
@@ -597,22 +597,6 @@ const validate = values => {
         errors.projectStartDate = 'Start date cannot be greater than end date';
         errors.projectEndDate = 'Start date cannot be greater than end date';
     }
-     const projectStagesErrors = [];
-     if(!values.projectStages){
-     } else {
-        values.projectStages.map((stage, index) => {
-            const stageErrors = {};
-            if(stage === undefined){
-            } else {
-                if(stage.budget < 0){
-                    stageErrors.name = "Must be greater than 0";
-                    projectStagesErrors[index] = stageErrors;
-                }
-            }
-        });
-        errors.stages = projectStagesErrors;
-    }
-
     return errors
 };
 

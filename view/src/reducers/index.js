@@ -15,9 +15,9 @@ import passwordResetReducer from "./auth-reducers/password-reset-reducer";
 import loginUserReducer from "./auth-reducers/login-reducer";
 import createProjectReducer from "./project-manager-reducers/project-create-reducer";
 import getAllProjectsReducer from "./project-manager-reducers/project-list-reducer";
-import getProjectToView from "./project-manager-reducers/project-view-reducer";
 import createTaskReducer from "./project-manager-reducers/project-create-task-reducer";
 import getAllUsersReducer from "./project-manager-reducers/project-create-user-list";
+import getProjectDataReducer from './project-manager-reducers/project-data-reducer';
 import sidebar from './layout-reducers/sidebar-reducer';
 import session from './auth-reducers/session-reducer';
 import language from './layout-reducers/language-reducer';
@@ -37,9 +37,9 @@ export default combineReducers({
         messageLogin: loginUserReducer,
         projectCreate: createProjectReducer,
         projectsList: getAllProjectsReducer,
-        projectViewData: getProjectToView,
         createTask: createTaskReducer,
         userList: getAllUsersReducer,
+        projectData: getProjectDataReducer,
         session: session,
         sidebar: sidebar,
         language: language,

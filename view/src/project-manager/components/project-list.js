@@ -6,13 +6,24 @@ import filterFactory from "react-bootstrap-table2-filter";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import { connect } from 'react-redux';
 import {getAllProjects} from "../../actions/project-manager-actions";
+import { Redirect } from 'react-router-dom';
+import moment from 'moment';
+
 
 const {SearchBar, ClearSearchButton } = Search;
 
 const tableColumns = [
     {
+        dataField:'_id',
+        text: "ID",
+        sort: true,
+        headerStyle: () => {
+            return { width: "20%" };
+        }
+    },
+    {
         dataField:'projectName',
-        text: "Nazwa",
+        text: "Nazwa Projektu",
         sort: true,
         headerStyle: () => {
             return { width: "50%" };
@@ -59,9 +70,30 @@ class ProjectList extends React.Component {
     }
 
 
+    doSomething = () => {
+        const projectList = this.props.projectList;
+        projectList.forEach(project => {
+           project.projectStartDate = moment(project.projectStartDate).format('DD-MM-YYYY');
+           project.projectEndDate = moment(project.projectEndDate).format('DD-MM-YYYY');
+        });
+    };
+
+
     render() {
 
         const projectListArray = this.props.projectList.filter(item => item.meta.status === this.state.status);
+
+        const rowEvents = {
+            onClick: (e, row ) => {
+                this.setState({redirect: true, id: row._id});
+            }
+        };
+
+        if(this.state.redirect){
+            return(
+                <Redirect to={'/project-manager/project-edit/'+ this.state.id}/>
+            )
+        }
 
         return (
             <>
@@ -92,6 +124,7 @@ class ProjectList extends React.Component {
                                             classes="table-responsive-lg"
                                             bootstrap4
                                             bordered={false}
+                                            rowEvents={rowEvents}
                                             striped
                                             hover
                                             filter={ filterFactory() }
@@ -122,6 +155,9 @@ const mapStateToProps = (state, ownProps) => {
             projectList: []
         })
     }else {
+        const list = state.projectsList.orderedProjectList;
+        list.forEach(project => {project.projectStartDate = moment(project.projectStartDate).format('DD-MM-YYYY'); project.projectEndDate = moment(project.projectEndDate).format('DD-MM-YYYY')});
+
         return ({
             ...ownProps,
             projectList: state.projectsList.orderedProjectList,

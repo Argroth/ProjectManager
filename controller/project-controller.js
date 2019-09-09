@@ -1,7 +1,5 @@
 const Project = require('../model/project-model');
 const Calendar = require('../model/calendar-model');
-const jwt = require('jsonwebtoken');
-const secret = 'mysecreetsshhh';
 const moment = require('moment');
 
 exports.index = (req, res) => {
@@ -28,16 +26,16 @@ exports.create = (req, res) => {
         projectEndDate,
         projectBudget,
         currency,
+        projectCurrency,
         projectManager,
         projectSteeringComitee,
         projectTeam,
         projectStages,
         projectRisks,
         projectOrganization,
+        projectMeetings,
         projectCommunication
     } = req.body.project;
-
-    console.log(projectManager);
 
      const project = new Project({
          projectName: projectName,
@@ -51,13 +49,15 @@ exports.create = (req, res) => {
              value: projectBudget,
              currency: currency
          },
+         projectCurrency: projectCurrency,
          projectManager: projectManager.value,
          projectManagerObject: projectManager,
          projectSteeringComitee: projectSteeringComitee,
          projectTeam: projectTeam,
          projectStages: projectStages,
-         projectRisk: projectRisks,
+         projectRisks: projectRisks,
          projectOrganization: projectOrganization,
+         projectMeetings: projectMeetings,
          projectCommunication: projectCommunication,
              meta: {
              createdAt: Date.now(),
@@ -77,24 +77,6 @@ exports.create = (req, res) => {
     });
 };
 
-//TODO updatedBy fetch from passport user
-exports.update = (req, res) => {
-    Project.findByIdAndUpdate({_id: req.params.project_id}, (err, projectSelected) => {
-        if(err) throw err;
-
-        projectSelected.name = req.body.name;
-        projectSelected.description = req.body.description;
-        projectSelected.tags = req.body.tags;
-        projectSelected.meta.updatedAt = Date.now();
-        projectSelected.meta.updatedBy = "Łukasz Gronczakiewicz";
-
-        projectSelected.save((err, projectDetails) => {
-           if(err) throw err;
-           res.send('Updated: ' + projectDetails);
-        });
-
-    });
-};
 
 
 exports.createTask = (req, res) => {
