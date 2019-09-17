@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Component} from "react";
 import {
     Badge,
     Button,
@@ -13,9 +13,14 @@ import {
     Label,
     Row
 } from "reactstrap";
+import { connect } from 'react-redux';
+import {Field, reduxForm} from "redux-form";
+
+import { createNewRisk } from "../../../../actions/project-manager-actions";
 
 
 const kindOfRisk = [
+    {value: "", label: "Wybierz z listy"},
     {value: "Zewnetrzne", label: "Zewnętrzne"},
     {value: "Organizacyjne", label: "Organizacyjne"},
     {value: "Techniczne", label: "Techniczne"},
@@ -23,167 +28,236 @@ const kindOfRisk = [
 ];
 
 const typeOfRisk = [
+    {value: "", label: "Wybierz z listy", color:""},
     {value: "Pozytywne", label: "Pozytywne", color:"success"},
     {value: "Negatywne", label: "Negatywne", color:"danger"}
 ];
 
-const probabilityAndConsequences = [
+const probability = [
+    {value: "", label: "Wybierz z listy"},
     {value: "1", label: "Niskie"},
     {value: "2", label: "Średnie"},
     {value: "3", label: "Wysokie"}
 ];
 
-const RiskForm = ({submitFn, changeProbability, changeConsequences, state}) => (
+const consequences = [
+    {value: "", label: "Wybierz z listy"},
+    {value: "1", label: "Niskie"},
+    {value: "2", label: "Średnie"},
+    {value: "3", label: "Wysokie"}
+];
 
-    <Form onSubmit={submitFn}>
-        <Card>
-            <CardHeader>
-                <CardTitle tag="h5" className="mb-0">
-                    Nowe ryzyko
-                </CardTitle>
-            </CardHeader>
-            <CardBody>
-                <Row>
-                    <Col md={2}>
-                        <FormGroup>
-                            <Label>Rodzaj ryzyka</Label>
-                            <Input
-                                type="select"
-                                id="kindOfRisk"
-                                name="kindOfRisk"
-                                className="react-select-container"
-                                classNamePrefix="react-select"
-                            >
-                                <option value="">Wybierz z listy</option>
-                                {kindOfRisk.map((risk, index) => {
-                                    return(
-                                        <option value={kindOfRisk[index].value}>{kindOfRisk[index].label}</option>
-                                    )
-                                })}
-                            </Input>
-                        </FormGroup>
-                    </Col>
-                    <Col md={2}>
-                        <FormGroup>
-                            <Label>Typ ryzyka</Label>
-                            <Input
-                                type="select"
-                                id="typeOfRisk"
-                                name="typeOfRisk"
-                                className="react-select-container"
-                                classNamePrefix="react-select"
-                            >
-                                <option value="">Wybierz z listy</option>
-                                {typeOfRisk.map((risk, index) => {
-                                    return(
-                                        <option value={typeOfRisk[index].value}>{typeOfRisk[index].label}</option>
-                                    )
-                                })}
-                            </Input>
-                        </FormGroup>
-                    </Col>
-                    <Col md={2}>
-                        <FormGroup>
-                            <Label>Prawdopodobieństwo</Label>
-                            <Input
-                                type="select"
-                                id="probability"
-                                name="probability"
-                                className="react-select-container"
-                                classNamePrefix="react-select"
-                                onChange={changeProbability}
-                            >
-                                <option value="">Wybierz z listy</option>
-                                {probabilityAndConsequences.map((risk, index) => {
-                                    return(
-                                        <option value={probabilityAndConsequences[index].value}>{probabilityAndConsequences[index].label}</option>
-                                    )
-                                })}
-                            </Input>
-                        </FormGroup>
-                    </Col>
-                    <Col md={2}>
-                        <FormGroup>
-                            <Label>Wpływ</Label>
-                            <Input
-                                type="select"
-                                id="consequences"
-                                name="consequences"
-                                className="react-select-container"
-                                classNamePrefix="react-select"
-                                onChange={changeConsequences}
-                            >
-                                <option value="">Wybierz z listy</option>
-                                {probabilityAndConsequences.map((risk, index) => {
-                                    return(
-                                        <option value={probabilityAndConsequences[index].value}>{probabilityAndConsequences[index].label}</option>
-                                    )
-                                })}
-                            </Input>
-                        </FormGroup>
-                    </Col>
-                    <Col md={2}>
-                    </Col>
-                    <Col md={2}>
-                        <FormGroup>
-                            <Label>Istotność</Label>
-                            <p>
-                                <Badge color={state.significanceColor}>
-                                    {state.significance}
-                                </Badge>
-                            </p>
-                        </FormGroup>
-                    </Col>
-                </Row>
+const significanceValue = [
+    {value: 0, label: "", color:""},
+    {value: 1, label: "Mała", color:"primary"},
+    {value: 2, label: "Mała", color:"primary"},
+    {value: 3, label: "Średnia", color:"warning"},
+    {value: 4, label: "Średnia", color:"warning"},
+    {value: 6, label: "Duża", color:"danger"},
+    {value: 9, label: "Duża", color:"danger"}
+];
+
+class RiskForm extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            probability: 1,
+            consequence: 1
+        }
+    }
+
+    RenderField = ({ input, label, type, meta: { touched, error } }) => (
+        <div>
+            <Input {...input} placeholder={label} type={type} rows="3"/>
+            {touched && ((error && <span>{error}</span>))}
+        </div>
+    );
+
+    RenderKindSelect = ({input}) => {
+        return(
+            <div>
+                <Input
+                    {...input}
+                    type='select'
+                    value={input.value}
+                    onChange={(value) => input.onChange(value)}
+                    onBlur={() => input.onBlur()}
+                >
+                    {kindOfRisk.map((risk, index) => {
+                        return(
+                            <option value={kindOfRisk[index].value}>{kindOfRisk[index].label}</option>
+                        )
+                    })}
+                </Input>
+            </div>
+        )
+    };
+
+    RenderTypeSelect = ({input}) => {
+        return(
+            <div>
+                <Input
+                    {...input}
+                    type='select'
+                    value={input.value}
+                    onChange={(value) => input.onChange(value)}
+                    onBlur={() => input.onBlur()}
+                >
+                    {typeOfRisk.map((risk, index) => {
+                        return(
+                            <option value={typeOfRisk[index].value}>{typeOfRisk[index].label}</option>
+                        )
+                    })}
+                </Input>
+            </div>
+        )
+    };
+
+    RenderProbabilitySelect = ({input}) => {
+        const handleChange = (value) => {
+            input.onChange(value);
+            this.setState({probability: value.target.value});
+        };
+
+        return(
+            <div>
+                <Input
+                    {...input}
+                    type='select'
+                    value={input.value}
+                    onChange={(value) => handleChange(value)}
+                    onBlur={() => input.onBlur()}
+                >
+                    {probability.map((risk, index) => {
+                        return(
+                            <option value={probability[index].value}>{probability[index].label}</option>
+                        )
+                    })}
+                </Input>
+            </div>
+        )
+    };
+
+    RenderConsequenceSelect = ({input}) => {
+        const handleChange = (value) => {
+            input.onChange(value);
+            this.setState({consequence: value.target.value});
+        };
+
+        return(
+            <div>
+                <Input
+                    {...input}
+                    type='select'
+                    value={input.value}
+                    onChange={(value) => handleChange(value)}
+                    onBlur={() => input.onBlur()}
+                >
+                    {consequences.map((risk, index) => {
+                        return(
+                            <option value={consequences[index].value}>{consequences[index].label}</option>
+                        )
+                    })}
+                </Input>
+            </div>
+        )
+    };
 
 
-                <FormGroup>
-                    <Label for="projectGoal">Opis</Label>
-                    <Input
-                        type="textarea"
-                        rows="3"
-                        name="riskDescription"
-                        id="riskDescription"
-                        placeholder="Opisz ryzyko, charakterystyka ryzyka"
-                    />
-                </FormGroup>
-                <FormGroup>
-                    <Label for="projectScope">Działania zapobiegawcze / wspomagające</Label>
-                    <Input
-                        type="textarea"
-                        rows="3"
-                        name="preventiveOrSupportiveActions"
-                        id="preventiveOrSupportiveActions"
-                        placeholder="Opisz działania zapobiegawcze lub wspomagające"/>
-                </FormGroup>
-                <FormGroup>
-                    <Label for="projectReasons">Działania naprawcze</Label>
-                    <Input
-                        type="textarea"
-                        rows="3"
-                        name="correctiveActions"
-                        id="correctiveActions"
-                        placeholder="Opisz działania naprawcze"/>
-                </FormGroup>
-                <div className="mb-3">
-                    <Button
-                        type="submit"
-                        color="primary"
-                        className="mr-1 mb-1"
-                    >
-                        Zapisz
-                    </Button>
-                    <Button
-                        color="danger"
-                        className="mr-1 mb-1"
-                    >
-                        Anuluj
-                    </Button>
-                </div>
-            </CardBody>
-        </Card>
+    render() {
+        const { handleSubmit, submitting, reset } = this.props;
+        return (
 
-    </Form>
+                <Form onSubmit={handleSubmit(this.props.createNewRisk)}>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle tag="h5" className="mb-0">
+                                Nowe ryzyko
+                            </CardTitle>
+                        </CardHeader>
+                        <CardBody>
+                            <Row>
+                                <Col md={2}>
+                                    <FormGroup>
+                                        <Label>Rodzaj ryzyka</Label>
+                                        <Field name="kind" component={this.RenderKindSelect} />
+                                    </FormGroup>
+                                </Col>
+                                <Col md={2}>
+                                    <FormGroup>
+                                        <Label>Typ ryzyka</Label>
+                                        <Field name="type" component={this.RenderTypeSelect} />
+                                    </FormGroup>
+                                </Col>
+                                <Col md={2}>
+                                    <FormGroup>
+                                        <Label>Prawdopodobieństwo</Label>
+                                        <Field name="probability" component={this.RenderProbabilitySelect} />
+                                    </FormGroup>
+                                </Col>
+                                <Col md={2}>
+                                    <FormGroup>
+                                        <Label>Wpływ</Label>
+                                        <Field name="consequence" component={this.RenderConsequenceSelect} />
+                                    </FormGroup>
+                                </Col>
+                                <Col md={2}>
+                                </Col>
+                                <Col md={2}>
+                                    <FormGroup>
+                                        <Label>Istotność</Label>
+                                        <p>
+                                            {significanceValue.map(x => {
+                                                if(this.state.consequence * this.state.probability === x.value){
+                                                    return <Badge color={x.color}>{x.label}</Badge>
+                                                }
+                                            })}
+                                        </p>
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+
+                            <FormGroup>
+                                <Label for="description">Opis</Label>
+                                <Field name="description" type="textarea" component={this.RenderField} label="Opisz Ryzyko, charakterystyka ryzyka"/>
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="prevSupp">Działania zapobiegawcze / wspomagające</Label>
+                                <Field name="prevSupp" type="textarea" rows="4" component={this.RenderField} label="Opisz działania zapobiegawcze lub wspomagające"/>
+                            </FormGroup>
+
+                            <FormGroup>
+                                <Label for="corrective">Działania naprawcze</Label>
+                                <Field name="corrective" type="textarea" rows="4" component={this.RenderField} label="Opisz działania naprawcze"/>
+                            </FormGroup>
+
+                            <div className="mb-3">
+                                <Button type="submit" color="primary" className="mr-1 mb-1">Zapisz</Button>
+                                <Button color="danger" className="mr-1 mb-1" onClick={reset}>Anuluj</Button>
+                            </div>
+                        </CardBody>
+                    </Card>
+
+                </Form>
+        );
+    }
+}
+
+
+const mapStateToProps = (state) => {
+    return({
+        state
+    })
+};
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+        createNewRisk: (risk) => dispatch(createNewRisk(risk, ownProps.projectID))
+});
+
+export default reduxForm({
+    form: 'NewRiskForm'
+})(
+    connect(mapStateToProps, mapDispatchToProps)(RiskForm)
 );
-
-export default RiskForm;

@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import { Chart } from "react-google-charts";
+import Chart from "react-google-charts";
 
 import AddTaskForm from './task-add-form';
+import {Card, CardBody, CardHeader, CardTitle} from "reactstrap";
 
 
 export default class GanttChart extends Component {
@@ -45,23 +46,29 @@ export default class GanttChart extends Component {
      };
 
     showFormToAddTask = () => {
-        this.setState({showAddTaskForm: true})
+        this.setState({showAddTaskForm: !this.state.showAddTaskForm})
     };
 
     render() {
         return (
-
-            <div>
-                <input type="button" value="Add task" onClick={this.showFormToAddTask}/>
+            <Card>
+                <CardHeader>
+                    <CardTitle tag="h5" className="mb-0">
+                        Gantt
+                    </CardTitle>
+                </CardHeader>
+                <CardBody>
+                <input type="button" value="Add Task" onClick={this.showFormToAddTask}/>
                 {this.state.showAddTaskForm? <AddTaskForm projectID={this.props.projectID}/> : null}
                 <Chart
-                    width={'90%'}
+                    width={'100%'}
                     height={'400px'}
                     chartType="Gantt"
+                    rootProps={{ 'data-testid': '3' }}
+
                     loader={<div>Loading Chart</div>}
                     data= {this.getData()}
 
-                    rootProps={{ 'data-testid': '4' }}
                     controls={[
                         {
                             controlType: 'StringFilter',
@@ -75,7 +82,8 @@ export default class GanttChart extends Component {
                         },
                     ]}
                 />
-            </div>
+                </CardBody>
+            </Card>
         );
     }
 }

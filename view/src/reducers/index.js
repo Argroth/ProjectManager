@@ -6,7 +6,6 @@ import forceChangePasswordReducer from './admin-panel-reducers/force-password-ch
 import userDisableReducer from './admin-panel-reducers/user-disable-reducer';
 import createUserReducer from './admin-panel-reducers/user-register-reducer';
 import selectedUserToEditReducer from './admin-panel-reducers/user-get-reducer';
-import fetchCalendarReducer from './admin-panel-reducers/calendar-get-reducer';
 import selectedDayReducer from './admin-panel-reducers/calendar-select-date-reducer';
 import updateDateReducer from './admin-panel-reducers/calendar-update-date-reducer';
 import verifyTokenReducer from "./auth-reducers/verify-token-reducer";
@@ -18,9 +17,12 @@ import getAllProjectsReducer from "./project-manager-reducers/project-list-reduc
 import createTaskReducer from "./project-manager-reducers/project-create-task-reducer";
 import getAllUsersReducer from "./project-manager-reducers/project-create-user-list";
 import getProjectDataReducer from './project-manager-reducers/project-data-reducer';
-import sidebar from './layout-reducers/sidebar-reducer';
-import session from './auth-reducers/session-reducer';
-import language from './layout-reducers/language-reducer';
+import sidebarReducer from './layout-reducers/sidebar-reducer';
+import sessionReducer from './auth-reducers/session-reducer';
+import languageReducer from './layout-reducers/language-reducer';
+import riskListReducer from './project-manager-reducers/project-risk-list-reducer';
+import riskCreateReducer from './project-manager-reducers/project-risk-create-reducer';
+import calendarReducer from "./project-manager-reducers/project-calendar-reducer";
 
 export default combineReducers({
         users: userReducer,
@@ -28,7 +30,7 @@ export default combineReducers({
         disableUser: userDisableReducer,
         createUser: createUserReducer,
         selectedUserToEdit: selectedUserToEditReducer,
-        calendar: fetchCalendarReducer,
+        calendar: calendarReducer,
         selectedDay: selectedDayReducer,
         updateDate: updateDateReducer,
         messageToken: verifyTokenReducer,
@@ -40,9 +42,11 @@ export default combineReducers({
         createTask: createTaskReducer,
         userList: getAllUsersReducer,
         projectData: getProjectDataReducer,
-        session: session,
-        sidebar: sidebar,
-        language: language,
+        session: sessionReducer,
+        sidebar: sidebarReducer,
+        language: languageReducer,
+        riskList: riskListReducer,
+        riskCreate: riskCreateReducer,
         form: formReducer
     }
 );

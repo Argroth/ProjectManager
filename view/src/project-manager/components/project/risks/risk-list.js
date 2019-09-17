@@ -1,20 +1,20 @@
 import React from "react";
-import {MinusCircle, PlusCircle, Edit2, Trash, MoreHorizontal, Menu} from "react-feather";
+import {MinusCircle, PlusCircle,  Menu} from "react-feather";
 import {
     Badge,
     Card,
     CardBody,
     CardHeader,
-    CardTitle, Col, Container, DropdownItem,
+    CardTitle,
+    DropdownItem,
     DropdownMenu,
-    DropdownToggle, Row,
-    TabPane,
+    DropdownToggle,
     UncontrolledDropdown
 } from "reactstrap";
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 import {toastr} from "react-redux-toastr";
-import RiskForm from "./risk-form";
+import { connect } from 'react-redux';
 
 
 const typeOfRisk = [
@@ -94,17 +94,17 @@ class ListOfRisk extends React.Component {
     handleOnSelect = (row, isSelect) => {
         if (isSelect) {
             this.setState(() => ({
-                selected: [...this.state.selected, row.idRisk]
+                selected: [...this.state.selected, row._id]
             }));
         } else {
             this.setState(() => ({
-                selected: this.state.selected.filter(x => x !== row.idRisk)
+                selected: this.state.selected.filter(x => x !== row._id)
             }));
         }
     };
 
     handleOnSelectAll = (isSelect, rows) => {
-        const ids = rows.map(r => r.idRisk);
+        const ids = rows.map(r => r._id);
         if (isSelect) {
             this.setState(() => ({
                 selected: ids
@@ -206,7 +206,7 @@ class ListOfRisk extends React.Component {
 
         const tableColumns = [
             {
-                dataField: "idRisk",
+                dataField: "_id",
                 text: "Id",
                 sort: true,
                 headerStyle: () => {
@@ -214,7 +214,7 @@ class ListOfRisk extends React.Component {
                 }
             },
             {
-                dataField: "kindOfRisk",
+                dataField: "kind",
                 text: "Rodzaj ryzyka",
                 sort: true,
                 headerStyle: () => {
@@ -223,7 +223,7 @@ class ListOfRisk extends React.Component {
 
             },
             {
-                dataField: "typeOfRisk",
+                dataField: "type",
                 text: "Typ ryzyka",
                 sort: true,
                 formatter: (cell, row) => {
@@ -249,7 +249,7 @@ class ListOfRisk extends React.Component {
                 }
             },
             {
-                dataField: "riskDescription",
+                dataField: "description",
                 text: "Opis",
                 sort: false,
                 headerStyle: () => {
@@ -257,7 +257,7 @@ class ListOfRisk extends React.Component {
                 }
             },
             {
-                dataField: "preventiveSupportiveActions",
+                dataField: "prevSupp",
                 text: "Działania zapobiegawcze / wspomagające",
                 sort: false,
                 headerStyle: () => {
@@ -265,7 +265,7 @@ class ListOfRisk extends React.Component {
                 }
             },
             {
-                dataField: "correctiveActions",
+                dataField: "corrective",
                 text: "Działania naprawcze",
                 sort: false,
                 headerStyle: () => {
@@ -280,7 +280,7 @@ class ListOfRisk extends React.Component {
                     <p>{`Utworzone przez: ${row.createdBy}`}</p>
                     <p>{`Data utworzenia: ${row.createDate}`}</p>
                     <p>{`Prawdopodobieństwo: ${row.probability}`}</p>
-                    <p>{`Wpływ: ${row.consequences}`}</p>
+                    <p>{`Wpływ: ${row.consequence}`}</p>
                 </div>
             ),
             showExpandColumn: true,
@@ -308,96 +308,115 @@ class ListOfRisk extends React.Component {
             onSelectAll: this.handleOnSelectAll
         };
 
-        return (
-            <>
-                <Card>
-                    <CardHeader>
-                        <div className="card-actions float-right">
-                            <UncontrolledDropdown>
-                                <DropdownToggle tag="a">
-                                    <Menu/>
-                                </DropdownToggle>
-                                <DropdownMenu right>
-                                    <DropdownItem onClick={() => console.log("Edit") }>Edytuj</DropdownItem>
-                                    <DropdownItem onClick={() => this.markAsOccurred() }>Oznacz jako wystąpiło</DropdownItem>
-                                </DropdownMenu>
-                            </UncontrolledDropdown>
-                        </div>
-                        <CardTitle tag="h5" className="mb-0">
-                            Lista ryzyk {<Badge color="secondary"> {riskWithoutOccurred.length} </Badge>}
-                        </CardTitle>
-                    </CardHeader>
-                    <CardBody>
-                        <BootstrapTable
-                            bootstrap4
-                            bordered={false}
-                            keyField="idRisk"
-                            data={riskWithoutOccurred}
-                            columns={tableColumns}
-                            selectRow={selectRow}
-                            expandRow={expandRow}
-                            striped
-                            hover
-                            condensed
-                            pagination={paginationFactory({
-                                sizePerPage: 5,
-                                sizePerPageList: [5, 10, 25, 50]
-                            })}
-                        />
-                    </CardBody>
-                </Card>
-                {
-                    (riskOccurred.length !== 0) ? (
-                        <Card>
-                            <CardHeader>
-                                <div className="card-actions float-right">
-                                    <UncontrolledDropdown>
-                                        <DropdownToggle tag="a">
-                                            Decyzja
-                                        </DropdownToggle>
-                                        <DropdownMenu right>
-                                            <DropdownItem>Brak działań</DropdownItem>
-                                            <DropdownItem>Uzupełnij</DropdownItem>
-                                        </DropdownMenu>
-                                    </UncontrolledDropdown>
-                                </div>
-                                <CardTitle tag="h5" className="mb-0">
-                                    Lista ryzyk, które wystąpiły {<Badge color="secondary"> {riskOccurred.length} </Badge>}
-                                </CardTitle>
-                            </CardHeader>
-                            <CardBody>
-                                <BootstrapTable
-                                    bootstrap4
-                                    bordered={false}
-                                    keyField="idRisk"
-                                    data={riskOccurred}
-                                    columns={tableColumns}
-                                    selectRow={selectRow}
-                                    expandRow={expandRow}
-                                    striped
-                                    hover
-                                    condensed
-                                    pagination={paginationFactory({
-                                        sizePerPage: 5,
-                                        sizePerPageList: [5, 10, 25, 50]
-                                    })}
-                                />
-                            </CardBody>
-                        </Card>
-                    ) : null
-                }
 
-                <RiskForm
-                    submitFn={this.addRisk}
-                    changeProbability={this.handleChangeProbability}
-                    changeConsequences={this.handleChangeConsequences}
-                    state={this.state}
-                />
-            </>
-        );
+
+        if(this.props.loading === true){
+            return (
+                <div>Loading ...</div>
+            )
+        }else {
+            return (
+                <>
+                    <Card>
+                        <CardHeader>
+                            <div className="card-actions float-right">
+                                <UncontrolledDropdown>
+                                    <DropdownToggle tag="a">
+                                        <Menu/>
+                                    </DropdownToggle>
+                                    <DropdownMenu right>
+                                        <DropdownItem onClick={() => console.log("Edit")}>Edytuj</DropdownItem>
+                                        <DropdownItem onClick={() => this.markAsOccurred()}>Oznacz jako
+                                            wystąpiło</DropdownItem>
+                                    </DropdownMenu>
+                                </UncontrolledDropdown>
+                            </div>
+                            <CardTitle tag="h5" className="mb-0">
+                                Lista ryzyk: <Badge
+                                color="secondary"> {this.props.notOccurred.length}  </Badge>
+                            </CardTitle>
+                        </CardHeader>
+                        <CardBody>
+                            <BootstrapTable
+                                bootstrap4
+                                bordered={false}
+                                keyField="_id"
+                                data={this.props.notOccurred}
+                                columns={tableColumns}
+                                selectRow={selectRow}
+                                expandRow={expandRow}
+                                striped
+                                hover
+                                condensed
+                                pagination={paginationFactory({
+                                    sizePerPage: 5,
+                                    sizePerPageList: [5, 10, 25, 50]
+                                })}
+                            />
+                        </CardBody>
+                    </Card>
+                    {
+                        (riskOccurred.length !== 0) ? (
+                            <Card>
+                                <CardHeader>
+                                    <div className="card-actions float-right">
+                                        <UncontrolledDropdown>
+                                            <DropdownToggle tag="a">
+                                                Decyzja
+                                            </DropdownToggle>
+                                            <DropdownMenu right>
+                                                <DropdownItem>Brak działań</DropdownItem>
+                                                <DropdownItem>Uzupełnij</DropdownItem>
+                                            </DropdownMenu>
+                                        </UncontrolledDropdown>
+                                    </div>
+                                    <CardTitle tag="h5" className="mb-0">
+                                        Lista ryzyk, które wystąpiły {<Badge
+                                        color="secondary"> {riskOccurred.length} </Badge>}
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardBody>
+
+                                </CardBody>
+                            </Card>
+                        ) : null
+                    }
+                </>
+            );
+        }
     };
 }
 
+{/*<BootstrapTable*/}
+{/*    bootstrap4*/}
+{/*    bordered={false}*/}
+{/*    keyField="idRisk"*/}
+{/*    data={riskOccurred}*/}
+{/*    columns={tableColumns}*/}
+{/*    selectRow={selectRow}*/}
+{/*    expandRow={expandRow}*/}
+{/*    striped*/}
+{/*    hover*/}
+{/*    condensed*/}
+{/*    pagination={paginationFactory({*/}
+{/*        sizePerPage: 5,*/}
+{/*        sizePerPageList: [5, 10, 25, 50]*/}
+{/*    })}*/}
+{/*/>*/}
 
+const mapStateToProps = (state) => {
+    if(!state.riskList.notOccurred){
+        return({
+            loading: true,
+            occurred: '',
+            notOccurred: ''
+        })
+    }else{
+        return({
+            occurred: state.riskList.occurred,
+            notOccurred: state.riskList.notOccurred
+        })
+    }
+};
 
-export default ListOfRisk;
+export default connect(mapStateToProps, null)(ListOfRisk);

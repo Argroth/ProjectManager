@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
 
-import { createNewTask } from "../../actions/project-manager-actions";
+import { createNewTask } from "../../../../actions/project-manager-actions";
 
 
 class TaskAddForm extends Component {
@@ -12,16 +12,21 @@ class TaskAddForm extends Component {
     };
 
 
+    onChange = (values) => {
+
+    };
+
     render() {
         const { handleSubmit, submitting } = this.props;
             return (
                 <div>
                     <form onSubmit={handleSubmit(this.props.createNewTask)}>
-                        <Field name="taskId" type="text" component={renderField} label="TaskID"/>
+                        <Field name="taskId" type="text" component={renderField} label="TaskID" onChange={this.onChange()}/>
                         <Field name="taskName" type="text" component={renderField} label="Task Name"/>
                         <Field name="startDate" type="date" component={renderField} label="Start Date"/>
+                        <Field name="endDate" type="date" component={renderField} label="End Date"/>
                         <Field name="duration" type="number" component={renderField} label="Ending in: ... days"/>
-                        Ignore free days?<Field name="freeDays" type="checkbox" defaultChecked={true} value="true" component={renderField}/>
+                        Ignore free days?<Field name="ignoreWeekends" type="checkbox" component={renderField}/>
                         <Field name="percentage" type="number" component={renderField} label="Percent Completion"/>
                         Select dependent task: <Field name="dependencies" component="select">
                             <option></option>
@@ -81,7 +86,7 @@ const renderField = ({ input, label, type, meta: { touched, error } }) => (
 
 const mapStateToProps = (state) => {
     return ({
-        projectViewData: state.projectViewData
+        projectViewData: state.projectData
     })
 };
 
@@ -91,8 +96,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
 
 export default reduxForm({
-     form: 'addNewTaskForm'
-    // validate
+     form: 'addNewTaskForm',
+     validate
 })(
     connect(mapStateToProps, mapDispatchToProps)(TaskAddForm)
 );

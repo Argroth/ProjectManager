@@ -1,5 +1,6 @@
 const Project = require('../model/project-model');
 const Calendar = require('../model/calendar-model');
+const Risk = require('../model/risk-model');
 const moment = require('moment');
 
 exports.index = (req, res) => {
@@ -72,7 +73,7 @@ exports.create = (req, res) => {
        if(err){
            res.json('Error creating project' +err)
        }else{
-        res.json('Project created successfully')
+        res.json('Project created successfully!')
        }
     });
 };
@@ -94,6 +95,7 @@ exports.createTask = (req, res) => {
                     ]
                 ]};
 
+            console.log(x);
             projectSelected.ganttChart = [...projectSelected.ganttChart, x];
             projectSelected.save();
         }
@@ -158,6 +160,38 @@ exports.getProjectData = (req, res) => {
             res.json('Invalid project ID');
         }else{
            res.json(projectSelected);
+        }
+    });
+};
+
+exports.getRiskList = (req, res) => {
+    Risk.find({projectID: req.body.projectID}, (err, list) => {
+        res.json(list);
+    })
+
+};
+
+exports.createRisk = (req, res) => {
+    const risk = req.body.risk;
+
+    //req.userID
+
+    const newRisk = new  Risk({
+        projectID: req.body.projectID,
+        kind: risk.type,
+        type: risk.type,
+        probability: risk.probability,
+        consequence: risk.consequence,
+        description: risk.description,
+        prevSupp: risk.prevSupp,
+        corrective: risk.corrective
+    });
+
+    newRisk.save((err) => {
+        if(err){
+            res.json('Error creating risk' +err)
+        }else{
+            res.json('Risk created successfully!')
         }
     });
 };
