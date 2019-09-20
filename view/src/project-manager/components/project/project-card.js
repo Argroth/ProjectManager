@@ -144,7 +144,7 @@ class Project extends React.Component {
     render() {
         return (
     <Container fluid className="p-0">
-       <h1 className="h3 mb-3">Projekt 1</h1>
+       <h1 className="h3 mb-3">{this.props.projectName}</h1>
          <Row>
            <Col>
             <Card>
@@ -255,7 +255,7 @@ class Project extends React.Component {
 
                     <TabContent activeTab={this.state.activeTab}>
                         <TabPane tabId="6">
-                            <GanttChart  projectID={this.props.projectID} data={this.props.ganttChart}/>
+                            <GanttChart  projectID={this.props.projectID} data={this.props.ganttChart} calendar={this.props.calendar} />
                         </TabPane>
                     </TabContent>
 
@@ -281,13 +281,17 @@ const mapStateToProps = (state, ownProps) => {
     if(!state.projectData.ganttChart){
         return({
             projectID: ownProps.match.params.projectID,
-            ganttChart: []
+            projectName: state.projectData.projectName,
+            ganttChart: [],
+            calendar: state.calendar
         })
     }else
     {
         return ({
             projectID: ownProps.match.params.projectID,
-            ganttChart: state.projectData.ganttChart
+            projectName: state.projectData.projectName,
+            ganttChart: state.projectData.ganttChart,
+            calendar: state.calendar
         })
     }
 };

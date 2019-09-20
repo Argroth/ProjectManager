@@ -2,6 +2,7 @@ const Project = require('../model/project-model');
 const Calendar = require('../model/calendar-model');
 const Risk = require('../model/risk-model');
 const moment = require('moment');
+const _ = require('lodash');
 
 exports.index = (req, res) => {
      Project.find({}, (err, projectList) => {
@@ -82,75 +83,146 @@ exports.create = (req, res) => {
 
 exports.createTask = (req, res) => {
     Project.findOne({_id: req.body.projectID}, (err, projectSelected) => {
-        if(req.body.task.ignoreWeekends === true){
-            const x = {data: [
-                    [
-                        req.body.task.taskId,
-                        req.body.task.taskName,
-                        req.body.task.startDate,
-                        moment(req.body.task.startDate).add(req.body.task.duration, 'days').format('YYYY-MM-DD'),
-                        req.body.task.duration,
-                        req.body.task.percentage,
-                        req.body.task.dependencies
+        Calendar.find({}, (err, calendar) => {
+            let calendarArray = [];
+
+            for(let i=0; i<calendar.length; i++){
+                calendarArray.push({_id: calendar[i]._id, day: moment(calendar[i].day).format('YYYY-MM-DD'), offWork: calendar[i].offWork, description: calendar[i].description, name: calendar[i].name});
+            }
+
+            const ignoreWeekends = req.body.task.ignoreWeekends;
+
+            if(ignoreWeekends === true /*all*/) {
+                if(req.body.task.endDate){
+                    const duration = [];
+
+                    calendarArray.map(x => {
+                        if(x.day > req.body.task.startDate && x.day < req.body.task.endDate){
+                            duration.push(x)
+                        }
+                    });
+
+                    const x = {
+                        data: [
+                            [
+                                req.body.task.taskId,
+                                req.body.task.taskName,
+                                req.body.task.resource,
+                                req.body.task.startDate,
+                                req.body.task.endDate,
+                                duration.length +1,
+                                req.body.task.percentage,
+                                req.body.task.dependencies,
+                                req.body.task.ignoreWeekends
+                            ]
+                        ]
+                    };
+
+
+                    console.log(x);
+                    projectSelected.ganttChart = [...projectSelected.ganttChart, x];
+                    projectSelected.save();
+                } else /* if duration*/ {
+                    const startDate = _.find(calendarArray, {day: req.body.task.startDate}).day;
+                    let period = [];
+                    const duration = req.body.task.duration;
+
+                    if(startDate){
+                        calendarArray.map(x => {
+                            if(x.day > startDate && x.day < calendarArray[calendarArray.length-1].day){
+                                period.push(x)
+                            }
+                        })
+                    }
+                    const x = {
+                        data: [
+                            [
+                                req.body.task.taskId,
+                                req.body.task.taskName,
+                                req.body.task.resource,
+                                req.body.task.startDate,
+                                period[duration -1].day,
+                                req.body.task.duration,
+                                req.body.task.percentage,
+                                req.body.task.dependencies,
+                                req.body.task.ignoreWeekends
+                            ]
+                        ]
+                    };
+
+                    console.log(x);
+                    projectSelected.ganttChart = [...projectSelected.ganttChart, x];
+                    projectSelected.save();
+                }
+            }
+
+            if(ignoreWeekends === false /*business*/) {
+                if(req.body.task.endDate){
+                    const duration = [];
+
+                    calendarArray.map(x => {
+                        if(x.day > req.body.task.startDate && x.day < req.body.task.endDate){
+                            if(x.offWork === false){duration.push(x)}
+                        }
+                    });
+
+                    const x = {
+                        data: [
+                            [
+                                req.body.task.taskId,
+                                req.body.task.taskName,
+                                req.body.task.resource,
+                                req.body.task.startDate,
+                                req.body.task.endDate,
+                                duration.length +1,
+                                req.body.task.percentage,
+                                req.body.task.dependencies,
+                                req.body.task.ignoreWeekends
+                            ]
+                        ]
+                    };
+
+                    console.log('1');
+                    console.log(x);
+                    projectSelected.ganttChart = [...projectSelected.ganttChart, x];
+                    projectSelected.save();
+                } else /* if duration*/ {
+                const startDate = _.find(calendarArray, {day: req.body.task.startDate}).day;
+                let period = [];
+                const duration = req.body.task.duration;
+
+                if(startDate){
+                    calendarArray.map(x => {
+                        if(x.day > startDate && x.day < calendarArray[calendarArray.length-1].day){
+                            if(x.offWork === false){period.push(x)}
+                        }
+                    });
+                }
+                const x = {
+                    data: [
+                        [
+                            req.body.task.taskId,
+                            req.body.task.taskName,
+                            req.body.task.resource,
+                            req.body.task.startDate,
+                            period[duration].day,
+                            req.body.task.duration,
+                            req.body.task.percentage,
+                            req.body.task.dependencies,
+                            req.body.task.ignoreWeekends
+                        ]
                     ]
-                ]};
+                };
 
-            console.log(x);
-            projectSelected.ganttChart = [...projectSelected.ganttChart, x];
-            projectSelected.save();
-        }
-        else if(req.body.task.ignoreWeekends === false){
-            Calendar.find({offWork: true, day: {$gte: moment(req.body.task.startDate).format('YYYY-MM-DD'),
-                                                $lte: moment(req.body.task.startDate).add(req.body.task.duration, 'days').format('YYYY-MM-DD')}}, (err, calendarSelected) => {
-                let dateToAdd = Number(req.body.task.duration) + Number(calendarSelected.length);
-                let endDate = moment(req.body.task.startDate).add(dateToAdd, 'days').format('YYYY-MM-DD');
-                Calendar.findOne({day: endDate}, (err, dayFound) => {
-                   if(dayFound.offWork === true){
-                         Calendar.findOne({offWork: false, day: {$gt: moment(dayFound.day).format('YYYY-MM-DD')}}, (err, day) => {
-                             //next Business Day
-                             const startDate = (moment(req.body.task.startDate));
-                             const y = (moment(day.day));
-                             const difference = (y.diff(startDate, 'days'));
-                             const finalDate = moment(req.body.task.startDate).add(difference, 'days').format('YYYY-MM-DD');
+                console.log('2');
+                console.log(x);
+                projectSelected.ganttChart = [...projectSelected.ganttChart, x];
+                projectSelected.save();
+                }
+            }
 
-                             const newTask = {data: [
-                                     [
-                                         req.body.task.taskId,
-                                         req.body.task.taskName,
-                                         req.body.task.startDate,
-                                         finalDate,
-                                         req.body.task.duration,
-                                         req.body.task.percentage,
-                                         req.body.task.dependencies
-                                     ]
-                                 ]};
-
-
-                             projectSelected.ganttChart = [...projectSelected.ganttChart, newTask];
-                             projectSelected.save();
-                         })
-                    }else{
-                       const newTask = {data: [
-                               [
-                                   req.body.task.taskId,
-                                   req.body.task.taskName,
-                                   req.body.task.startDate,
-                                   endDate,
-                                   req.body.task.duration,
-                                   req.body.task.percentage,
-                                   req.body.task.dependencies
-                               ]
-                           ]};
-
-
-                       projectSelected.ganttChart = [...projectSelected.ganttChart, newTask];
-                       projectSelected.save();
-                   }
-                });
-
-            })
-        }
-        res.json(projectSelected);
+            res.json(projectSelected);
+        });
     });
 };
 
@@ -173,8 +245,6 @@ exports.getRiskList = (req, res) => {
 
 exports.createRisk = (req, res) => {
     const risk = req.body.risk;
-
-    //req.userID
 
     const newRisk = new  Risk({
         projectID: req.body.projectID,

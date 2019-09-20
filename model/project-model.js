@@ -6,8 +6,8 @@ const projectSchema = mongoose.Schema({
     projectScope: {type: String, default: null},
     projectReasons: {type: String, default: null},
     projectBenefits: [],
-    projectStartDate: Date,
-    projectEndDate: Date,
+    projectStartDate: {type: Date, default: null},
+    projectEndDate: {type: Date, default: null},
     projectBudget: {
         value: {type: Number, default: null},
         currency: {type: String, default: null}

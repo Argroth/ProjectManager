@@ -20,6 +20,7 @@ export default class GanttChart extends Component {
              [
                  { type: 'string', label: 'Task ID' },
                  { type: 'string', label: 'Task Name' },
+                 { type: 'string', label: 'Resource' },
                  { type: 'date', label: 'Start Date' },
                  { type: 'date', label: 'End Date' },
                  { type: 'number', label: 'Duration' },
@@ -33,11 +34,12 @@ export default class GanttChart extends Component {
                  return taskData.push([
                      task[0],
                      task[1],
-                     new Date(task[2]),
+                     task[2],
                      new Date(task[3]),
-                     task[4],
+                     new Date(task[4]),
                      task[5],
                      task[6],
+                     task[7],
                  ])
              })
          });
@@ -59,13 +61,11 @@ export default class GanttChart extends Component {
                 </CardHeader>
                 <CardBody>
                 <input type="button" value="Add Task" onClick={this.showFormToAddTask}/>
-                {this.state.showAddTaskForm? <AddTaskForm projectID={this.props.projectID}/> : null}
+                {this.state.showAddTaskForm? <AddTaskForm projectID={this.props.projectID} calendar={this.props.calendar} tasks={this.props.data}/> : null}
                 <Chart
                     width={'100%'}
                     height={'400px'}
                     chartType="Gantt"
-                    rootProps={{ 'data-testid': '3' }}
-
                     loader={<div>Loading Chart</div>}
                     data= {this.getData()}
 
@@ -81,6 +81,7 @@ export default class GanttChart extends Component {
                             },
                         },
                     ]}
+                    rootProps={{ 'data-testid': '3' }}
                 />
                 </CardBody>
             </Card>

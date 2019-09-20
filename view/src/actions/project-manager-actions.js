@@ -11,7 +11,6 @@ export const GET_CALENDAR = 'GET_CALENDAR';
 
 
 export const createProject = (project) => async dispatch => {
-    console.log(project);
     const response = await axios.post('http://localhost:5000/project-manager/create-project',
         {project}, {withCredentials: true});
     dispatch({type: CREATE_PROJECT, payload: response});
@@ -46,6 +45,7 @@ export const getProjectData = (projectID) => async dispatch => {
 };
 
 export const createNewRisk = (risk, projectID) => async dispatch => {
+    console.log(risk, projectID);
     const response = await axios.post('http://localhost:5000/project-manager/project-data/risk-create', {risk, projectID});
     dispatch({type: CREATE_NEW_RISK, payload: response.data})
 };

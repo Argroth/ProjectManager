@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
+import _ from 'lodash';
+import moment from 'moment';
 
 import { createNewTask } from "../../../../actions/project-manager-actions";
 
@@ -12,22 +14,34 @@ class TaskAddForm extends Component {
     };
 
 
-    onChange = (values) => {
-
-    };
 
     render() {
         const { handleSubmit, submitting } = this.props;
             return (
                 <div>
                     <form onSubmit={handleSubmit(this.props.createNewTask)}>
-                        <Field name="taskId" type="text" component={renderField} label="TaskID" onChange={this.onChange()}/>
-                        <Field name="taskName" type="text" component={renderField} label="Task Name"/>
-                        <Field name="startDate" type="date" component={renderField} label="Start Date"/>
-                        <Field name="endDate" type="date" component={renderField} label="End Date"/>
-                        <Field name="duration" type="number" component={renderField} label="Ending in: ... days"/>
-                        Ignore free days?<Field name="ignoreWeekends" type="checkbox" component={renderField}/>
-                        <Field name="percentage" type="number" component={renderField} label="Percent Completion"/>
+                        <Field name="taskId" type="text" component={this.RenderField} label="TaskID"/>
+                        <Field name="taskName" type="text" component={this.RenderField} label="Task Name"/>
+                        <Field name="resource" component="select">
+                            <option></option>
+                            {this.props.projectViewData.projectStages.map(stage => {
+                                return <option value={stage.name}>{stage.name}</option>
+                            })}
+                        </Field>
+                        <br/>
+                        Ignore holidays<Field name="ignoreWeekends" type="checkbox" component={this.RenderField}/>
+                        <Field name="startDate" type="date" component={this.RenderField} label="Start Date"/>
+                        <Field name="endDate" type="date" component={this.RenderField} label="End Date"/>
+                        <Field name="duration" type="number" component={this.RenderField} label="Ending in: ... days"/>
+                        <Field name="percentage" component='select'>
+                            <option ></option>
+                            <option value='0%'>0%</option>
+                            <option value='25%'>25%</option>
+                            <option value='50%'>50%</option>
+                            <option value='75%'>75%</option>
+                            <option value='100%'>100%</option>
+                        </Field>
+                        <br/>
                         Select dependent task: <Field name="dependencies" component="select">
                             <option></option>
                             {this.props.projectViewData.ganttChart.map(outerArray => {
@@ -43,50 +57,23 @@ class TaskAddForm extends Component {
                 </div>
             );
     }
+
+    RenderField = ({ input, label, type, meta: { touched, error, warning } }) => (
+        <div>
+            <div>
+                <input {...input} placeholder={label} type={type}/>
+                {touched && ((error && <span>{error}</span>) || (warning && <span>{warning}</span>))}
+            </div>
+        </div>
+    );
 }
 
-const validate = values => {
-    const errors = {};
-    if (!values.taskId) {
-        errors.taskId = 'Required'
-    }else if(values.taskId < 4){
-        errors.taskId = 'Task ID has to have at least 3 chars'
-    }
-    if (!values.taskName) {
-        errors.taskName = 'Required'
-    }else if(values.taskName < 4){
-        errors.taskName = 'Task name has to have at least 3 chars'
-    }
-    if (!values.startDate) {
-        errors.startDate = 'Required'
-    }
-    if (!values.endDate) {
-        errors.endDate = 'Required'
-    }
-    if(values.startDate > values.endDate) {
-        errors.startDate = 'The end date cant be before the start date'
-    }
-    if (!values.percentage) {
-        errors.percentage = 'Required'
-    }else if(values.percentage < 0 || values.percentage > 100){
-        errors.percentage = 'Percentage must be between 0 and 100'
-    }
-    return errors
-};
-
-
-const renderField = ({ input, label, type, meta: { touched, error } }) => (
-    <div>
-        <div>
-            <input {...input} placeholder={label} type={type}/>
-            {touched && ((error && <span>{error}</span>))}
-        </div>
-    </div>
-);
 
 const mapStateToProps = (state) => {
     return ({
-        projectViewData: state.projectData
+        projectViewData: state.projectData,
+        stages: state.projectData.projectStages,
+        calendar: state.calendar
     })
 };
 
@@ -94,10 +81,116 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     createNewTask: (task) => dispatch(createNewTask(task, ownProps.projectID))
 });
 
+const warn = (values, props) => {
+    const calendar = props.calendar;
+    const warnings = {};
+
+    if(values.ignoreWeekends === false && values.duration && values.startDate) {
+        const startDate = _.find(calendar, {day: values.startDate}).day;
+        const duration = values.duration;
+        let period = [];
+
+        if(startDate){
+            calendar.map(x => {
+                if(x.day > startDate && x.day < calendar[calendar.length-1].day){
+                    if(x.offWork === false){period.push(x)}
+                }
+            })
+        }
+
+        warnings.duration = `Wybrałeś datę: ${period[duration].day} ( ${period[duration].name} )`;
+    }
+
+    if(values.ignoreWeekends === true && values.duration && values.startDate) {
+        const startDate = _.find(calendar, {day: values.startDate}).day;
+        const duration = values.duration;
+        let period = [];
+
+        if(startDate){
+            calendar.map(x => {
+                if(x.day > startDate && x.day < calendar[calendar.length-1].day){
+                    period.push(x)
+                }
+            })
+        }
+
+        warnings.duration = `Wybrałeś datę: ${period[duration-1].day} ( ${period[duration-1].name} )`;
+    }
+
+    return warnings;
+};
+
+const validate = (values, props) => {
+    const calendar = props.calendar;
+    const errors = {};
+    if (!values.taskId) {
+        errors.taskId = 'Required'
+    }
+
+    //validate start date
+    if(values.ignoreWeekends === false && values.startDate){
+        const dayFound = _.find(calendar, {day: values.startDate});
+
+        if(dayFound.offWork === true){
+            let tempArrayDate = [];
+            let dateRange = moment(dayFound.day).add(40, 'days');
+
+            calendar.map(x => {
+                if(x.day > dayFound.day && x.day < dateRange.format('YYYY-MM-DD')){
+                    tempArrayDate.push(x);
+                }
+            });
+
+            errors.startDate = `Wybrałeś datę: ${dayFound.day} ( ${dayFound.name} ). Sugerowana data rozpoczęcia zadania to: ${tempArrayDate.find((x) => {return x.offWork === false}).day} lub zaznacz ignorowanie dni świątecznych`;
+        }
+    }
+
+    //validate end date
+    if(values.ignoreWeekends === false && values.endDate){
+        const dayFound = _.find(calendar, {day: values.endDate});
+
+        if(dayFound.offWork === true){
+            let tempArrayDate = [];
+            let dateRange = moment(dayFound.day).add(40, 'days');
+
+            calendar.map(x => {
+                if(x.day > dayFound.day && x.day < dateRange.format('YYYY-MM-DD')){
+                    tempArrayDate.push(x);
+                }
+            });
+
+            errors.endDate = `Wybrałeś datę: ${dayFound.day} ( ${dayFound.name} ). Sugerowana data zakończenia zadania to: ${tempArrayDate.find((x) => {return x.offWork === false}).day} lub zaznacz ignorowanie dni świątecznych`;
+        }
+
+    }
+
+    if(values.dependencies && values.startDate){
+        const tasks = props.tasks;
+        tasks.map(taskDestructurized => {
+                taskDestructurized.data.map(x => {
+                    if(values.dependencies === x[0]){
+
+                            if(values.startDate < x[4]){
+                                errors.startDate = `Nie może być mniejszy jak data zakończenia zadania ${x[0]}`
+                            }
+
+                    }
+                })
+
+        });
+
+
+    }
+
+    return errors;
+};
+
 
 export default reduxForm({
-     form: 'addNewTaskForm',
-     validate
+    form: 'addNewTaskForm',
+    initialValues: {ignoreWeekends: false},
+    validate,
+    warn
 })(
     connect(mapStateToProps, mapDispatchToProps)(TaskAddForm)
 );
