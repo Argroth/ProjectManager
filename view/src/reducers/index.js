@@ -23,6 +23,9 @@ import languageReducer from './layout-reducers/language-reducer';
 import riskListReducer from './project-manager-reducers/project-risk-list-reducer';
 import riskCreateReducer from './project-manager-reducers/project-risk-create-reducer';
 import calendarReducer from "./project-manager-reducers/project-calendar-reducer";
+import selectRiskToEditReducer from './project-manager-reducers/project-risk-to-edit';
+import riskDataReducer from './project-manager-reducers/project-risk-data';
+import taskListReducer from './project-manager-reducers/gantt-task-list-reducer';
 
 export default combineReducers({
         users: userReducer,
@@ -47,6 +50,9 @@ export default combineReducers({
         language: languageReducer,
         riskList: riskListReducer,
         riskCreate: riskCreateReducer,
+        selectedRisk: selectRiskToEditReducer,
+        riskData: riskDataReducer,
+        taskList: taskListReducer,
         form: formReducer
     }
 );

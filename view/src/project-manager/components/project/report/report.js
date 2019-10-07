@@ -1,4 +1,5 @@
-import React from "react";
+import React, {Component} from 'react';
+
 import {
     Card,
     CardBody,
@@ -15,55 +16,64 @@ import RiskForm from "../risks/risk-form";
 import RegisterForm from "../register/register-form"
 
 
+class Report extends Component {
+    constructor(props) {
+        super(props);
 
-const Report = ({submitRegister, changeTypeInformation, state, submitFn, changeProbability, changeConsequences }) => (
+        this.state={
+            formToShow: ''
+        }
+    }
 
-    <Card>
-        <CardHeader>
-            <CardTitle tag="h5" className="mb-0">
-                Zgłoszenie
-            </CardTitle>
-        </CardHeader>
-        <CardBody>
-            <Row>
-                <Col md={2}>
-                    <FormGroup>
-                        <Label>Rodzaj zgłaszenia</Label>
-                        <Input
-                            type="select"
-                            id="typeInformation"
-                            name="typeInformation"
-                            className="mb-3"
-                            onChange={changeTypeInformation}
-                        >
-                            <option value="">Wybierz z listy</option>
-                            <option value="1">Ryzyko</option>
-                            <option value="2">Zmiania / problem</option>
-                        </Input>
-                    </FormGroup>
-                </Col>
-            </Row>
+    changeFormShow = (event) =>{
+        this.setState({formToShow: event.target.value})
+};
 
-            {
-                (state.valueTypeInformation === "1") ? (
-                    <RiskForm
-                        submitFn={submitFn}
-                        changeProbability={changeProbability}
-                        changeConsequences={changeConsequences}
-                        state={state}
-                    />
-                ) : (
-                    state.valueTypeInformation ==="2"
-                ) ? (
-                    <RegisterForm
-                        submitRegister={submitRegister}
-                        state={state}
-                    />
-                ) : null
-            }
+    render() {
+        return (
+            <div>
+                <Card>
+                    <CardHeader>
+                        <CardTitle tag="h5" className="mb-0">
+                            Zgłoszenie
+                        </CardTitle>
+                    </CardHeader>
+                    <CardBody>
+                        <Row>
+                            <Col md={2}>
+                                <FormGroup>
+                                    <Label>Rodzaj zgłaszenia</Label>
+                                    <Input
+                                        type="select"
+                                        id="typeInformation"
+                                        name="typeInformation"
+                                        className="mb-3"
+                                        onChange={this.changeFormShow}
+                                    >
+                                        <option value="">Wybierz z listy</option>
+                                        <option value="1">Ryzyko</option>
+                                        <option value="2">Zmiania / problem</option>
+                                    </Input>
+                                </FormGroup>
+                            </Col>
+                        </Row>
 
-        </CardBody>
-    </Card>
-);
+                        {
+                            (this.state.formToShow === "1") ? (
+                                <RiskForm projectID={this.props.projectID}/>
+                            ) : (
+                                this.state.formToShow ==="2"
+                            ) ? (
+                                <RegisterForm />
+                            ) : null
+                        }
+
+                    </CardBody>
+                </Card>
+            </div>
+        );
+    }
+}
 
 export default Report;
+

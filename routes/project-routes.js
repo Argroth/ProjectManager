@@ -6,8 +6,13 @@ module.exports= (app) => {
      app.get('/project-manager/list-projects', projectController.index);
      app.post('/project-manager/create-project',userDetailsMiddleware.getUserDetails, projectController.create);
      app.post('/project-manager/project-data', projectController.getProjectData);
+     app.post('/project-manager/project-data/risk', projectController.getRiskData);
      app.post('/project-manager/project-data/risk-list', projectController.getRiskList);
-     app.post('/project-manager/project-data/risk-create', projectController.createRisk);
+     app.post('/project-manager/project-data/risk-create',userDetailsMiddleware.getUserDetails, projectController.createRisk);
+     app.post('/project-manager/project-data/risk-occurred', projectController.markRiskAsOccurred);
+     app.post('/project-manager/project-data/risk-edit', projectController.editRisk);
+     app.post('/project-manager/project-data/risk-decision', projectController.riskDecision);
+     app.post('/project-manager/project-data/task-list', projectController.getTaskList);
+     app.get('/task', projectController.updateTask);
      app.post('/project/add-task', projectController.createTask);
-     //app.get('/project/add-task', projectController.createTask);
 };

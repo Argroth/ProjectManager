@@ -10,7 +10,7 @@ class App extends Component {
     }
 
     handleChange = (event) => {
-
+        console.log(event);
         this.setState({miasto: event.target.value})
     };
 

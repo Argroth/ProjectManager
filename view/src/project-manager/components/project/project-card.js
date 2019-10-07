@@ -18,7 +18,13 @@ import {toastr} from "react-redux-toastr";
 import { connect } from 'react-redux';
 
 //import actions
-import {getAllUsers, getProjectData, getRiskList, getCalendar} from "../../../actions/project-manager-actions";
+import {
+    getAllUsers,
+    getProjectData,
+    getRiskList,
+    getCalendar,
+    getTaskList
+} from "../../../actions/project-manager-actions";
 
 
 //import components
@@ -27,7 +33,7 @@ import ProjectCard from '../project-edit';
 import Register from "./register/register";
 import Report from "./report/report";
 import ChangeLog from "./change-log/change-log";
-import GanttChart from "./gantt/gantt-chart";
+import GanttComponent from "./gantt/gantt-component";
 
 const impactOnProject = [
     {value: "1", label: "Niski", color: "primary"},
@@ -82,6 +88,7 @@ class Project extends React.Component {
         this.props.getTeam();
         this.props.getProjectData(this.props.projectID);
         this.props.getRiskList(this.props.projectID);
+        this.props.getTaskList(this.props.projectID);
         this.props.getCalendar();
     };
 
@@ -238,6 +245,7 @@ class Project extends React.Component {
                     <TabContent activeTab={this.state.activeTab}>
                         <TabPane tabId="4">
                             <Report
+                                projectID={this.props.projectID}
                                 submitRegister={this.addRegister}
                                 changeTypeInformation={this.handleChangeTypeInformation}
                                 state={this.state}
@@ -255,7 +263,7 @@ class Project extends React.Component {
 
                     <TabContent activeTab={this.state.activeTab}>
                         <TabPane tabId="6">
-                            <GanttChart  projectID={this.props.projectID} data={this.props.ganttChart} calendar={this.props.calendar} />
+                            <GanttComponent projectID={this.props.projectID} data={this.props.ganttChart} calendar={this.props.calendar} />
                         </TabPane>
                     </TabContent>
 
@@ -273,12 +281,13 @@ const mapDispatchToProps = (dispatch) => ({
     getTeam: () => dispatch(getAllUsers()),
     getProjectData: (projectID) => dispatch(getProjectData(projectID)),
     getRiskList: (projectID) => dispatch(getRiskList(projectID)),
-    getCalendar: () => dispatch(getCalendar())
+    getCalendar: () => dispatch(getCalendar()),
+    getTaskList: (projectID) => dispatch(getTaskList(projectID))
 });
 
 const mapStateToProps = (state, ownProps) => {
     console.log(state);
-    if(!state.projectData.ganttChart){
+    if(!state.taskList){
         return({
             projectID: ownProps.match.params.projectID,
             projectName: state.projectData.projectName,
@@ -290,7 +299,7 @@ const mapStateToProps = (state, ownProps) => {
         return ({
             projectID: ownProps.match.params.projectID,
             projectName: state.projectData.projectName,
-            ganttChart: state.projectData.ganttChart,
+            ganttChart: state.taskList,
             calendar: state.calendar
         })
     }

@@ -1,17 +1,12 @@
 import React, {Component} from 'react';
 import Chart from "react-google-charts";
 
-import AddTaskForm from './task-add-form';
 import {Card, CardBody, CardHeader, CardTitle} from "reactstrap";
 
 
 export default class GanttChart extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            showAddTaskForm: false,
-            taskDate: null
-        };
     };
 
 
@@ -30,28 +25,30 @@ export default class GanttChart extends Component {
          ];
 
          this.props.data.map(task => {
-            task.data.map(task => {
                  return taskData.push([
-                     task[0],
-                     task[1],
-                     task[2],
-                     new Date(task[3]),
-                     new Date(task[4]),
-                     task[5],
-                     task[6],
-                     task[7],
+                     task.taskID,
+                     task.taskName,
+                     task.resource,
+                     new Date(task.startDate),
+                     new Date(task.endDate),
+                     task.duration,
+                     task.percentage,
+                     task.dependencies,
                  ])
-             })
          });
 
          return (taskData);
      };
 
-    showFormToAddTask = () => {
-        this.setState({showAddTaskForm: !this.state.showAddTaskForm})
-    };
+
 
     render() {
+        if(this.props.data === undefined){
+            return (
+                <div>
+                </div>
+            )
+        } else {
         return (
             <Card>
                 <CardHeader>
@@ -60,8 +57,7 @@ export default class GanttChart extends Component {
                     </CardTitle>
                 </CardHeader>
                 <CardBody>
-                <input type="button" value="Add Task" onClick={this.showFormToAddTask}/>
-                {this.state.showAddTaskForm? <AddTaskForm projectID={this.props.projectID} calendar={this.props.calendar} tasks={this.props.data}/> : null}
+
                 <Chart
                     width={'100%'}
                     height={'400px'}
@@ -83,8 +79,9 @@ export default class GanttChart extends Component {
                     ]}
                     rootProps={{ 'data-testid': '3' }}
                 />
+
                 </CardBody>
             </Card>
         );
-    }
+    }}
 }

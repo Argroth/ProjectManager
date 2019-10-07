@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import RiskList from './risk-list';
 import RiskForm from './risk-form';
+import RiskEdit from './risk-edit';
+import { connect } from 'react-redux';
 
 class Risk extends Component {
     constructor(props) {
@@ -12,11 +14,16 @@ class Risk extends Component {
         return (
             <div>
                 <RiskList />
-                <RiskForm projectID={this.props.projectID}/>
+                {this.props.riskID === undefined || null? <RiskForm projectID={this.props.projectID}/>:<RiskEdit projectID={this.props.projectID} riskID={this.props.riskID}/>}
             </div>
         );
     }
 }
 
+const mapStateToProps = (state) => {
+    return({
+        riskID: state.selectedRisk.risk
+    })
+};
 
-export default Risk;
+export default connect(mapStateToProps, null)(Risk);

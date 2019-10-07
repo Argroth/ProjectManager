@@ -599,10 +599,6 @@ class ProjectEdit extends Component {
 }
 
 
-
-
-
-
 const validate = values => {
     const errors = {};
     if (!values.projectName) {

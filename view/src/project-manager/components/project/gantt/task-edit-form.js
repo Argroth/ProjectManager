@@ -7,7 +7,7 @@ import moment from 'moment';
 import { createNewTask } from "../../../../actions/project-manager-actions";
 
 
-class TaskAddForm extends Component {
+class TaskEditForm extends Component {
     constructor(props) {
         super(props);
 
@@ -17,43 +17,45 @@ class TaskAddForm extends Component {
 
     render() {
         const { handleSubmit, submitting } = this.props;
-            return (
-                <div>
-                    <form onSubmit={handleSubmit(this.props.createNewTask)}>
-                        <Field name="taskId" type="text" component={this.RenderField} label="TaskID"/>
-                        <Field name="taskName" type="text" component={this.RenderField} label="Task Name"/>
-                        <Field name="resource" component="select">
-                            <option></option>
-                            {this.props.projectViewData.projectStages.map(stage => {
-                                return <option value={stage.name}>{stage.name}</option>
-                            })}
-                        </Field>
-                        <br/>
-                        Ignore holidays<Field name="ignoreWeekends" type="checkbox" component={this.RenderField}/>
-                        <Field name="startDate" type="date" component={this.RenderField} label="Start Date"/>
-                        <Field name="endDate" type="date" component={this.RenderField} label="End Date"/>
-                        <Field name="duration" type="number" component={this.RenderField} label="Ending in: ... days"/>
-                        <Field name="percentage" component='select'>
-                            <option ></option>
-                            <option value='0%'>0%</option>
-                            <option value='25%'>25%</option>
-                            <option value='50%'>50%</option>
-                            <option value='75%'>75%</option>
-                            <option value='100%'>100%</option>
-                        </Field>
-                        <br/>
-                        Select dependent task: <Field name="dependencies" component="select">
-                            <option></option>
-                            {this.props.tasks.map(task => {
-                                           return <option value={task.taskID}>{task.taskName}</option>
-                            })}
-                        </Field>
-                        <div>
-                            <button type="submit" disabled={submitting}>Submit</button>
-                        </div>
-                    </form>
-                </div>
-            );
+        return (
+            <div>
+                <form onSubmit={handleSubmit(this.props.createNewTask)}>
+                    <Field name="taskId" type="text" component={this.RenderField} label="TaskID"/>
+                    <Field name="taskName" type="text" component={this.RenderField} label="Task Name"/>
+                    <Field name="resource" component="select">
+                        <option></option>
+                        {this.props.projectViewData.projectStages.map(stage => {
+                            return <option value={stage.name}>{stage.name}</option>
+                        })}
+                    </Field>
+                    <br/>
+                    Ignore holidays<Field name="ignoreWeekends" type="checkbox" component={this.RenderField}/>
+                    <Field name="startDate" type="date" component={this.RenderField} label="Start Date"/>
+                    <Field name="endDate" type="date" component={this.RenderField} label="End Date"/>
+                    <Field name="duration" type="number" component={this.RenderField} label="Ending in: ... days"/>
+                    <Field name="percentage" component='select'>
+                        <option ></option>
+                        <option value='0%'>0%</option>
+                        <option value='25%'>25%</option>
+                        <option value='50%'>50%</option>
+                        <option value='75%'>75%</option>
+                        <option value='100%'>100%</option>
+                    </Field>
+                    <br/>
+                    Select dependent task: <Field name="dependencies" component="select">
+                    <option></option>
+                    {this.props.projectViewData.ganttChart.map(outerArray => {
+                        return outerArray.data.map(innerArrayObject => {
+                            return <option value={innerArrayObject[0]}>{innerArrayObject[1]}</option>
+                        })
+                    })}
+                </Field>
+                    <div>
+                        <button type="submit" disabled={submitting}>Submit</button>
+                    </div>
+                </form>
+            </div>
+        );
     }
 
     RenderField = ({ input, label, type, meta: { touched, error, warning } }) => (
@@ -68,10 +70,8 @@ class TaskAddForm extends Component {
 
 
 const mapStateToProps = (state) => {
-    console.log(state);
     return ({
         projectViewData: state.projectData,
-        tasks: state.taskList,
         stages: state.projectData.projectStages,
         calendar: state.calendar
     })
@@ -167,15 +167,19 @@ const validate = (values, props) => {
     if(values.dependencies && values.startDate){
         const tasks = props.tasks;
         tasks.map(taskDestructurized => {
-            console.log('task');
-            console.log(taskDestructurized);
+            taskDestructurized.data.map(x => {
+                if(values.dependencies === x[0]){
 
-            if(values.dependencies === taskDestructurized.taskID){
-                            if(values.startDate < taskDestructurized.endDate){
-                                errors.startDate = `Nie może zaczynać się przed końcem zadania: ${taskDestructurized.taskName}`
-                            }
+                    if(values.startDate < x[4]){
+                        errors.startDate = `Nie może być mniejszy jak data zakończenia zadania ${x[0]}`
                     }
+
+                }
+            })
+
         });
+
+
     }
 
     return errors;
@@ -183,10 +187,9 @@ const validate = (values, props) => {
 
 
 export default reduxForm({
-    form: 'addNewTaskForm',
-    initialValues: {ignoreWeekends: false},
+    form: 'editTaskForm',
     validate,
     warn
 })(
-    connect(mapStateToProps, mapDispatchToProps)(TaskAddForm)
+    connect(mapStateToProps, mapDispatchToProps)(TaskEditForm)
 );
