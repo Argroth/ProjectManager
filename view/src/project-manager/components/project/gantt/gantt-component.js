@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import GanttChart from "./gantt-chart";
 import TaskForm from './task-add-form';
-import EditTaskForm from './task-edit-form';
-import {CardBody} from "reactstrap";
+import moment from 'moment';
 
-class GanttComponent extends Component {
+export default class GanttComponent extends Component {
     constructor(props) {
         super(props);
 
@@ -18,13 +17,13 @@ class GanttComponent extends Component {
         this.setState({showAddTaskForm: !this.state.showAddTaskForm})
     };
 
+
     render() {
         return (
             <div>
                 <input type="button" value="Add Task" onClick={this.showFormToAddTask}/>
                 {this.state.showAddTaskForm? <TaskForm projectID={this.props.projectID} calendar={this.props.calendar} tasks={this.props.data}/> : null}
-                <GanttChart projectID={this.props.projectID} data={this.props.data} calendar={this.props.calendar} />
-
+                <GanttChart data={this.props.data} tasks={this.props.data}/>
                 <table>
                     <tr>
                         <th>Task ID</th>
@@ -38,17 +37,18 @@ class GanttComponent extends Component {
                         <th>Ignore Weekends</th>
                     </tr>
                     {this.props.data.map(task => {
+                        console.log(task);
                         return(
                             <tr>
                                 <th>{task.taskID}</th>
                                 <th>{task.taskName}</th>
-                                <th>{task.startDate}</th>
-                                <th>{task.endDate}</th>
+                                <th>{moment(task.startDate).format('YYYY-MM-DD')}</th>
+                                <th>{moment(task.endDate).format('YYYY-MM-DD')}</th>
                                 <th>{task.duration}</th>
                                 <th>{task.percentComplete}</th>
                                 <th>{task.dependencies}</th>
                                 <th>{task.resource}</th>
-                                <th>{task.ignoreWeekends}</th>
+                                <th><input type="checkbox" checked={task.ignoreWeekends}/></th>
                             </tr>
                         )
                     })}
@@ -57,5 +57,3 @@ class GanttComponent extends Component {
         );
     }
 }
-
-export default GanttComponent;

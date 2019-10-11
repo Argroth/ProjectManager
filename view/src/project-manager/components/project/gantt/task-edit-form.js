@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
-import _ from 'lodash';
 import moment from 'moment';
+import _ from 'lodash';
 
-import { createNewTask } from "../../../../actions/project-manager-actions";
-
+import { editTask } from "../../../../actions/project-manager-actions";
 
 class TaskEditForm extends Component {
     constructor(props) {
@@ -13,27 +12,23 @@ class TaskEditForm extends Component {
 
     };
 
-
-
     render() {
-        const { handleSubmit, submitting } = this.props;
+        const { handleSubmit, submitting, reset} = this.props;
         return (
             <div>
-                <form onSubmit={handleSubmit(this.props.createNewTask)}>
-                    <Field name="taskId" type="text" component={this.RenderField} label="TaskID"/>
+                <form  onSubmit={handleSubmit(this.props.editTask)}>
+                    <Field name="taskID" type="text" input={{disabled: true}} component={this.RenderField} label="TaskID"/>
                     <Field name="taskName" type="text" component={this.RenderField} label="Task Name"/>
                     <Field name="resource" component="select">
                         <option></option>
-                        {this.props.projectViewData.projectStages.map(stage => {
-                            return <option value={stage.name}>{stage.name}</option>
-                        })}
+
                     </Field>
                     <br/>
                     Ignore holidays<Field name="ignoreWeekends" type="checkbox" component={this.RenderField}/>
                     <Field name="startDate" type="date" component={this.RenderField} label="Start Date"/>
                     <Field name="endDate" type="date" component={this.RenderField} label="End Date"/>
                     <Field name="duration" type="number" component={this.RenderField} label="Ending in: ... days"/>
-                    <Field name="percentage" component='select'>
+                    <Field name="percentComplete" component='select'>
                         <option ></option>
                         <option value='0%'>0%</option>
                         <option value='25%'>25%</option>
@@ -44,14 +39,12 @@ class TaskEditForm extends Component {
                     <br/>
                     Select dependent task: <Field name="dependencies" component="select">
                     <option></option>
-                    {this.props.projectViewData.ganttChart.map(outerArray => {
-                        return outerArray.data.map(innerArrayObject => {
-                            return <option value={innerArrayObject[0]}>{innerArrayObject[1]}</option>
-                        })
+                    {this.props.tasks.map(task => {
+                        return <option value={task.taskID}>{task.taskName}</option>
                     })}
                 </Field>
                     <div>
-                        <button type="submit" disabled={submitting}>Submit</button>
+                        <button type="submit" disabled={submitting} >Submit</button>
                     </div>
                 </form>
             </div>
@@ -67,19 +60,6 @@ class TaskEditForm extends Component {
         </div>
     );
 }
-
-
-const mapStateToProps = (state) => {
-    return ({
-        projectViewData: state.projectData,
-        stages: state.projectData.projectStages,
-        calendar: state.calendar
-    })
-};
-
-const mapDispatchToProps = (dispatch, ownProps) => ({
-    createNewTask: (task) => dispatch(createNewTask(task, ownProps.projectID))
-});
 
 const warn = (values, props) => {
     const calendar = props.calendar;
@@ -109,7 +89,7 @@ const warn = (values, props) => {
         if(startDate){
             calendar.map(x => {
                 if(x.day > startDate && x.day < calendar[calendar.length-1].day){
-                    period.push(x)
+                    period.push(x);
                 }
             })
         }
@@ -141,7 +121,7 @@ const validate = (values, props) => {
                 }
             });
 
-            errors.startDate = `Wybrałeś datę: ${dayFound.day} ( ${dayFound.name} ). Sugerowana data rozpoczęcia zadania to: ${tempArrayDate.find((x) => {return x.offWork === false}).day} lub zaznacz ignorowanie dni świątecznych`;
+            errors.startDate = `Wybrałeś datę: ${dayFound.day} (${dayFound.name}). Sugerowana data rozpoczęcia zadania to: ${tempArrayDate.find((x) => {return x.offWork === false}).day} lub zaznacz ignorowanie dni świątecznych`;
         }
     }
 
@@ -167,29 +147,36 @@ const validate = (values, props) => {
     if(values.dependencies && values.startDate){
         const tasks = props.tasks;
         tasks.map(taskDestructurized => {
-            taskDestructurized.data.map(x => {
-                if(values.dependencies === x[0]){
-
-                    if(values.startDate < x[4]){
-                        errors.startDate = `Nie może być mniejszy jak data zakończenia zadania ${x[0]}`
-                    }
-
+            if(values.dependencies === taskDestructurized.taskID){
+                console.log(moment(taskDestructurized.endDate));
+                console.log(taskDestructurized.endDate);
+                if(values.startDate < taskDestructurized.endDate){
+                    errors.startDate = `Nie może zaczynać się przed końcem zadania: ${taskDestructurized.taskName} (${moment(taskDestructurized.endDate).format('YYYY-MM-DD')})`
                 }
-            })
-
+            }
         });
-
-
     }
-
     return errors;
 };
 
+const mapStateToProps = (state, ownProps) => {
+    ownProps.task.startDate = moment(ownProps.task.startDate).format('YYYY-MM-DD');
+    ownProps.task.endDate = moment(ownProps.task.endDate).format('YYYY-MM-DD');
 
-export default reduxForm({
-    form: 'editTaskForm',
+        return ({
+            tasks: ownProps.tasks,
+            calendar: state.calendar,
+            initialValues: ownProps.task
+        })
+};
+
+const mapDispatchToProps = (dispatch) => ({
+    editTask: (task) => dispatch(editTask(task))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(reduxForm({
+    form: 'EditTaskForm',
+    warn,
     validate,
-    warn
-})(
-    connect(mapStateToProps, mapDispatchToProps)(TaskEditForm)
-);
+    enableReinitialize: true
+})(TaskEditForm));

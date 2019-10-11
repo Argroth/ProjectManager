@@ -18,7 +18,7 @@ exports.index = (req, res) => {
      })
 };
 
-exports.create = (req, res) => {
+exports.createProject = (req, res) => {
     const {
         projectName,
         projectGoal,
@@ -412,43 +412,173 @@ exports.getTaskList = (req, res) => {
 };
 
 exports.updateTask = (req, res) => {
-    const updateID = ['TaskID3'];
+    let errors = [];
+    let updateID = [];
+    let taskFromFront = req.body.task;
+    const taskIDfromFront = req.body.task.taskID;
 
-
-    Task.find({projectID: '5d9b260fcfefce47b8a66d19'}, (err, tasks) => {
-        let numberOfChecks = tasks.length;
-
-        for(let i = numberOfChecks; i > 0; i--){
-            tasks.map(task => {
-                updateID.map(id => {
-                    if(task.dependencies === id){
-                        updateID.push(task.taskID);
-                    }
-                });
-            })
-        }
-
-        let unifiedArray = _.uniq(updateID);
-        tasks.map(task => {
-            unifiedArray.map(id => {
-                if(id === task.taskID){
-                    updateDate(task, 7);
-                }
-            })
-        });
+    Task.findOne({_id: req.body.task._id}, async (err, task) => {
+        await task;
+        checkWhatChanged(task);
     });
 
-    const updateDate = (task, daysToAdd) => {
-        //checks if task has ignoreWeekends set to true or false depending on the bool function returns new date calculated with or without weekends
+    //     if(req.body.task.taskID !== task.taskID){
+    //         updateID.push(task.taskID)
+    //     }else{
+    //         updateID.push(taskIDfromFront)
+    //     }
+    // });
+    //
+    //
+    // Task.find({projectID: req.body.task.projectID}, (err, tasks) => {
+    //     let numberOfChecks = tasks.length;
+    //
+    //     for(let i = numberOfChecks; i > 0; i--){
+    //         tasks.map(task => {
+    //             updateID.map(id => {
+    //                 if(task.dependencies === id){
+    //                     updateID.push(task.taskID);
+    //                 }
+    //             });
+    //         })
+    //     }
+    //
+    //     let unifiedArray = _.uniq(updateID);
+    //     tasks.map(task => {
+    //         unifiedArray.map(id => {
+    //
+    //         })
+    //     });
 
-        Calendar.find({}, (err, calendar) => {
-            //all days
-            if(task.ignoreWeekends === true){
-
-            } else if (task.ignoreWeekends === false){ //business days
-
+    //perform simple update without any date manipulation
+    const simpleUpdate = () => {
+        Task.findOne({_id: taskFromFront._id}, (err, taskFound) => {
+            taskFound.taskName = taskFromFront.taskName;
+            taskFound.resource = taskFromFront.resource;
+            taskFound.percentComplete = taskFromFront.percentComplete;
+            taskFound.dependencies = taskFromFront.dependencies;
+            if(err){errors.push('Error ' + taskFound._id)}else {
+                taskFound.save();
             }
         })
+    };
+
+    //one function is enough because of front validation
+    const updateStartDate = () => {
+        Task.findOne({_id: taskFromFront._id}, (err, taskFound) => {
+            const start = moment(taskFromFront.startDate);
+            const end = moment(taskFound.endDate);
+
+            taskFound.startDate = taskFromFront.startDate;
+            taskFound.duration = end.diff(start, 'days');
+
+            if(err){errors.push('Error ' + taskFound._id)}  {
+                taskFound.save();
+            }
+        });
+    };
+
+    const updateEndDate = (task) => {
+        Task.findOne({_id: taskFromFront._id}, (err, taskFound) => {
+            const start = moment(taskFound.startDate);
+            const end = moment(taskFromFront.endDate);
+
+            taskFound.endDate = taskFromFront.endDate;
+            taskFound.duration = end.diff(start, 'days');
+
+            Task.findOne({_id: task._id}, (err, firstTask) => {
+                let a = moment(task.startDate);
+                let b = moment(task.endDate);
+
+                firstTask.endDate = task.endDate;
+                firstTask.duration = b.diff(a, 'days');
+
+                firstTask.save();
+            });
+
+
+
+            if(err){errors.push('Error ' + taskFound._id)}  {
+                taskFound.save();
+            }
+
+                if(req.body.task.taskID !== taskFound.taskID){
+                    updateID.push(taskFound.taskID)
+                }else{
+                    updateID.push(taskIDfromFront)
+                }
+            });
+
+
+            Task.find({projectID: req.body.task.projectID}, (err, tasks) => {
+                let numberOfChecks = tasks.length;
+
+                for(let i = numberOfChecks; i > 0; i--){
+                    tasks.map(task => {
+                        updateID.map(id => {
+                            if(task.dependencies === id){
+                                updateID.push(task.taskID);
+                            }
+                        });
+                    })
+                }
+
+                let unifiedArray = _.uniq(updateID);
+                console.log(unifiedArray);
+
+                tasks.map(taskss => {
+                    unifiedArray.map(id => {
+                        if(taskss.taskID === id){
+                            let a = moment(taskFromFront.endDate);
+                            let b = moment(task.endDate);
+                            let diff = b.diff(a, 'days');
+
+                            Task.findOne({taskID: id}, async (err, taskToUpdate) => {
+
+                                console.log(taskToUpdate.startDate.add(1, 'days'));
+                                if(taskToUpdate.ignoreWeekends === false){
+                                    //let x = moment(taskToUpdate.startDate).add(7, 'days');
+                                    //console.log(x);
+                                    // taskToUpdate.startDate = taskToUpdate.startDate.add(7, 'days');
+                                    // taskToUpdate.endDate = taskToUpdate.endDate.add(7, 'days');
+                                }
+                                //await taskToUpdate.save();
+                                console.log('task updated: ' + taskToUpdate.taskID);
+                            });
+                        }
+                    })
+                });
+
+        });
+    };
+
+
+    const checkWhatChanged = (task) => {
+        //check if its just simple update
+        if(   taskFromFront.startDate === moment(task.startDate).format('YYYY-MM-DD') &&
+              taskFromFront.endDate === moment(task.endDate).format('YYYY-MM-DD') &&
+              taskFromFront.duration === task.duration &&
+              taskFromFront.ignoreWeekends === task.ignoreWeekends
+            ){
+            console.log('1');
+            simpleUpdate();
+        }//check if just start date changed
+        if(   taskFromFront.startDate !== moment(task.startDate).format('YYYY-MM-DD') &&
+              taskFromFront.endDate === moment(task.endDate).format('YYYY-MM-DD') &&
+              taskFromFront.duration === task.duration &&
+              taskFromFront.ignoreWeekends === task.ignoreWeekends
+        ){
+            console.log('2');
+            updateStartDate();
+        }//check if only end date changed
+        if(   taskFromFront.startDate !== moment(task.startDate).format('YYYY-MM-DD') &&
+              taskFromFront.endDate !== moment(task.endDate).format('YYYY-MM-DD') &&
+              taskFromFront.duration === task.duration &&
+              taskFromFront.ignoreWeekends === task.ignoreWeekends
+        ){
+            console.log('3');
+            updateEndDate(task);
+        }
     };
 res.json('123');
 };

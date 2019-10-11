@@ -11,6 +11,7 @@ export const GET_CALENDAR = 'GET_CALENDAR';
 export const MARK_RISK_TO_EDIT = 'MARK_RISK_TO_EDIT';
 export const GET_RISK_DATA = 'GET_RISK_DATA';
 export const GET_TASK_LIST = 'GET_TASK_LIST';
+export const MARK_TASK_TO_EDIT = 'MARK_TASK_TO_EDIT';
 
 export const createProject = (project) => async dispatch => {
     const response = await axios.post('http://localhost:5000/project-manager/create-project',
@@ -95,4 +96,9 @@ export const getCalendar = () => async dispatch => {
 export const getTaskList = (projectID) => async dispatch => {
     const response = await axios.post('http://localhost:5000/project-manager/project-data/task-list', {projectID});
     dispatch({type: GET_TASK_LIST, payload: response.data});
+};
+
+export const editTask = (task) => async dispatch => {
+    console.log(task);
+  const response = await axios.post('http://localhost:5000/project-manager/project-data/edit-task', {task})
 };

@@ -249,9 +249,6 @@ class Project extends React.Component {
                                 submitRegister={this.addRegister}
                                 changeTypeInformation={this.handleChangeTypeInformation}
                                 state={this.state}
-                                submitFn={this.addRisk}
-                                changeProbability={this.handleChangeProbability}
-                                changeConsequences={this.handleChangeConsequences}
                             />
                         </TabPane>
                     </TabContent>
@@ -263,7 +260,7 @@ class Project extends React.Component {
 
                     <TabContent activeTab={this.state.activeTab}>
                         <TabPane tabId="6">
-                            <GanttComponent projectID={this.props.projectID} data={this.props.ganttChart} calendar={this.props.calendar} />
+                           <GanttComponent projectID={this.props.projectID} data={this.props.ganttChart} calendar={this.props.calendar} />
                         </TabPane>
                     </TabContent>
 
@@ -286,23 +283,12 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state, ownProps) => {
-    console.log(state);
-    if(!state.taskList){
-        return({
-            projectID: ownProps.match.params.projectID,
-            projectName: state.projectData.projectName,
-            ganttChart: [],
-            calendar: state.calendar
-        })
-    }else
-    {
         return ({
             projectID: ownProps.match.params.projectID,
             projectName: state.projectData.projectName,
             ganttChart: state.taskList,
             calendar: state.calendar
         })
-    }
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Project);

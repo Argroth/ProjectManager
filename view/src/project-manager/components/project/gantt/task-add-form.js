@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import { Field, reduxForm } from "redux-form";
+import { Field, reduxForm, change } from "redux-form";
 import { connect } from "react-redux";
 import _ from 'lodash';
-import moment from 'moment';
+import moment, {duration} from 'moment';
 
 import { createNewTask } from "../../../../actions/project-manager-actions";
 
@@ -10,9 +10,31 @@ import { createNewTask } from "../../../../actions/project-manager-actions";
 class TaskAddForm extends Component {
     constructor(props) {
         super(props);
-
+        this.state = {
+            startDate: undefined,
+            endDate: undefined,
+            duration: undefined
+        }
     };
 
+    onChange = (event) => {
+      if(event.target.name === 'startDate'){
+          this.setState({startDate: event.target.value})
+      }else if(event.target.name === 'endDate'){
+          this.setState({endDate: event.target.value});
+      }else if(event.target.name === 'duration'){
+          this.setState({duration: event.target.valueAsNumber})
+      }
+    };
+
+    handleChange = () => {
+        const a = moment(this.state.startDate);
+        const b = moment(this.state.endDate);
+
+        if(a && b){
+                this.props.updateDuration(b.diff(a, 'days'));
+        }
+    };
 
 
     render() {
@@ -30,9 +52,9 @@ class TaskAddForm extends Component {
                         </Field>
                         <br/>
                         Ignore holidays<Field name="ignoreWeekends" type="checkbox" component={this.RenderField}/>
-                        <Field name="startDate" type="date" component={this.RenderField} label="Start Date"/>
-                        <Field name="endDate" type="date" component={this.RenderField} label="End Date"/>
-                        <Field name="duration" type="number" component={this.RenderField} label="Ending in: ... days"/>
+                        <Field name="startDate" type="date" onChange={(value) => {this.onChange(value)}} onBlur={() => {this.handleChange()}} component={this.RenderField} label="Start Date"/>
+                        <Field name="endDate" type="date" onChange={(value) => {this.onChange(value)}} onBlur={() => {this.handleChange()}} component={this.RenderField} label="End Date"/>
+                        <Field name="duration" type="number" component={this.RenderField} onChange={(value) => {this.onChange(value)}} onBlur={() => {this.handleChange()}} label="Ending in: ... days"/>
                         <Field name="percentage" component='select'>
                             <option ></option>
                             <option value='0%'>0%</option>
@@ -64,28 +86,14 @@ class TaskAddForm extends Component {
             </div>
         </div>
     );
+
 }
-
-
-const mapStateToProps = (state) => {
-    console.log(state);
-    return ({
-        projectViewData: state.projectData,
-        tasks: state.taskList,
-        stages: state.projectData.projectStages,
-        calendar: state.calendar
-    })
-};
-
-const mapDispatchToProps = (dispatch, ownProps) => ({
-    createNewTask: (task) => dispatch(createNewTask(task, ownProps.projectID))
-});
 
 const warn = (values, props) => {
     const calendar = props.calendar;
     const warnings = {};
 
-    if(values.ignoreWeekends === false && values.duration && values.startDate) {
+    if(values.ignoreWeekends === false && values.duration > 0 && values.startDate) {
         const startDate = _.find(calendar, {day: values.startDate}).day;
         const duration = values.duration;
         let period = [];
@@ -167,8 +175,6 @@ const validate = (values, props) => {
     if(values.dependencies && values.startDate){
         const tasks = props.tasks;
         tasks.map(taskDestructurized => {
-            console.log('task');
-            console.log(taskDestructurized);
 
             if(values.dependencies === taskDestructurized.taskID){
                             if(values.startDate < taskDestructurized.endDate){
@@ -178,9 +184,26 @@ const validate = (values, props) => {
         });
     }
 
+    if(values.duration <= 0){
+        errors.duration = 'Czas trwania nie może być mniejszy od 0';
+    }
+
     return errors;
 };
 
+const mapStateToProps = (state) => {
+    return ({
+        projectViewData: state.projectData,
+        tasks: state.taskList,
+        stages: state.projectData.projectStages,
+        calendar: state.calendar
+    })
+};
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+    createNewTask: (task) => dispatch(createNewTask(task, ownProps.projectID)),
+    updateDuration: (dur) => dispatch(change('addNewTaskForm', 'duration', dur))
+});
 
 export default reduxForm({
     form: 'addNewTaskForm',
