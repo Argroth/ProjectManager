@@ -6,7 +6,7 @@ module.exports = transporter = nodemailer.createTransport({
     port: 587,
     tls:{rejectUnauthorized: false},
     auth: {
-        user: 'development@telemond-holding.com',
-        pass: 'Muk65276'
+        user: '',
+        pass: ''
     }
 });
