@@ -14,15 +14,7 @@ class UserRegister extends Component {
                 <Field name="name" type="text" component={renderField} label="Name"/>
                 <Field name="email" type="email" component={renderField} label="Email"/>
                 <Field name="telephone" type="text" component={renderField} label="Telephone Number"/>
-                <Field name="department" type="text" component={renderField} label="Department"/>
                 <Field name="departmentRole" type="text" component={renderField} label="Department Role"/>
-                Select Company<Field name="company" component="select">
-                <option value=""></option>
-                    <option value="Teleskop">Teleskop</option>
-                    <option value="Montel">Montel</option>
-                    <option value="Henschel">Henschel</option>
-                    <option value="Teleyard">Teleyard</option>
-                </Field><br/>
                 Select Default Language<Field name="defaultLanguage" component="select">
                 <option value=""></option>
                     <option value="PL">Polski</option>
@@ -46,9 +38,8 @@ const validate = values => {
     }
     if (!values.email){
         errors.email = 'Required'
-    } else if (!/^[A-Z.]+@telemond-holding.com$/i.test(values.email)) {
-        errors.email = 'Invalid email address'
     }
+
     if(!values.department){
         errors.department = 'Required'
     }

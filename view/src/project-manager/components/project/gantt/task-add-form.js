@@ -5,7 +5,20 @@ import _ from 'lodash';
 import moment, {duration} from 'moment';
 
 import { createNewTask } from "../../../../actions/project-manager-actions";
-
+import {
+    Badge,
+    Button,
+    Card,
+    CardBody,
+    CardHeader,
+    CardTitle,
+    Col,
+    Form,
+    FormGroup,
+    Input,
+    Label,
+    Row
+} from "reactstrap";
 
 class TaskAddForm extends Component {
     constructor(props) {
@@ -42,38 +55,123 @@ class TaskAddForm extends Component {
             return (
                 <div>
                     <form onSubmit={handleSubmit(this.props.createNewTask)}>
-                        <Field name="taskId" type="text" component={this.RenderField} label="TaskID"/>
-                        <Field name="taskName" type="text" component={this.RenderField} label="Task Name"/>
-                        <Field name="resource" component="select">
-                            <option></option>
-                            {this.props.projectViewData.projectStages.map(stage => {
-                                return <option value={stage.name}>{stage.name}</option>
-                            })}
-                        </Field>
-                        <br/>
-                        Ignore holidays<Field name="ignoreWeekends" type="checkbox" component={this.RenderField}/>
-                        <Field name="startDate" type="date" onChange={(value) => {this.onChange(value)}} onBlur={() => {this.handleChange()}} component={this.RenderField} label="Start Date"/>
-                        <Field name="endDate" type="date" onChange={(value) => {this.onChange(value)}} onBlur={() => {this.handleChange()}} component={this.RenderField} label="End Date"/>
-                        <Field name="duration" type="number" component={this.RenderField} onChange={(value) => {this.onChange(value)}} onBlur={() => {this.handleChange()}} label="Ending in: ... days"/>
-                        <Field name="percentage" component='select'>
-                            <option ></option>
-                            <option value='0%'>0%</option>
-                            <option value='25%'>25%</option>
-                            <option value='50%'>50%</option>
-                            <option value='75%'>75%</option>
-                            <option value='100%'>100%</option>
-                        </Field>
-                        <br/>
-                        Select dependent task: <Field name="dependencies" component="select">
-                            <option></option>
-                            {this.props.tasks.map(task => {
-                                           return <option value={task.taskID}>{task.taskName}</option>
-                            })}
-                        </Field>
-                        <div>
-                            <button type="submit" disabled={submitting}>Submit</button>
-                        </div>
-                    </form>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle tag="h5" className="mb-0">
+                                Add task
+                            </CardTitle>
+                            <CardBody>
+                                <Row>
+                                    <Col md={2}>
+                                        <FormGroup>
+                                            <Label>ID Zadania</Label>
+                                            <Field name="taskId" type="text" component={this.RenderField} label="TaskID"/>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md={2}>
+                                        <FormGroup>
+                                            <Label>Nazwa Zadania</Label>
+                                            <Field name="taskName" type="text" component={this.RenderField} label="Task Name"/>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md={2}>
+                                        <FormGroup>
+                                            <Label>Etap</Label>
+                                            <Field name="resource" component="select">
+                                                <option></option>
+                                                {this.props.projectViewData.projectStages.map(stage => {
+                                                    return <option value={stage.name}>{stage.name}</option>
+                                                })}
+                                            </Field>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md={2}>
+                                        <FormGroup>
+                                            <Label>Ignore holidays</Label>
+                                            <Field name="ignoreWeekends" type="checkbox" component={this.RenderField}/>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md={2}>
+                                        <FormGroup>
+                                            <Label>Data rozpoczęcia</Label>
+                                            <Field name="startDate" type="date" onChange={(value) => {this.onChange(value)}} onBlur={() => {this.handleChange()}} component={this.RenderField} label="Start Date"/>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md={2}>
+                                        <FormGroup>
+                                            <Label>Data zakończenia</Label>
+                                            <Field name="endDate" type="date" onChange={(value) => {this.onChange(value)}} onBlur={() => {this.handleChange()}} component={this.RenderField} label="Start Date"/>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md={2}>
+                                        <FormGroup>
+                                            <Label>Czas trwania</Label>
+                                            <Field name="duration" type="number" component={this.RenderField} onChange={(value) => {this.onChange(value)}} onBlur={() => {this.handleChange()}} label="Ending in: ... days"/>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md={2}>
+                                        <FormGroup>
+                                            <Label>Procent ukończenia</Label>
+                                            <Field name="percentage" component='select'>
+                                                <option ></option>
+                                                <option value='0%'>0%</option>
+                                                <option value='25%'>25%</option>
+                                                <option value='50%'>50%</option>
+                                                <option value='75%'>75%</option>
+                                                <option value='100%'>100%</option>
+                                            </Field>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md={2}>
+                                        <FormGroup>
+                                            <Label>Zadanie zależne</Label>
+                                            <Field name="dependencies" component="select">
+                                            <option></option>
+                                            {this.props.tasks.map(task => {
+                                                return <option value={task.taskID}>{task.taskName}</option>
+                                            })}
+                                        </Field>
+                                        </FormGroup>
+                                    </Col>
+                                            <div className='mb-1'>
+                                                <Button type="submit" color="primary" className="mr-1 mb-1">Zapisz</Button>
+                                            </div>
+                                </Row>
+                            </CardBody>
+                        </CardHeader>
+                    </Card>
+                        {/*<Field name="taskId" type="text" component={this.RenderField} label="TaskID"/>*/}
+                        {/*<Field name="taskName" type="text" component={this.RenderField} label="Task Name"/>*/}
+                        {/*<Field name="resource" component="select">*/}
+                        {/*    <option></option>*/}
+                        {/*    {this.props.projectViewData.projectStages.map(stage => {*/}
+                        {/*        return <option value={stage.name}>{stage.name}</option>*/}
+                        {/*    })}*/}
+                        {/*</Field>*/}
+                        {/*<br/>*/}
+                        {/*Ignore holidays<Field name="ignoreWeekends" type="checkbox" component={this.RenderField}/>*/}
+                        {/*<Field name="startDate" type="date" onChange={(value) => {this.onChange(value)}} onBlur={() => {this.handleChange()}} component={this.RenderField} label="Start Date"/>*/}
+                        {/*<Field name="endDate" type="date" onChange={(value) => {this.onChange(value)}} onBlur={() => {this.handleChange()}} component={this.RenderField} label="End Date"/>*/}
+                        {/*<Field name="duration" type="number" component={this.RenderField} onChange={(value) => {this.onChange(value)}} onBlur={() => {this.handleChange()}} label="Ending in: ... days"/>*/}
+                        {/*<Field name="percentage" component='select'>*/}
+                        {/*    <option ></option>*/}
+                        {/*    <option value='0%'>0%</option>*/}
+                        {/*    <option value='25%'>25%</option>*/}
+                        {/*    <option value='50%'>50%</option>*/}
+                        {/*    <option value='75%'>75%</option>*/}
+                        {/*    <option value='100%'>100%</option>*/}
+                        {/*</Field>*/}
+                        {/*<br/>*/}
+                        {/*Select dependent task: <Field name="dependencies" component="select">*/}
+                        {/*    <option></option>*/}
+                        {/*    {this.props.tasks.map(task => {*/}
+                        {/*                   return <option value={task.taskID}>{task.taskName}</option>*/}
+                        {/*    })}*/}
+                        {/*</Field>*/}
+                        {/*<div>*/}
+                        {/*    <button type="submit" disabled={submitting}>Submit</button>*/}
+                        {/*</div>*/}
+                </form>
                 </div>
             );
     }
@@ -81,7 +179,7 @@ class TaskAddForm extends Component {
     RenderField = ({ input, label, type, meta: { touched, error, warning } }) => (
         <div>
             <div>
-                <input {...input} placeholder={label} type={type}/>
+                <Input {...input} placeholder={label} type={type}/>
                 {touched && ((error && <span>{error}</span>) || (warning && <span>{warning}</span>))}
             </div>
         </div>

@@ -58,43 +58,7 @@ db.once('open', () => {
 });
 
 //###########################################################     SANDBOX    ##############################################################################
-const io = require('socket.io')(80);
 
-const notifications = [
-  {
-    type: "important",
-    title: "Update completed",
-    description: "Restart server 12 to complete the update.",
-    time: "2h ago"
-  },
-  {
-    type: "default",
-    title: "Lorem ipsum",
-    description: "Aliquam ex eros, imperdiet vulputate hendrerit et.",
-    time: "6h ago"
-  },
-  {
-    type: "login",
-    title: "Login from 192.186.1.1",
-    description: "",
-    time: "6h ago"
-  },
-  {
-    type: "request",
-    title: "New connection",
-    description: "Anna accepted your request.",
-    time: "12h ago"
-  }
-];
-
-io.on('connection',  (socket) => {
-  socket.emit('news', notifications);
-  socket.on('my other event', (data) => {
-    const newMessage = [...notifications, data];
-
-    io.emit('news', newMessage);
-  });
-});
 
 //###########################################################     SANDBOX     ##############################################################################
 

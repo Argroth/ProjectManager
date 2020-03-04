@@ -4,7 +4,7 @@ const userDetailsMiddleware = require('../middlewares/user-details-middleware');
 module.exports= (app) => {
 
      app.get('/project-manager/list-projects', projectController.index);
-     app.post('/project-manager/create-project',userDetailsMiddleware.getUserDetails, projectController.createProject);
+     app.post('/project-manager/create-project', projectController.createProject);
      app.post('/project-manager/project-data', projectController.getProjectData);
      app.post('/project-manager/project-data/risk', projectController.getRiskData);
      app.post('/project-manager/project-data/risk-list', projectController.getRiskList);

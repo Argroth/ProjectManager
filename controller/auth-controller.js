@@ -3,7 +3,6 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const User = require('../model/user-model');
 require('../emailer/emailer-config');
-//TODO Change secret to env variable
 const secret = 'mysecreetsshhh';
 
 const token = crypto.randomBytes(12).toString('hex');
@@ -24,7 +23,6 @@ exports.register = (req, res) => {
             newUser.label = req.body.user.name;
             newUser.meta.department = req.body.user.department;
             newUser.meta.departmentRole = req.body.user.departmentRole;
-            newUser.meta.company = req.body.user.company;
             newUser.meta.createdAt = Date.now();
             newUser.authToken.tokenID = token;
             newUser.authToken.expDate = Date.now()+86400000;

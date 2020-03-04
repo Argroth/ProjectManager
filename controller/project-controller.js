@@ -65,8 +65,8 @@ exports.createProject = (req, res) => {
              meta: {
              createdAt: Date.now(),
              updatedAt: Date.now(),
-             createdBy: req.userID,
-             updatedBy: req.userID
+             createdBy: 'Adam',
+             updatedBy: 'Adam'
              },
          ganttChart: []
      });
@@ -524,25 +524,73 @@ exports.updateTask = (req, res) => {
                 }
 
                 let unifiedArray = _.uniq(updateID);
-                console.log(unifiedArray);
+                unifiedArray.shift();
 
                 tasks.map(taskss => {
                     unifiedArray.map(id => {
                         if(taskss.taskID === id){
                             let a = moment(taskFromFront.endDate);
                             let b = moment(task.endDate);
-                            let diff = b.diff(a, 'days');
+                            let diff = a.diff(b, 'days');
+                            console.log(diff);
 
-                            Task.findOne({taskID: id}, async (err, taskToUpdate) => {
-
-                                console.log(taskToUpdate.startDate.add(1, 'days'));
+                            Task.findOne({taskID: id, projectID: taskFromFront.projectID}, (err, taskToUpdate) => {
                                 if(taskToUpdate.ignoreWeekends === false){
-                                    //let x = moment(taskToUpdate.startDate).add(7, 'days');
-                                    //console.log(x);
-                                    // taskToUpdate.startDate = taskToUpdate.startDate.add(7, 'days');
-                                    // taskToUpdate.endDate = taskToUpdate.endDate.add(7, 'days');
+                                    let x = moment(taskToUpdate.startDate).format('YYYY-MM-DD');
+                                    let z = moment(taskToUpdate.endDate).format('YYYY-MM-DD');
+
+                                    if(diff > 0 ){
+                                        taskToUpdate.startDate = moment(x).add(diff, 'days');
+                                        taskToUpdate.endDate = moment(z).add(diff, 'days');
+                                    }else{
+                                        let positive = Math.abs(diff);
+                                        taskToUpdate.startDate = moment(x).subtract(positive, 'days');
+                                        taskToUpdate.endDate = moment(z).subtract(positive, 'days');
+                                    }
+                                // }else if (taskToUpdate.ignoreWeekends === false){
+                                //     Calendar.find({}, (err, calendar) => {
+                                //         let y = taskToUpdate.startDate;
+                                //         let x = moment(taskToUpdate.startDate).format('YYYY-MM-DD');
+                                //         let z = moment(taskToUpdate.endDate).format('YYYY-MM-DD');
+                                //
+                                //         const xx = moment(x).add(diff, 'days');
+                                //         const yy = moment(x).add(diff, 'days');
+                                //
+                                //         let newStartDate = new Date(moment(xx).format('YYYY-MM-DD'));
+                                //         let newEndDate = new Date(moment(yy).format('YYYY-MM-DD'));
+                                //
+                                //         if(_.find(calendar, {day: newEndDate}) === true){
+                                //             taskToUpdate.endDate = newEndDate;
+                                //         }else{
+                                //             let newDate = _.find(calendar, x => {return x.day > newEndDate});
+                                //             taskToUpdate.endDate = newDate.day;
+                                //             console.log(newDate);
+                                //         }
+                                //         if(_.find(calendar, {day: newStartDate}) === true){
+                                //             taskToUpdate.startDate = newStartDate;
+                                //         }else{
+                                //             let newDate = _.find(calendar, x => {return x.day > newStartDate});
+                                //             console.log(newDate);
+                                //             taskToUpdate.startDate = newDate.day;
+                                //         }
+                                        // if(_.find(calendar, {day: newEndDate}).offWork === true){
+                                        //     let endDateToUpdate = _.find(calendar, x => {return x.offWork === false && x.day > newEndDate});
+                                        //     //taskToUpdate.endDate = endDateToUpdate;
+                                        // }else{
+                                        //     taskToUpdate.endDate = newEndDate;
+                                        // }
+                                        //
+                                        // if(_.find(calendar, {day: newStartDate}).offWork === true){
+                                        //     let startDateToUpdate = _.find(calendar, x => {return x.offWork === false && x.day > newStartDate});
+                                        //     //taskToUpdate.startDate = startDateToUpdate;
+                                        // }else{
+                                        //     taskToUpdate.startDate = newStartDate;
+                                        // }
+                                    //
+                                    // });
                                 }
-                                //await taskToUpdate.save();
+
+                                taskToUpdate.save();
                                 console.log('task updated: ' + taskToUpdate.taskID);
                             });
                         }

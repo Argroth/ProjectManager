@@ -14,6 +14,7 @@ export const GET_TASK_LIST = 'GET_TASK_LIST';
 export const MARK_TASK_TO_EDIT = 'MARK_TASK_TO_EDIT';
 
 export const createProject = (project) => async dispatch => {
+    console.log(project);
     const response = await axios.post('http://localhost:5000/project-manager/create-project',
         {project}, {withCredentials: true});
     dispatch({type: CREATE_PROJECT, payload: response});
