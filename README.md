@@ -1,4 +1,4 @@
-# TelemondApp 
+# ProjectManager 
 
 > App based on M.E.R.N. stack with JWT based authentication. 
 
